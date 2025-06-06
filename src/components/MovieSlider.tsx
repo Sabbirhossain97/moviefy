@@ -1,10 +1,9 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import { Movie } from "@/services/api";
 import MovieCard from "./MovieCard";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 interface MovieSliderProps {
@@ -15,7 +14,7 @@ interface MovieSliderProps {
 }
 
 const MovieSlider = ({ title, movies, className, cardSize = "md" }: MovieSliderProps) => {
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {
     const container = scrollContainerRef.current;
@@ -56,7 +55,7 @@ const MovieSlider = ({ title, movies, className, cardSize = "md" }: MovieSliderP
         </div>
       </div>
       
-      <ScrollArea className="pb-4" ref={scrollContainerRef}>
+      <div className="overflow-x-auto pb-4 scrollbar-hide" ref={scrollContainerRef}>
         <div className="flex gap-4">
           {movies.map((movie) => (
             <div key={movie.id} className="flex-shrink-0">
@@ -64,8 +63,7 @@ const MovieSlider = ({ title, movies, className, cardSize = "md" }: MovieSliderP
             </div>
           ))}
         </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      </div>
     </section>
   );
 };
