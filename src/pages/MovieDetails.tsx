@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Star, Calendar, Clock, Film } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +19,7 @@ const MovieDetails = () => {
   const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
   const [videos, setVideos] = useState<MovieVideo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showTrailer, setShowTrailer] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -202,15 +204,12 @@ const MovieDetails = () => {
                 {/* Action buttons */}
                 {trailer && (
                   <div>
-                    <a 
-                      href={`https://www.youtube.com/watch?v=${trailer.key}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Button 
+                      className="bg-movie-primary hover:bg-movie-primary/90"
+                      onClick={() => setShowTrailer(true)}
                     >
-                      <Button className="bg-movie-primary hover:bg-movie-primary/90">
-                        Watch Trailer
-                      </Button>
-                    </a>
+                      Watch Trailer
+                    </Button>
                   </div>
                 )}
                 
@@ -317,6 +316,23 @@ const MovieDetails = () => {
           </p>
         </div>
       </footer>
+
+      {/* Trailer Dialog */}
+      {trailer && (
+        <Dialog open={showTrailer} onOpenChange={setShowTrailer}>
+          <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black">
+            <div className="aspect-video w-full">
+              <iframe
+                src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1`}
+                title={`${movie.title} Trailer`}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 };
