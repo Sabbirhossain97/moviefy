@@ -6,24 +6,31 @@
 @layer base {
   :root {
     --background: 220 20% 10%;
+    --background-gradient: linear-gradient(135deg, hsl(220, 20%, 10%) 0%, hsl(220, 25%, 8%) 50%, hsl(220, 20%, 12%) 100%);
     --foreground: 0 0% 98%;
 
     --card: 220 20% 13%;
+    --card-gradient: linear-gradient(135deg, hsl(220, 20%, 13%) 0%, hsl(220, 25%, 11%) 50%, hsl(220, 20%, 15%) 100%);
     --card-foreground: 0 0% 98%;
 
     --popover: 220 20% 10%;
+    --popover-gradient: linear-gradient(135deg, hsl(220, 20%, 10%) 0%, hsl(220, 25%, 8%) 50%, hsl(220, 20%, 12%) 100%);
     --popover-foreground: 0 0% 98%;
 
     --primary: 354 86% 48%;
+    --primary-gradient: linear-gradient(135deg, hsl(354, 86%, 48%) 0%, hsl(354, 86%, 42%) 50%, hsl(354, 86%, 54%) 100%);
     --primary-foreground: 210 40% 98%;
 
     --secondary: 199 77% 26%;
+    --secondary-gradient: linear-gradient(135deg, hsl(199, 77%, 26%) 0%, hsl(199, 77%, 22%) 50%, hsl(199, 77%, 30%) 100%);
     --secondary-foreground: 210 40% 98%;
 
     --muted: 220 20% 20%;
+    --muted-gradient: linear-gradient(135deg, hsl(220, 20%, 20%) 0%, hsl(220, 25%, 18%) 50%, hsl(220, 20%, 22%) 100%);
     --muted-foreground: 215.4 16.3% 76.9%;
 
     --accent: 220 20% 15%;
+    --accent-gradient: linear-gradient(135deg, hsl(220, 20%, 15%) 0%, hsl(220, 25%, 13%) 50%, hsl(220, 20%, 17%) 100%);
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -43,7 +50,9 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply text-foreground font-sans;
+    background: var(--background-gradient);
+    min-height: 100vh;
   }
 
   .movie-card-hover {
@@ -52,6 +61,30 @@
 
   .text-shadow {
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .gradient-bg {
+    background: var(--background-gradient);
+  }
+
+  .gradient-card {
+    background: var(--card-gradient);
+  }
+
+  .gradient-primary {
+    background: var(--primary-gradient);
+  }
+
+  .gradient-secondary {
+    background: var(--secondary-gradient);
+  }
+
+  .gradient-muted {
+    background: var(--muted-gradient);
+  }
+
+  .gradient-accent {
+    background: var(--accent-gradient);
   }
 }
 
@@ -63,5 +96,12 @@
   
   .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Chrome, Safari and Opera */
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 }

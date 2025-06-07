@@ -61,7 +61,7 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
         <Button
           variant="outline"
           size="icon"
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm"
+          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity gradient-card backdrop-blur-sm border-border/50"
           onClick={scrollLeft}
           disabled={scrollPosition <= 0}
         >
@@ -76,9 +76,9 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {validMovies.map((movie) => (
-            <div key={movie.id} className="flex-shrink-0 w-48">
+            <div key={movie.id} className="flex-shrink-0 w-[200px]">
               <Link to={`/movie/${movie.id}`} className="block">
-                <div className="bg-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50">
                   <div className="aspect-[2/3] overflow-hidden">
                     <img
                       src={
@@ -90,18 +90,23 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                     />
                   </div>
-                  <div className="p-3">
-                    <h3 className="font-medium text-sm line-clamp-2 mb-1">
+                  <div className="p-3 h-[60px] flex flex-col justify-between">
+                    <h3 
+                      className="font-medium text-sm line-clamp-2 leading-tight"
+                      title={movie.title}
+                    >
                       {movie.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground">
-                      {movie.release_date ? new Date(movie.release_date).getFullYear() : "TBA"}
-                    </p>
-                    {movie.vote_average > 0 && (
-                      <p className="text-xs text-yellow-500 mt-1">
-                        ★ {movie.vote_average.toFixed(1)}
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-muted-foreground">
+                        {movie.release_date ? new Date(movie.release_date).getFullYear() : "TBA"}
                       </p>
-                    )}
+                      {movie.vote_average > 0 && (
+                        <p className="text-xs text-yellow-500">
+                          ★ {movie.vote_average.toFixed(1)}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -118,7 +123,7 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
         <Button
           variant="outline"
           size="icon"
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm"
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity gradient-card backdrop-blur-sm border-border/50"
           onClick={scrollRight}
         >
           <ChevronRight className="h-4 w-4" />

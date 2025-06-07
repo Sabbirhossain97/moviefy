@@ -29,7 +29,7 @@ const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
 
   return (
     <Link to={`/movie/${movie.id}`}>
-      <Card className={`overflow-hidden movie-card-hover ${cardSizes[size]} h-full bg-card`}>
+      <Card className={`overflow-hidden movie-card-hover ${cardSizes[size]} gradient-card border-border/50`}>
         <div className="relative aspect-[2/3] overflow-hidden">
           <img
             src={posterUrl}
@@ -38,15 +38,20 @@ const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
             loading="lazy"
           />
           <div className="absolute top-2 right-2">
-            <Badge variant="secondary" className="flex items-center gap-1 font-medium">
+            <Badge variant="secondary" className="flex items-center gap-1 font-medium gradient-secondary">
               <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
               {movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
             </Badge>
           </div>
         </div>
-        <CardContent className="p-3">
-          <h3 className="font-semibold line-clamp-2 text-sm">{movie.title}</h3>
-          <p className="text-xs text-muted-foreground mt-1">{releaseYear}</p>
+        <CardContent className="p-3 h-[60px] flex flex-col justify-between">
+          <h3 
+            className="font-semibold text-sm line-clamp-2 leading-tight"
+            title={movie.title}
+          >
+            {movie.title}
+          </h3>
+          <p className="text-xs text-muted-foreground">{releaseYear}</p>
         </CardContent>
       </Card>
     </Link>

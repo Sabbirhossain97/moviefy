@@ -78,7 +78,7 @@ const AIMovieSearch = () => {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
+      <div className="gradient-card rounded-lg border border-border/50 shadow-lg p-6">
         <div className="flex items-center gap-2 mb-4">
           <Sparkles className="h-5 w-5 text-yellow-500" />
           <h2 className="text-xl font-semibold">AI Movie Recommendations</h2>
@@ -94,14 +94,14 @@ const AIMovieSearch = () => {
               placeholder="e.g., I want a romantic comedy with a happy ending, or a sci-fi thriller with time travel, or something like Inception but lighter..."
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              className="min-h-[100px]"
+              className="min-h-[100px] gradient-muted border-border/50"
             />
           </div>
           
           <Button 
             type="submit" 
             disabled={loading || !userInput.trim()}
-            className="w-full"
+            className="w-full gradient-primary hover:opacity-90 transition-opacity"
           >
             {loading ? (
               <>
@@ -116,13 +116,13 @@ const AIMovieSearch = () => {
             )}
           </Button>
         </form>
-      </Card>
+      </div>
 
       {reasoning && (
-        <Card className="p-4">
+        <div className="gradient-card rounded-lg border border-border/50 shadow-lg p-4">
           <h3 className="font-semibold mb-2">Why these movies?</h3>
           <p className="text-muted-foreground">{reasoning}</p>
-        </Card>
+        </div>
       )}
 
       {recommendations.length > 0 && (
