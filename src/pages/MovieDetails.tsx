@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { api, Movie, Cast, Crew, MovieVideo, IMAGE_SIZES } from "@/services/api";
@@ -10,6 +9,8 @@ import { Separator } from "@/components/ui/separator";
 import { Star, Calendar, Clock, Film } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { aiRecommendations } from "@/services/aiRecommendations";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +22,30 @@ const MovieDetails = () => {
   const [loading, setLoading] = useState(true);
   const [showTrailer, setShowTrailer] = useState(false);
   const { toast } = useToast();
+
+  const handleFeedback = async (liked: boolean) => {
+    if (!movie) return;
+    
+    try {
+      aiRecommendations.updatePreferences(
+        movie.id,
+        liked,
+        movie.genres?.map(g => g.id) || movie.genre_ids || []
+      );
+      
+      toast({
+        title: liked ? "Added to preferences" : "Noted your dislike",
+        description: `We'll ${liked ? 'recommend more' : 'avoid'} movies like "${movie.title}".`,
+      });
+    } catch (error) {
+      console.error("Error updating preferences:", error);
+      toast({
+        title: "Error updating preferences",
+        description: "There was a problem updating your preferences.",
+        variant: "destructive",
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -202,16 +227,34 @@ const MovieDetails = () => {
                 </div>
                 
                 {/* Action buttons */}
-                {trailer && (
-                  <div>
+                <div className="flex gap-4">
+                  {trailer && (
                     <Button 
                       className="bg-movie-primary hover:bg-movie-primary/90"
                       onClick={() => setShowTrailer(true)}
                     >
                       Watch Trailer
                     </Button>
-                  </div>
-                )}
+                  )}
+                  
+                  {/* Feedback buttons */}
+                  <Button
+                    variant="outline"
+                    onClick={() => handleFeedback(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <ThumbsUp className="h-4 w-4" />
+                    I Like This
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleFeedback(false)}
+                    className="flex items-center gap-2"
+                  >
+                    <ThumbsDown className="h-4 w-4" />
+                    Not For Me
+                  </Button>
+                </div>
                 
                 {/* Overview */}
                 <div>

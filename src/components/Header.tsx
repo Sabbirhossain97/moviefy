@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,16 +12,34 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Search, Video } from "lucide-react";
-import { Genre } from "@/services/api";
+import { Genre, api } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   genres?: Genre[];
 }
 
-const Header = ({ genres = [] }: HeaderProps) => {
+const Header = ({ genres: propGenres = [] }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [genres, setGenres] = useState<Genre[]>(propGenres);
   const navigate = useNavigate();
+
+  // Fetch genres if not provided as props
+  useEffect(() => {
+    if (propGenres.length === 0) {
+      const fetchGenres = async () => {
+        try {
+          const response = await api.getGenres();
+          setGenres(response.genres);
+        } catch (error) {
+          console.error("Error fetching genres:", error);
+        }
+      };
+      fetchGenres();
+    } else {
+      setGenres(propGenres);
+    }
+  }, [propGenres]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,6 +110,14 @@ const Header = ({ genres = [] }: HeaderProps) => {
                 <Link to="/movies/upcoming">
                   <NavigationMenuLink className="px-4 py-2 hover:text-movie-primary transition-colors">
                     Upcoming
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link to="/recommendations">
+                  <NavigationMenuLink className="px-4 py-2 hover:text-movie-primary transition-colors">
+                    AI Recommendations
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>

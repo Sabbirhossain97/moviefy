@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +10,7 @@ import GenrePage from "./pages/GenrePage";
 import GenresList from "./pages/GenresList";
 import MovieCategory from "./pages/MovieCategory";
 import NotFound from "./pages/NotFound";
+import AIRecommendations from "./pages/AIRecommendations";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +27,7 @@ const App = () => (
           <Route path="/genre/:id" element={<GenrePage />} />
           <Route path="/genres" element={<GenresList />} />
           <Route path="/movies/:category" element={<MovieCategory />} />
+          <Route path="/recommendations" element={<AIRecommendations />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
