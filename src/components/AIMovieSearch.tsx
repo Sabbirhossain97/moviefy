@@ -27,19 +27,35 @@ const AIMovieSearch = () => {
         userInput: userInput.trim()
       });
 
+      console.log("AI Response:", aiResponse);
+
       // Search for each recommended movie
       const moviePromises = aiResponse.recommendations.map(async (title) => {
         try {
+          console.log(`Searching for movie: ${title}`);
           const searchResult = await api.searchMovies(title, 1);
-          return searchResult.results[0]; // Get the first match
+          const movie = searchResult.results[0];
+          console.log(`Found movie for "${title}":`, movie);
+          return movie || null; // Return null if no movie found
         } catch (error) {
           console.error(`Error searching for movie: ${title}`, error);
           return null;
         }
       });
 
-      const movies = await Promise.all(moviePromises);
-      const validMovies = movies.filter(movie => movie !== null) as Movie[];
+      const movieResults = await Promise.all(moviePromises);
+      console.log("All movie results:", movieResults);
+      
+      // Filter out null/undefined values and ensure valid movie objects
+      const validMovies = movieResults.filter((movie): movie is Movie => 
+        movie != null && 
+        typeof movie === 'object' && 
+        'id' in movie && 
+        'title' in movie &&
+        typeof movie.id === 'number'
+      );
+
+      console.log("Valid movies after filtering:", validMovies);
 
       setRecommendations(validMovies);
       setReasoning(aiResponse.reasoning);

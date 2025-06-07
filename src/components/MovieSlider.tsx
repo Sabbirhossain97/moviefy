@@ -16,6 +16,19 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isScrollable, setIsScrollable] = useState(true);
 
+  // Filter out any undefined, null, or invalid movie objects
+  const validMovies = movies.filter((movie): movie is Movie => 
+    movie != null && 
+    typeof movie === 'object' && 
+    'id' in movie && 
+    'title' in movie
+  );
+
+  // Don't render if no valid movies
+  if (validMovies.length === 0) {
+    return null;
+  }
+
   const scrollLeft = () => {
     const container = document.getElementById(`slider-${title.replace(/\s+/g, '-')}`);
     if (container) {
@@ -62,7 +75,7 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
           onScroll={handleScroll}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {movies.map((movie) => (
+          {validMovies.map((movie) => (
             <div key={movie.id} className="flex-shrink-0 w-48">
               <Link to={`/movie/${movie.id}`} className="block">
                 <div className="bg-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
