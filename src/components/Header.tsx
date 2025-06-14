@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Search, Video, Brain } from "lucide-react";
 import { Genre, api } from "@/services/api";
+import { UserMenu } from "@/components/UserMenu";
 
 interface HeaderProps {
   genres?: Genre[];
@@ -128,24 +129,29 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
           </NavigationMenu>
         </div>
         
-        {/* Search */}
-        <form onSubmit={handleSearch} className="relative w-full max-w-sm">
-          <Input
-            type="search"
-            placeholder="Search movies..."
-            className="pr-10 bg-muted/50 border-muted-foreground/20 focus:border-movie-primary"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Button
-            type="submit"
-            size="icon"
-            variant="ghost"
-            className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-          >
-            <Search className="h-4 w-4 text-muted-foreground" />
-          </Button>
-        </form>
+        <div className="flex items-center gap-4">
+          {/* Search */}
+          <form onSubmit={handleSearch} className="relative w-full max-w-sm">
+            <Input
+              type="search"
+              placeholder="Search movies..."
+              className="pr-10 bg-muted/50 border-muted-foreground/20 focus:border-movie-primary"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Button
+              type="submit"
+              size="icon"
+              variant="ghost"
+              className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+            >
+              <Search className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          </form>
+          
+          {/* User Menu */}
+          <UserMenu />
+        </div>
       </div>
     </header>
   );
