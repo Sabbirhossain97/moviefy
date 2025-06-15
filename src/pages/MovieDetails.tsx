@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api, Movie, MovieVideo, IMAGE_SIZES, Cast } from '@/services/api';
@@ -128,18 +127,22 @@ const MovieDetails = () => {
             No Cover Available
           </div>
         )}
-        {/* Poster and heart overlay */}
-        <div className="relative z-20 mt-32 md:mt-40 ml-6 md:ml-12" style={{marginBottom: '-90px'}}>
+      </div>
+
+      {/* Main info and meta LEFT POSTER DESIGN */}
+      <main className="container relative z-20 max-w-6xl px-4 md:px-6 mt-4 md:mt-12 flex flex-col md:flex-row gap-8">
+        {/* LEFT - poster, wishlist */}
+        <div className="w-full md:w-[220px] shrink-0 flex flex-col items-center md:items-start mb-6 md:mb-0 z-10">
           {posterUrl ? (
             <div className="relative group">
               <img
                 src={posterUrl}
                 alt={movie.title}
-                className="w-36 md:w-56 rounded-lg shadow-lg border-4 border-white/10"
+                className="w-36 md:w-52 rounded-lg shadow-lg border-4 border-white/10"
               />
               {/* Wishlist heart overlay */}
               <div className="absolute -top-2 -right-2 md:top-2 md:right-2 drop-shadow-md">
-                <WishlistButton 
+                <WishlistButton
                   movie={movie}
                   size="icon"
                   variant="ghost"
@@ -148,23 +151,24 @@ const MovieDetails = () => {
               </div>
             </div>
           ) : (
-            <div className="w-36 md:w-56 h-56 bg-gray-700 rounded-md flex items-center justify-center">
+            <div className="w-36 md:w-52 h-56 bg-gray-700 rounded-md flex items-center justify-center">
               <Film className="w-12 h-12 text-gray-600" />
             </div>
           )}
         </div>
-      </div>
 
-      {/* Main info and meta */}
-      <main className="container relative z-20 max-w-6xl px-4 md:px-6 mt-4 md:mt-12 flex flex-col md:flex-row gap-8">
-        {/* Left: poster already shown above, empty for spacing on large screens */}
-        <div className="hidden md:block w-[200px] shrink-0" />
-        {/* Main detail block */}
+        {/* MIDDLE - main info */}
         <div className="flex-1">
-          <h1 className="text-3xl font-bold mb-2">{movie.title} <span className="text-gray-400 font-light text-2xl">({releaseYear})</span></h1>
+          <h1 className="text-3xl font-bold mb-2">
+            {movie.title}{" "}
+            <span className="text-gray-400 font-light text-2xl">
+              ({releaseYear})
+            </span>
+          </h1>
           {movie.tagline && (
             <div className="italic text-md text-gray-300 mb-2">{movie.tagline}</div>
           )}
+
           {/* Meta badges/row */}
           <div className="flex flex-wrap items-center gap-3 mb-3 text-sm">
             {movie.genres && movie.genres.map((genre) => (
@@ -177,12 +181,15 @@ const MovieDetails = () => {
               {movie.release_date}
             </span>
             {movie.runtime && (
-              <span className="text-gray-400">{Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m</span>
+              <span className="text-gray-400">
+                {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m
+              </span>
             )}
             {movie.status && (
               <Badge variant="secondary">{movie.status}</Badge>
             )}
           </div>
+
           {/* Vote, reminder, rating */}
           <div className="flex flex-wrap gap-4 items-center mb-4">
             <span className="flex items-center text-yellow-400 font-medium text-lg">
@@ -200,6 +207,7 @@ const MovieDetails = () => {
             <MovieReminderButton movieId={movie.id} releaseDate={movie.release_date} />
             <MovieRating movieId={movie.id} />
           </div>
+
           {/* Watch trailer button */}
           {videos.length > 0 && (
             <div className="mb-3">
@@ -209,32 +217,47 @@ const MovieDetails = () => {
                 rel="noopener noreferrer"
               >
                 <button className="bg-red-600 hover:bg-red-700 text-white rounded px-5 py-2 transition-all font-semibold flex items-center gap-2 shadow-md">
-                  <PlayCircle className="w-5 h-5" /> Watch Trailer
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path stroke="currentColor" strokeWidth="2" d="M10 8.64L15 12L10 15.36V8.64Z" />
+                    <rect x="2" y="2" width="20" height="20" rx="5" fill="none" />
+                  </svg>
+                  Watch Trailer
                 </button>
               </a>
             </div>
           )}
+
           {/* Overview */}
           <div className="mt-6 mb-2">
             <h2 className="text-xl font-bold mb-1">Overview</h2>
             <p className="text-gray-300">{movie.overview}</p>
           </div>
+
           {/* More info (director, budget, etc) */}
           {(movie.production_companies || movie.budget || movie.revenue) && (
             <div className="mt-4 mb-3 flex flex-wrap gap-x-16 gap-y-2 text-sm text-gray-400">
               {movie.production_companies && movie.production_companies.length > 0 &&
                 <span>
-                  <span className="font-medium text-white">Production:</span> {movie.production_companies.map(pc => pc.name).join(', ')}
+                  <span className="font-medium text-white">Production:</span>{" "}
+                  {movie.production_companies.map(pc => pc.name).join(", ")}
                 </span>
               }
               {movie.budget ? (
                 <span>
-                  <span className="font-medium text-white">Budget:</span> ${movie.budget.toLocaleString()}
+                  <span className="font-medium text-white">Budget:</span>{" "}
+                  ${movie.budget.toLocaleString()}
                 </span>
               ) : null}
               {movie.revenue ? (
                 <span>
-                  <span className="font-medium text-white">Revenue:</span> ${movie.revenue.toLocaleString()}
+                  <span className="font-medium text-white">Revenue:</span>{" "}
+                  ${movie.revenue.toLocaleString()}
                 </span>
               ) : null}
             </div>
