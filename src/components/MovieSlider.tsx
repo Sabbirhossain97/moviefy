@@ -61,9 +61,13 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
         <Button
           variant="outline"
           size="icon"
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity gradient-card backdrop-blur-sm border-border/50"
+          className={`absolute left-2 top-1/2 transform -translate-y-1/2 z-10 transition-opacity gradient-card backdrop-blur-sm border-border/50 opacity-0 group-hover:opacity-100 ${
+            scrollPosition <= 0 ? "pointer-events-none opacity-40" : ""
+          }`}
           onClick={scrollLeft}
           disabled={scrollPosition <= 0}
+          tabIndex={scrollPosition <= 0 ? -1 : 0}
+          aria-disabled={scrollPosition <= 0}
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
@@ -134,3 +138,4 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
 };
 
 export default MovieSlider;
+
