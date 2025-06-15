@@ -69,6 +69,12 @@ const GenrePage = () => {
     }
   };
 
+  // Determine custom genre header label.
+  let genreTitle = genre ? genre.name : "Genre Not Found";
+  if (genreTitle.toLowerCase() === "tv movie") {
+    genreTitle = "TV Shows";
+  }
+
   if (loading && movies.length === 0) {
     return (
       <>
@@ -91,7 +97,7 @@ const GenrePage = () => {
       
       <main className="container py-8">
         <h1 className="text-3xl font-bold mb-6">
-          {genre ? `${genre.name} Movies` : "Genre Not Found"}
+          {genre ? `${genreTitle}` : "Genre Not Found"}
         </h1>
         
         {movies.length === 0 ? (

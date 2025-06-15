@@ -119,7 +119,12 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
         {/* Only show Set Reminder if NOT released */}
         {!isReleased && (
           <div className="flex">
-            <MovieReminderButton movieId={movie.id} releaseDate={movie.release_date} />
+            <MovieReminderButton
+              movieId={movie.id}
+              releaseDate={movie.release_date}
+              size="lg"
+              className="min-w-[165px] h-10 rounded px-5 py-2 font-semibold flex items-center gap-2 shadow-md" // Same as Watch Trailer
+            />
           </div>
         )}
         {videos.length > 0 && (
