@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { api, Movie, MovieVideo, IMAGE_SIZES, Cast } from '@/services/api';
@@ -153,6 +152,10 @@ const MovieDetails = () => {
           setShowTrailer={setShowTrailer}
           releaseYear={releaseYear}
         />
+        {/* Move MovieRating above MovieInfoSection */}
+        <div className="mb-2 flex items-center gap-3">
+          <MovieRating movieId={movie.id} />
+        </div>
         <MovieInfoSection
           overview={movie.overview}
           director={director}

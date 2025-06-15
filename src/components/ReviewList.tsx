@@ -16,6 +16,7 @@ interface ReviewListProps {
   onDelete: (id: string) => void;
   filterRating?: number | null;
   latestUserReviewId?: string | null;
+  userRating?: number | null;
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({
@@ -32,6 +33,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
   onDelete,
   filterRating,
   latestUserReviewId,
+  userRating,
 }) => {
   // Filtering by rating is unused since Review model has no rating.
 
@@ -57,6 +59,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
             onCancelEdit={onCancelEdit}
             onDelete={onDelete}
             showUserRating={user && r.user_id === user.id && latestUserReviewId === r.id}
+            rating={user && r.user_id === user.id && latestUserReviewId === r.id ? userRating : undefined}
           />
         </li>
       ))}

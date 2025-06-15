@@ -3,6 +3,8 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Pencil } from "lucide-react";
 import dayjs from "dayjs";
+import { Button } from "@/components/ui/button";
+import { Star } from "lucide-react";
 
 interface ReviewCardProps {
   review: any;
@@ -16,7 +18,8 @@ interface ReviewCardProps {
   onStartEdit: (r: any) => void;
   onCancelEdit: () => void;
   onDelete: (id: string) => void;
-  showUserRating?: boolean;
+  showUserRating?: boolean; // this review is latest user's review
+  rating?: number | null; // passes the user rating
 }
 
 const ReviewCard: React.FC<ReviewCardProps> = ({
@@ -32,12 +35,13 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   onCancelEdit,
   onDelete,
   showUserRating,
+  rating,
 }) => {
   const isOwner = user && r.user_id === user.id;
 
   return (
     <div className="flex gap-2 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative">
-      {/* Owner action icon in corner (now edit only, per requirements) */}
+      {/* Owner action icon in corner */}
       {isOwner && editingReviewId !== r.id && (
         <div className="absolute top-3 right-3 flex gap-2 z-10">
           <span
@@ -50,6 +54,27 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           >
             <Pencil className="w-4 h-4" />
           </span>
+          {/* Add delete button */}
+          <Button
+            size="icon"
+            variant="ghost"
+            type="button"
+            className="ml-1"
+            title="Delete review"
+            onClick={() => onDelete(r.id)}
+            aria-label="Delete review"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 text-destructive"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </Button>
         </div>
       )}
 
@@ -66,8 +91,20 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
         <div className="flex items-center gap-2">
           <span className="font-bold text-base">{r.user?.full_name || "User"}</span>
           <span className="text-xs text-gray-400">{dayjs(r.created_at).format("MMM D, YYYY")}</span>
-          {/* Show user rating only on latest review - logic could be added if rating is part of review */}
-          {/* No rating rendered since reviews have no rating property */}
+          {/* Show user rating only on latest user review */}
+          {showUserRating && rating ? (
+            <span className="ml-2 flex items-center gap-1">
+              {Array.from({ length: 5 }, (_, i) => (
+                <Star
+                  key={i}
+                  size={16}
+                  className={i < rating ? "text-yellow-400" : "text-muted-foreground"}
+                  fill={i < rating ? "currentColor" : "none"}
+                />
+              ))}
+              <span className="text-xs font-semibold text-yellow-500">{rating}/5</span>
+            </span>
+          ) : null}
         </div>
         {/* If this user is editing this review */}
         {editingReviewId === r.id ? (

@@ -31,6 +31,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
   const { reviews, myReview, submitReview, deleteReview, loading, error, refresh } = useMovieReviews(movieId);
+  const { rating: userRating } = require("@/hooks/useMovieRatings").useMovieRatings(movieId);
 
   useEffect(() => {
     refresh();
@@ -159,7 +160,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Rating filter dropdown - UI only, functionality is not wired as reviews don't have ratings */}
+          {/* Rating filter dropdown */}
           <Select
             value={filterRating !== null ? String(filterRating) : "all"}
             onValueChange={v => setFilterRating(v === "all" ? null : Number(v))}
@@ -215,6 +216,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
           }}
           filterRating={filterRating}
           latestUserReviewId={latestUserReviewId}
+          userRating={userRating}
         />
 
         {!user && (
