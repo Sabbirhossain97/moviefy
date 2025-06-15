@@ -2,16 +2,16 @@
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
-import { Card, CardContent } from '@/components/ui/card';
+import { Heart } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, Trash2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { AuthDialog } from '@/components/AuthDialog';
-import { IMAGE_SIZES } from '@/services/api';
+import WishlistMovieCard from '@/components/WishlistMovieCard';
 
 const Wishlist = () => {
   const { user } = useAuth();
   const { wishlist, loading, removeFromWishlist } = useWishlist();
+  const navigate = useNavigate();
 
   if (!user) {
     return (
@@ -74,44 +74,12 @@ const Wishlist = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {wishlist.map((item) => (
-                <Card key={item.id} className="overflow-hidden gradient-card">
-                  <div className="relative aspect-[2/3]">
-                    <img
-                      src={
-                        item.movie_poster_path
-                          ? `${IMAGE_SIZES.poster.medium}${item.movie_poster_path}`
-                          : '/placeholder.svg'
-                      }
-                      alt={item.movie_title}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold mb-2 line-clamp-2">
-                      {item.movie_title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {item.movie_release_date
-                        ? new Date(item.movie_release_date).getFullYear()
-                        : 'N/A'}
-                    </p>
-                    <div className="flex gap-2">
-                      <Link to={`/movie/${item.movie_id}`} className="flex-1">
-                        <Button variant="outline" size="sm" className="w-full">
-                          View Details
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeFromWishlist(item.movie_id)}
-                        className="text-red-500 border-red-500 hover:bg-red-50"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <WishlistMovieCard
+                  key={item.id}
+                  item={item}
+                  onRemove={removeFromWishlist}
+                  onClick={(movieId) => navigate(`/movie/${movieId}`)}
+                />
               ))}
             </div>
           )}

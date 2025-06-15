@@ -114,6 +114,9 @@ const MovieDetails = () => {
   const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
   const director = credits?.crew?.find((c: any) => c.job === "Director")?.name ?? "Unknown";
 
+  // Trailer modal controls
+  // NO auto-play, only on button click
+  // Dialog stays controlled by showTrailer
   return (
     <div className="min-h-screen gradient-bg relative">
       <Header />
@@ -251,8 +254,8 @@ const MovieDetails = () => {
               </>
             )}
             <Button
-              className="min-w-[165px] h-10 bg-transparent hover:bg-accent text-primary font-semibold flex items-center gap-2 shadow-md border border-transparent"
-              variant="ghost"
+              className="min-w-[165px] h-10 border border-primary bg-transparent hover:bg-accent text-primary font-semibold flex items-center gap-2 shadow-md"
+              variant="outline"
               onClick={() => {
                 if (reviewSectionRef.current) {
                   reviewSectionRef.current.scrollIntoView({ behavior: "smooth" });
@@ -262,12 +265,9 @@ const MovieDetails = () => {
               Write a Review
             </Button>
           </div>
-          {/* User rating */}
-          <div className="mb-4">
-            <MovieRating movieId={movie.id} />
-          </div>
-          {/* Overview, Director, Production (now vertical) */}
-          <div className="mb-2 space-y-4">
+
+          {/* Overview, Director, Production (vertical) */}
+          <div className="mb-2 space-y-4 flex flex-col">
             <div>
               <h2 className="text-lg font-bold mb-0">Overview</h2>
               <p className="text-gray-300">{movie.overview}</p>
