@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,12 +24,27 @@ const Profile = () => {
   });
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
       fetchProfile();
     }
   }, [user]);
+
+  // Clean up preview object URL if file changes
+  useEffect(() => {
+    let previewUrl: string | null = null;
+    if (avatarFile) {
+      previewUrl = URL.createObjectURL(avatarFile);
+      setAvatarPreview(previewUrl);
+    } else {
+      setAvatarPreview(null);
+    }
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [avatarFile]);
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -38,7 +54,7 @@ const Profile = () => {
         .from('profiles')
         .select('full_name, avatar_url')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -99,6 +115,7 @@ const Profile = () => {
         description: 'Your profile has been updated successfully.',
       });
       setAvatarFile(null);
+      setAvatarPreview(null);
       setProfile(prev => ({ ...prev, avatar_url }));
       fetchProfile(); // refresh UI from db
     } catch (error: any) {
@@ -147,7 +164,12 @@ const Profile = () => {
                 <div className="flex items-center gap-6">
                   <div className="relative">
                     <Avatar className="w-20 h-20">
-                      <AvatarImage src={profile.avatar_url} />
+                      {/* Show preview if available; otherwise show existing avatar */}
+                      {avatarPreview ? (
+                        <AvatarImage src={avatarPreview} />
+                      ) : (
+                        <AvatarImage src={profile.avatar_url} />
+                      )}
                       <AvatarFallback>
                         <User className="w-8 h-8" />
                       </AvatarFallback>
@@ -222,3 +244,4 @@ const Profile = () => {
 };
 
 export default Profile;
+
