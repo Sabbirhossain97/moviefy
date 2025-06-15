@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -75,12 +74,7 @@ const Profile = () => {
     const fileName = `${user.id}.${fileExt}`;
     setAvatarUploading(true);
     try {
-      // Check that the bucket exists by attempting a list
-      const { data: bucket, error: bucketErr } = await supabase.storage.getBucket(BUCKET);
-      if (!bucket || bucketErr) {
-        throw new Error(`Bucket "${BUCKET}" not found in Supabase Storage. Please create it and make it public.`);
-      }
-      // Upload file, overwrite if exists
+      // Directly try to upload avatar file
       const { data, error } = await supabase
         .storage
         .from(BUCKET)
@@ -244,4 +238,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
