@@ -20,26 +20,27 @@ interface HeaderProps {
 }
 
 const Header = ({ genres: propGenres = [] }: HeaderProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [genres, setGenres] = useState<Genre[]>(propGenres);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
-  // Fetch genres if not provided as props
+  // Only fetch genres on mount if not provided by props and genres state is empty
   useEffect(() => {
-    if (propGenres.length === 0) {
-      const fetchGenres = async () => {
-        try {
-          const response = await api.getGenres();
-          setGenres(response.genres);
-        } catch (error) {
+    let isMounted = true;
+    if (propGenres.length === 0 && genres.length === 0) {
+      api.getGenres()
+        .then(response => {
+          if (isMounted) setGenres(response.genres);
+        })
+        .catch(error => {
           console.error("Error fetching genres:", error);
-        }
-      };
-      fetchGenres();
-    } else {
+        });
+    } else if (propGenres.length > 0) {
       setGenres(propGenres);
     }
-  }, [propGenres]);
+    return () => { isMounted = false; };
+    // eslint-disable-next-line
+  }, [propGenres]); // Only dependency is propGenres
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,3 +159,4 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
 };
 
 export default Header;
+
