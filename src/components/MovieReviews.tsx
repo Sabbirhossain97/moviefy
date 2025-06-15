@@ -8,6 +8,8 @@ import MovieRating from "@/components/MovieRating";
 import dayjs from "dayjs";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import ReviewInput from "./ReviewInput";
+import ReviewList from "./ReviewList";
 
 // Helper to calculate average rating from review objects (if ratings are implemented per review in future)
 function getAverageRating(reviews) {
@@ -102,36 +104,14 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
         </div>
 
         {/* Your review input (write or edit) */}
-        {user && (
-          <form onSubmit={handleSubmit} className="flex gap-2 mb-4 rounded-lg shadow bg-card px-3 py-2 border border-gray-800 items-center">
-            <Avatar className="w-8 h-8 shrink-0">
-              {user.avatar_url ? (
-                <AvatarImage src={user.avatar_url} alt="Your avatar" />
-              ) : (
-                <AvatarFallback>
-                  <User className="w-4 h-4" />
-                </AvatarFallback>
-              )}
-            </Avatar>
-            <input
-              className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-muted-foreground text-sm"
-              placeholder={myReview ? "Edit your review…" : "Write a review…"}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              disabled={loading}
-              maxLength={500}
-              autoFocus={false}
-            />
-            <Button
-              type="submit"
-              disabled={loading || !input.trim()}
-              variant="default"
-              className="rounded shadow"
-            >
-              {myReview ? "Update" : "Post"}
-            </Button>
-          </form>
-        )}
+        <ReviewInput
+          user={user}
+          input={input}
+          setInput={setInput}
+          loading={loading}
+          onSubmit={handleSubmit}
+          myReview={myReview}
+        />
 
         {/* Show overall average rating */}
         <div className="mb-2 flex items-center gap-3 justify-between">
@@ -145,19 +125,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
               <span className="text-xs text-muted-foreground">No ratings yet</span>
             )}
           </div>
-          {/* Optional: future rating filter */}
-          {/* <div>
-            <select
-              className="rounded bg-muted text-muted-foreground px-2 py-1 text-xs border border-gray-700"
-              value={filterRating ?? ""}
-              onChange={e => setFilterRating(e.target.value ? Number(e.target.value) : null)}
-            >
-              <option value="">All ratings</option>
-              {ratingFilters.map(star => (
-                <option value={star} key={star}>{star} star</option>
-              ))}
-            </select>
-          </div> */}
         </div>
 
         {/* Show errors */}
@@ -168,90 +135,25 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
         )}
 
         {/* Review List */}
-        <ul className="space-y-5 mb-4" data-testid="review-list">
-          {(!displayReviews || displayReviews.length === 0) && !error && (
-            <div className="text-muted-foreground text-sm mb-4 py-6 text-center border rounded-lg bg-card/80">
-              No reviews yet. Be the first to review!
-            </div>
-          )}
-          {displayReviews.map((r) => (
-            <li key={r.id}>
-              <div className={`flex gap-2 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative`}>
-                <Avatar className="w-10 h-10 shrink-0">
-                  {r.user?.avatar_url ? (
-                    <AvatarImage src={r.user?.avatar_url} alt="User avatar" />
-                  ) : (
-                    <AvatarFallback>
-                      <User className="w-4 h-4" />
-                    </AvatarFallback>
-                  )}
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-base">{r.user?.full_name || "User"}</span>
-                    <span className="text-xs text-gray-400">{dayjs(r.created_at).format("MMM D, YYYY")}</span>
-                  </div>
-                  {/* If this user is editing this review */}
-                  {editingReviewId === r.id ? (
-                    <div className="flex flex-col mt-1 gap-2">
-                      <textarea
-                        className="w-full rounded border bg-background text-white p-2 text-sm resize-none focus:ring focus:outline-none"
-                        value={editingInput}
-                        onChange={e => setEditingInput(e.target.value)}
-                        maxLength={500}
-                        rows={2}
-                      />
-                      <div className="flex gap-2">
-                        <Button type="button" variant="default" size="sm" onClick={() => handleEditSubmit(r)} disabled={loading}>
-                          Save
-                        </Button>
-                        <Button type="button" variant="ghost" size="sm" onClick={cancelEdit}>
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-sm mt-1 text-muted-foreground whitespace-pre-line">{r.review}</div>
-                  )}
-                  {/* Actions for review owner */}
-                  {user && r.user_id === user.id && editingReviewId !== r.id && (
-                    <div className="flex gap-2 mt-2 items-center">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => startEdit(r)}
-                        disabled={loading}
-                        title="Edit review"
-                        className="text-primary hover:bg-primary/10"
-                      >
-                        <Pencil className="w-4 h-4 mr-1" />
-                        Edit
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        onClick={async () => {
-                          await deleteReview(r.id);
-                          setInput("");
-                          refresh();
-                          toast({ title: "Review deleted." });
-                        }}
-                        disabled={loading}
-                        title="Delete review"
-                        className="ml-1"
-                      >
-                        <Trash2 className="w-4 h-4 mr-1" />
-                        Delete
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <ReviewList
+          reviews={displayReviews}
+          user={user}
+          editingReviewId={editingReviewId}
+          editingInput={editingInput}
+          setEditingReviewId={setEditingReviewId}
+          setEditingInput={setEditingInput}
+          loading={loading}
+          onEditSubmit={handleEditSubmit}
+          onStartEdit={startEdit}
+          onCancelEdit={cancelEdit}
+          onDelete={async (id: string) => {
+            await deleteReview(id);
+            setInput("");
+            refresh();
+            toast({ title: "Review deleted." });
+          }}
+        />
+
         {!user && (
           <div className="text-muted-foreground text-sm my-2 text-center">Sign in to write a review.</div>
         )}
