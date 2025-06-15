@@ -1,102 +1,43 @@
 
-import React, { useEffect, useState } from "react";
-import { api, Movie, Genre } from "@/services/api";
-import Header from "@/components/Header";
-import HeroBanner from "@/components/HeroBanner";
-import MovieSlider from "@/components/MovieSlider";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from '@/hooks/useAuth';
+import LandingPage from './LandingPage';
+import Dashboard from './Dashboard';
+import { useState, useEffect } from 'react';
 
 const Index = () => {
-  const [trending, setTrending] = useState<Movie[]>([]);
-  const [popular, setPopular] = useState<Movie[]>([]);
-  const [topRated, setTopRated] = useState<Movie[]>([]);
-  const [upcoming, setUpcoming] = useState<Movie[]>([]);
-  const [genres, setGenres] = useState<Genre[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  const { session } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        setLoading(true);
-        const [trendingRes, popularRes, topRatedRes, upcomingRes, genresRes] = await Promise.all([
-          api.getTrending(),
-          api.getPopular(),
-          api.getTopRated(),
-          api.getUpcoming(),
-          api.getGenres(),
-        ]);
+    // This logic prevents a "flicker" from the landing page to the dashboard on load
+    // for authenticated users. We'll show a brief loader while Supabase checks the session.
+    const authCheckTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
 
-        setTrending(trendingRes.results);
-        setPopular(popularRes.results);
-        setTopRated(topRatedRes.results);
-        setUpcoming(upcomingRes.results);
-        setGenres(genresRes.genres);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        toast({
-          title: "Error loading movies",
-          description: "There was a problem loading movies. Please try again later.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+    // If the session is loaded before the timer, clear the timer and hide the loader.
+    if (session) {
+      clearTimeout(authCheckTimer);
+      setIsLoading(false);
+    }
 
-    fetchMovies();
-  }, [toast]);
+    return () => clearTimeout(authCheckTimer);
+  }, [session]);
 
-  // Feature movie is the first trending movie
-  const featuredMovie = trending[0];
-
-  if (loading) {
+  // While checking auth, show a loader. But if the session is loaded, don't show the loader.
+  if (isLoading && session === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
         <div className="animate-pulse flex flex-col items-center">
           <div className="h-12 w-12 rounded-full bg-muted mb-4"></div>
-          <p className="text-muted-foreground">Loading movies...</p>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
   }
 
-  return (
-    <>
-      <Header genres={genres} />
-      
-      <main className="container py-6">
-        {featuredMovie && <HeroBanner movie={featuredMovie} className="mb-8" />}
-        
-        <div className="space-y-8">
-          <MovieSlider title="Trending Now" movies={trending} />
-          <Separator />
-          <MovieSlider title="Popular Movies" movies={popular} />
-          <Separator />
-          <MovieSlider title="Top Rated" movies={topRated} />
-          <Separator />
-          <MovieSlider title="Upcoming Movies" movies={upcoming} />
-        </div>
-      </main>
-      
-      <footer className="mt-12 py-6 border-t">
-        <div className="container text-center">
-          <p className="text-sm text-muted-foreground">
-            Movie data provided by{" "}
-            <a 
-              href="https://www.themoviedb.org" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-movie-primary hover:underline"
-            >
-              The Movie Database (TMDb)
-            </a>
-          </p>
-        </div>
-      </footer>
-    </>
-  );
+  return session ? <Dashboard /> : <LandingPage />;
 };
 
 export default Index;
+
