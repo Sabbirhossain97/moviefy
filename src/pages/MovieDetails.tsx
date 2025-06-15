@@ -10,6 +10,8 @@ import MovieReviews from "@/components/MovieReviews";
 import MovieReviewAdminPanel from "@/components/MovieReviewAdminPanel";
 import MovieReminderButton from "@/components/MovieReminderButton";
 import MovieSlider from '@/components/MovieSlider';
+import { Dialog } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface CreditsResponse {
   cast: Cast[];
@@ -24,6 +26,7 @@ const MovieDetails = () => {
   const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showTrailer, setShowTrailer] = useState(false);
   const reviewSectionRef = useRef<HTMLDivElement>(null);
 
   // Helper to check if movie is released
@@ -109,6 +112,7 @@ const MovieDetails = () => {
   const backdropUrl = movie.backdrop_path ? `${IMAGE_SIZES.backdrop.original}${movie.backdrop_path}` : null;
   const posterUrl = movie.poster_path ? `${IMAGE_SIZES.poster.large}${movie.poster_path}` : null;
   const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
+  const director = credits?.crew?.find((c: any) => c.job === "Director")?.name ?? "Unknown";
 
   return (
     <div className="min-h-screen gradient-bg relative">
@@ -209,19 +213,46 @@ const MovieDetails = () => {
               </div>
             )}
             {videos.length > 0 && (
-              <a
-                href={`https://www.youtube.com/watch?v=${videos[0].key}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <button className="bg-red-600 hover:bg-red-700 text-white rounded px-5 py-2 font-semibold flex items-center gap-2 shadow-md min-w-[165px] h-10">
+              <>
+                <Button
+                  className="min-w-[165px] h-10 bg-red-600 hover:bg-red-700 text-white rounded px-5 py-2 font-semibold flex items-center gap-2 shadow-md"
+                  style={{ backgroundColor: "#E50914" }}
+                  onClick={() => setShowTrailer(true)}
+                >
                   <PlayCircle className="h-5 w-5" />
                   Watch Trailer
-                </button>
-              </a>
+                </Button>
+                <Dialog open={showTrailer} onOpenChange={setShowTrailer}>
+                  <div
+                    className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center"
+                    style={{ display: showTrailer ? "flex" : "none" }}
+                    onClick={() => setShowTrailer(false)}
+                  >
+                    <div className="relative bg-black max-w-2xl w-full rounded shadow-lg" onClick={e => e.stopPropagation()}>
+                      <button
+                        aria-label="Close"
+                        onClick={() => setShowTrailer(false)}
+                        className="absolute top-2 right-2 text-white text-3xl leading-none z-10"
+                      >
+                        &times;
+                      </button>
+                      <iframe
+                        width="560"
+                        height="315"
+                        src={`https://www.youtube.com/embed/${videos[0].key}?autoplay=1`}
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                        title="Movie Trailer"
+                        className="rounded w-full aspect-video"
+                      />
+                    </div>
+                  </div>
+                </Dialog>
+              </>
             )}
-            <button
-              className="bg-blue-600 hover:bg-blue-700 text-white rounded px-5 py-2 font-semibold flex items-center gap-2 shadow-md min-w-[165px] h-10"
+            <Button
+              className="min-w-[165px] h-10 bg-transparent hover:bg-accent text-primary font-semibold flex items-center gap-2 shadow-md border border-transparent"
+              variant="ghost"
               onClick={() => {
                 if (reviewSectionRef.current) {
                   reviewSectionRef.current.scrollIntoView({ behavior: "smooth" });
@@ -229,40 +260,31 @@ const MovieDetails = () => {
               }}
             >
               Write a Review
-            </button>
+            </Button>
           </div>
           {/* User rating */}
           <div className="mb-4">
             <MovieRating movieId={movie.id} />
           </div>
-          {/* Overview */}
-          <div className="mb-2">
-            <h2 className="text-lg font-bold mb-0">Overview</h2>
-            <p className="text-gray-300">{movie.overview}</p>
-          </div>
-          {/* Director, budget, revenue, production */}
-          {(movie.production_companies || movie.budget || movie.revenue) && (
-            <div className="mt-2 mb-1 flex flex-wrap gap-x-10 gap-y-2 text-sm text-gray-400">
-              {movie.budget ? (
-                <span>
-                  <span className="font-medium text-white">Budget:</span>{" "}
-                  ${movie.budget.toLocaleString()}
-                </span>
-              ) : null}
-              {movie.revenue ? (
-                <span>
-                  <span className="font-medium text-white">Revenue:</span>{" "}
-                  ${movie.revenue.toLocaleString()}
-                </span>
-              ) : null}
-              {movie.production_companies && movie.production_companies.length > 0 &&
-                <span>
-                  <span className="font-medium text-white">Production:</span>{" "}
+          {/* Overview, Director, Production (now vertical) */}
+          <div className="mb-2 space-y-4">
+            <div>
+              <h2 className="text-lg font-bold mb-0">Overview</h2>
+              <p className="text-gray-300">{movie.overview}</p>
+            </div>
+            <div>
+              <span className="font-medium text-white">Director: </span>
+              <span className="text-gray-300">{director}</span>
+            </div>
+            {movie.production_companies && movie.production_companies.length > 0 &&
+              <div>
+                <span className="font-medium text-white">Production: </span>
+                <span className="text-gray-300">
                   {movie.production_companies.map(pc => pc.name).join(", ")}
                 </span>
-              }
-            </div>
-          )}
+              </div>
+            }
+          </div>
         </div>
       </main>
 

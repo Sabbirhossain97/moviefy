@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -8,19 +8,26 @@ import { Trash2 } from "lucide-react";
 export default function MovieReviews({ movieId }: { movieId: number }) {
   const { user } = useAuth();
   const [input, setInput] = useState("");
-  const { reviews, myReview, submitReview, deleteReview, loading } = useMovieReviews(movieId);
+  const { reviews, myReview, submitReview, deleteReview, loading, refresh } = useMovieReviews(movieId);
 
+  // Make sure to refresh reviews after a new review is submitted by current user
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
       await submitReview(input);
       setInput("");
-      // The review list updates automatically after submit via fetchReviews().
+      await refresh(); // Force update to fetch latest reviews
     }
   };
 
+  // After mounting, always get latest reviews as a safeguard
+  useEffect(() => {
+    refresh();
+    // eslint-disable-next-line
+  }, [movieId]);
+
   return (
-    <div className="max-w-xl w-full ml-0"> {/* align left, max width */}
+    <div className="max-w-xl w-full ml-0">
       <h3 className="text-lg font-semibold mb-2">Reviews</h3>
       {reviews.length === 0 && <div className="text-muted-foreground text-sm mb-4">No reviews yet.</div>}
 
@@ -36,7 +43,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
       {user && (
         <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
           <input
-            className="flex-1 border rounded px-3 py-1 text-black bg-white" // ensure visible text
+            className="flex-1 border rounded px-3 py-1 text-black bg-white"
             placeholder="Write a review …"
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -51,7 +58,10 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
               type="button"
               variant="ghost"
               size="icon"
-              onClick={() => deleteReview(myReview.id)}
+              onClick={async () => {
+                await deleteReview(myReview.id);
+                await refresh();
+              }}
               disabled={loading}
               title="Delete review"
             >
