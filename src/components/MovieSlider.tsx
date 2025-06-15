@@ -14,7 +14,6 @@ interface MovieSliderProps {
 
 const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSliderProps) => {
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [isScrollable, setIsScrollable] = useState(true);
 
   // Filter out any undefined, null, or invalid movie objects
   const validMovies = movies.filter((movie): movie is Movie => 
@@ -55,22 +54,20 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
   return (
     <section className={`relative ${className}`}>
       {title && <h2 className="text-2xl font-semibold mb-6">{title}</h2>}
-      
       <div className="relative group">
-        {/* Left scroll button */}
-        <Button
-          variant="outline"
-          size="icon"
-          className={`absolute left-2 top-1/2 transform -translate-y-1/2 z-10 transition-opacity gradient-card backdrop-blur-sm border-border/50 opacity-0 group-hover:opacity-100 ${
-            scrollPosition <= 0 ? "pointer-events-none opacity-40" : ""
-          }`}
-          onClick={scrollLeft}
-          disabled={scrollPosition <= 0}
-          tabIndex={scrollPosition <= 0 ? -1 : 0}
-          aria-disabled={scrollPosition <= 0}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+        {/* Only show left scroll button if not at the very start */}
+        {scrollPosition > 0 && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 transition-opacity gradient-card backdrop-blur-sm border-border/50 opacity-0 group-hover:opacity-100"
+            onClick={scrollLeft}
+            tabIndex={0}
+            aria-disabled={false}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+        )}
 
         {/* Movie cards container */}
         <div
