@@ -1,9 +1,9 @@
+
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { api, Movie, MovieVideo, IMAGE_SIZES } from '@/services/api';
+import { useParams, Link } from 'react-router-dom';
+import { api, Movie, MovieVideo, IMAGE_SIZES, Person } from '@/services/api';
 import Header from '@/components/Header';
 import { CalendarDays, PlayCircle, Film } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -12,11 +12,20 @@ import MovieRating from "@/components/MovieRating";
 import MovieReviews from "@/components/MovieReviews";
 import MovieReviewAdminPanel from "@/components/MovieReviewAdminPanel";
 import MovieReminderButton from "@/components/MovieReminderButton";
+import MovieSlider from '@/components/MovieSlider';
+
+// Add types for credits API response
+interface CreditsResponse {
+  cast: Person[];
+  crew: Person[];
+}
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [videos, setVideos] = useState<MovieVideo[]>([]);
+  const [credits, setCredits] = useState<CreditsResponse | null>(null);
+  const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,11 +40,18 @@ const MovieDetails = () => {
       try {
         setLoading(true);
         const movieId = parseInt(id, 10);
-        const movieDetails = await api.getMovie(movieId);
-        const movieVideos = await api.getMovieVideos(movieId);
+
+        const [movieDetails, movieVideos, creditsResp, similarResp] = await Promise.all([
+          api.getMovie(movieId),
+          api.getMovieVideos(movieId),
+          api.getMovieCredits(movieId),
+          api.getSimilarMovies(movieId)
+        ]);
 
         setMovie(movieDetails);
         setVideos(movieVideos.results);
+        setCredits(creditsResp);
+        setSimilarMovies(similarResp.results || []);
         setError(null);
       } catch (err: any) {
         setError(err.message || 'Failed to load movie details');
@@ -90,58 +106,75 @@ const MovieDetails = () => {
     );
   }
 
+  // Cover images
   const backdropUrl = movie.backdrop_path ? `${IMAGE_SIZES.backdrop.original}${movie.backdrop_path}` : null;
   const posterUrl = movie.poster_path ? `${IMAGE_SIZES.poster.medium}${movie.poster_path}` : null;
-  const releaseYear = new Date(movie.release_date).getFullYear();
+  const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
 
   return (
     <div>
       <Header />
-      {/* Fallback solid background for missing backdrop */}
-      {backdropUrl ? (
-        <div className="relative">
-          <div
-            className="h-64 md:h-96 w-full object-cover object-center"
-            style={{
-              backgroundImage: `url('${backdropUrl}')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          ></div>
-          <div className="absolute inset-0 bg-black opacity-20"></div>
-        </div>
-      ) : (
-        <div className="h-64 md:h-96 w-full flex items-center justify-center bg-gradient-to-r from-gray-900 to-gray-700 text-gray-300 text-xl font-semibold">
-          No Cover Available
-        </div>
-      )}
-
-      <main className="container py-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-1">
-            {posterUrl ? (
-              <img src={posterUrl} alt={movie.title} className="w-full rounded-md shadow-md" />
-            ) : (
-              <div className="w-full h-64 bg-gray-700 rounded-md flex items-center justify-center">
-                <Film className="w-16 h-16 text-gray-500" />
-              </div>
-            )}
+      {/* Stylish backdrop with fade-out at bottom */}
+      <div className="relative h-64 md:h-96 w-full flex items-end justify-center">
+        {backdropUrl ? (
+          <>
+            <img
+              src={backdropUrl}
+              alt={movie.title}
+              className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none"
+              style={{ zIndex: 0 }}
+            />
+            {/* Fade mask */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-[#141722] pointer-events-none" style={{zIndex:1}} />
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-gray-900 to-gray-700 text-gray-300 text-xl font-semibold">
+            No Cover Available
           </div>
+        )}
+        {/* Poster card with wishlist overlay */}
+        <div className="relative z-10 mt-24 md:mt-44 max-w-max" style={{marginBottom: '-48px'}}>
+          {posterUrl ? (
+            <div className="relative">
+              <img
+                src={posterUrl}
+                alt={movie.title}
+                className="w-32 md:w-52 rounded-lg shadow-lg border-4 border-white/10"
+              />
+              <div className="absolute top-2 right-2">
+                <WishlistButton 
+                  movie={movie}
+                  size="icon"
+                  variant="ghost"
+                  showText={false}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="w-32 md:w-52 h-44 md:h-72 bg-gray-700 rounded-md flex items-center justify-center">
+              <Film className="w-12 h-12 text-gray-500" />
+            </div>
+          )}
+        </div>
+      </div>
 
-          <div className="md:col-span-2">
+      <main className="container pt-8">
+        <div className="md:flex md:gap-8 mb-4">
+          {/* Details */}
+          <div className="flex-1">
             <h1 className="text-3xl font-bold mb-2">{movie.title}</h1>
-            <div className="flex items-center space-x-2 mb-4">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-4 text-sm">
               <Badge variant="secondary">{movie.status || 'Released'}</Badge>
-              <span className="text-gray-500">
+              <span className="flex items-center text-gray-500">
                 <CalendarDays className="inline-block w-4 h-4 mr-1" />
                 {movie.release_date} ({releaseYear})
               </span>
-              <span className="text-gray-500">
+              <span className="flex items-center text-gray-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="w-4 h-4 inline-block mr-1"
+                  className="w-4 h-4 mr-1"
                 >
                   <path
                     fillRule="evenodd"
@@ -152,18 +185,14 @@ const MovieDetails = () => {
                 {movie.vote_average} ({movie.vote_count} votes)
               </span>
             </div>
-
-            {/* Remove any "like"/"not for me" button UIs. Only show these components: */}
-            <MovieReminderButton movieId={movie.id} releaseDate={movie.release_date} />
-
-            {/* Reviews */}
-            <div className="my-8">
-              <MovieReviews movieId={movie.id} />
-              <MovieReviewAdminPanel movieId={movie.id} />
+            {/* Actions */}
+            <div className="flex gap-3 mb-4">
+              <MovieReminderButton movieId={movie.id} releaseDate={movie.release_date} />
+              <MovieRating movieId={movie.id} />
             </div>
-
-            <p className="mb-4">{movie.overview}</p>
-
+            {/* Overview */}
+            <p className="mb-5">{movie.overview}</p>
+            {/* Genres */}
             {movie.genres && movie.genres.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold mb-2">Genres</h4>
@@ -176,7 +205,7 @@ const MovieDetails = () => {
                 </div>
               </div>
             )}
-
+            {/* Trailers */}
             {videos.length > 0 && (
               <div className="mb-6">
                 <h4 className="font-semibold mb-3">Trailers</h4>
@@ -202,8 +231,47 @@ const MovieDetails = () => {
                 </ScrollArea>
               </div>
             )}
-            <WishlistButton movie={movie} />
+            {/* Cast Section */}
+            {credits?.cast && credits.cast.length > 0 && (
+              <div className="mb-8">
+                <h4 className="font-semibold mb-3">Cast</h4>
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-3">
+                  {credits.cast.slice(0, 15).map((person) => (
+                    <div
+                      key={person.id}
+                      className="flex flex-col items-center w-24"
+                      title={person.name}
+                    >
+                      {person.profile_path ? (
+                        <img
+                          src={`${IMAGE_SIZES.profile.small}${person.profile_path}`}
+                          alt={person.name}
+                          className="w-16 h-16 rounded-full object-cover mb-1 border-2 border-white/20"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 bg-muted rounded-full mb-1 flex items-center justify-center text-xs text-gray-400">N/A</div>
+                      )}
+                      <span className="truncate text-xs text-center">{person.name}</span>
+                      <span className="truncate text-[11px] text-muted-foreground">{person.character}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* Similar Movies */}
+            {similarMovies.length > 0 && (
+              <div className="mb-10">
+                <h4 className="font-semibold mb-3">Similar Movies</h4>
+                <MovieSlider title="Similar Movies" movies={similarMovies.slice(0, 10)} />
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="my-8 md:my-12 max-w-3xl mx-auto">
+          <MovieReviews movieId={movie.id} />
+          <MovieReviewAdminPanel movieId={movie.id} />
         </div>
       </main>
     </div>
