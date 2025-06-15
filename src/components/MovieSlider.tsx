@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Movie, IMAGE_SIZES } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -12,49 +12,114 @@ interface MovieSliderProps {
   renderActions?: (movie: Movie) => React.ReactNode;
 }
 
+const SCROLL_STEP = 300;
+
 const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSliderProps) => {
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [atEnd, setAtEnd] = useState(false);
 
-  // Filter out any undefined, null, or invalid movie objects
+  const sliderRef = useRef<HTMLDivElement | null>(null);
+
+  // Drag-related
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragStartScroll = useRef(0);
+
+  // Validate movies
   const validMovies = movies.filter((movie): movie is Movie => 
-    movie != null && 
-    typeof movie === 'object' && 
-    'id' in movie && 
-    'title' in movie
+    movie != null && typeof movie === 'object' && 'id' in movie && 'title' in movie
   );
+  if (validMovies.length === 0) return null;
 
-  // Don't render if no valid movies
-  if (validMovies.length === 0) {
-    return null;
-  }
-
+  // Arrow navigation
   const scrollLeft = () => {
-    const container = document.getElementById(`slider-${title.replace(/\s+/g, '-')}`);
+    const container = sliderRef.current;
     if (container) {
-      const newPosition = Math.max(0, scrollPosition - 300);
+      const newPosition = Math.max(0, container.scrollLeft - SCROLL_STEP);
       container.scrollTo({ left: newPosition, behavior: 'smooth' });
-      setScrollPosition(newPosition);
+      // In 'scroll' event handler we will updateScrollState, no need to set scrollPosition here.
     }
   };
-
   const scrollRight = () => {
-    const container = document.getElementById(`slider-${title.replace(/\s+/g, '-')}`);
+    const container = sliderRef.current;
     if (container) {
       const maxScroll = container.scrollWidth - container.clientWidth;
-      const newPosition = Math.min(maxScroll, scrollPosition + 300);
+      const newPosition = Math.min(maxScroll, container.scrollLeft + SCROLL_STEP);
       container.scrollTo({ left: newPosition, behavior: 'smooth' });
-      setScrollPosition(newPosition);
+      // In 'scroll' event handler we will updateScrollState, no need to set scrollPosition here.
     }
   };
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    setScrollPosition(e.currentTarget.scrollLeft);
+  // Track position & whether at start/end
+  const updateScrollState = () => {
+    const container = sliderRef.current;
+    if (container) {
+      setScrollPosition(container.scrollLeft);
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      setAtEnd(container.scrollLeft >= maxScroll - 1 || maxScroll <= 0);
+    }
   };
+
+  useEffect(() => {
+    // On mount/resize: check if at end, in case items fit perfectly.
+    updateScrollState();
+    const handleResize = () => updateScrollState();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Drag/Swipe Scroll Logic
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    isDragging.current = true;
+    dragStartX.current = e.pageX;
+    dragStartScroll.current = sliderRef.current?.scrollLeft ?? 0;
+    document.body.style.userSelect = "none";
+  };
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging.current || !sliderRef.current) return;
+    const dx = e.pageX - dragStartX.current;
+    sliderRef.current.scrollLeft = dragStartScroll.current - dx;
+  };
+  const handleMouseUp = () => {
+    isDragging.current = false;
+    document.body.style.userSelect = "";
+  };
+
+  useEffect(() => {
+    // Attach global move/up when dragging
+    if (isDragging.current) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+    // eslint-disable-next-line
+  }, [isDragging.current]);
+
+  // Touch events
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    isDragging.current = true;
+    dragStartX.current = e.touches[0].pageX;
+    dragStartScroll.current = sliderRef.current?.scrollLeft ?? 0;
+  };
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isDragging.current || !sliderRef.current) return;
+    const dx = e.touches[0].pageX - dragStartX.current;
+    sliderRef.current.scrollLeft = dragStartScroll.current - dx;
+  };
+  const handleTouchEnd = () => {
+    isDragging.current = false;
+  };
+
+  // On scroll: update state for arrows
+  const handleScroll = () => updateScrollState();
 
   return (
     <section className={`relative ${className}`}>
       {title && <h2 className="text-2xl font-semibold mb-6">{title}</h2>}
-      <div className="relative group">
+      <div className="relative group select-none">
         {/* Only show left scroll button if not at the very start */}
         {scrollPosition > 0 && (
           <Button
@@ -64,17 +129,22 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
             onClick={scrollLeft}
             tabIndex={0}
             aria-disabled={false}
+            type="button"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
         )}
-
-        {/* Movie cards container */}
         <div
+          ref={sliderRef}
           id={`slider-${title.replace(/\s+/g, '-')}`}
-          className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
+          className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 cursor-grab active:cursor-grabbing"
           onScroll={handleScroll}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          draggable={false}
         >
           {validMovies.map((movie) => (
             <div key={movie.id} className="flex-shrink-0 w-[200px]">
@@ -119,16 +189,20 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
             </div>
           ))}
         </div>
-
-        {/* Right scroll button */}
-        <Button
-          variant="outline"
-          size="icon"
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity gradient-card backdrop-blur-sm border-border/50"
-          onClick={scrollRight}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
+        {/* Only show right scroll button if not at the very end */}
+        {!atEnd && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity gradient-card backdrop-blur-sm border-border/50"
+            onClick={scrollRight}
+            tabIndex={0}
+            aria-disabled={false}
+            type="button"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        )}
       </div>
     </section>
   );
