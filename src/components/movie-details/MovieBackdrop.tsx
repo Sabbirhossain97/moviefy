@@ -7,7 +7,7 @@ interface MovieBackdropProps {
 }
 
 const MovieBackdrop: React.FC<MovieBackdropProps> = ({ backdropUrl, title }) => (
-  <div className="relative w-full h-[36vh] min-h-[220px] max-h-[320px] flex items-end overflow-hidden">
+  <div className="relative w-full h-[48vh] min-h-[300px] max-h-[520px] flex items-end overflow-hidden">
     {backdropUrl ? (
       <>
         <img
