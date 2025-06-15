@@ -15,11 +15,12 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     if (input.trim()) {
       await submitReview(input);
       setInput("");
+      // The review list updates automatically after submit via fetchReviews().
     }
   };
 
   return (
-    <div>
+    <div className="max-w-xl w-full ml-0"> {/* align left, max width */}
       <h3 className="text-lg font-semibold mb-2">Reviews</h3>
       {reviews.length === 0 && <div className="text-muted-foreground text-sm mb-4">No reviews yet.</div>}
 
@@ -35,7 +36,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
       {user && (
         <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
           <input
-            className="flex-1 border rounded px-3 py-1"
+            className="flex-1 border rounded px-3 py-1 text-black bg-white" // ensure visible text
             placeholder="Write a review …"
             value={input}
             onChange={e => setInput(e.target.value)}
