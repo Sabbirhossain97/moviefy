@@ -8,18 +8,23 @@ export function useMovieReminders(movieId: number) {
   const [hasReminder, setHasReminder] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Fetch if the user has a reminder for this movie
   useEffect(() => {
     if (!user) return setHasReminder(false);
     setLoading(true);
-    supabase
-      .from("movie_reminders")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("movie_id", movieId)
-      .maybeSingle()
-      .then(({ data }) => setHasReminder(!!data))
-      .finally(() => setLoading(false));
+
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from("movie_reminders")
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("movie_id", movieId)
+          .maybeSingle();
+        setHasReminder(!!data);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, [movieId, user]);
 
   const setReminder = async (remindOn: string, byEmail = true) => {

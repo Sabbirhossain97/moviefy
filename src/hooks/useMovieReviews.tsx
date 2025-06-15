@@ -33,7 +33,14 @@ export function useMovieReviews(movieId: number) {
       query = query.eq("is_approved", true);
     }
     const { data } = await query;
-    setReviews(data || []);
+    // Defensive mapping: ensure user field always has { full_name }
+    const safeData: Review[] = (data || []).map((r: any) => ({
+      ...r,
+      user: r.user && typeof r.user === "object" && "full_name" in r.user
+        ? { full_name: r.user.full_name }
+        : { full_name: null }
+    }));
+    setReviews(safeData);
     setLoading(false);
   };
 

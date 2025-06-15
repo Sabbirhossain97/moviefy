@@ -12,14 +12,20 @@ export function useMovieRatings(movieId: number) {
   useEffect(() => {
     if (!user) return setRating(null);
     setLoading(true);
-    supabase
-      .from("movie_ratings")
-      .select("rating")
-      .eq("user_id", user.id)
-      .eq("movie_id", movieId)
-      .maybeSingle()
-      .then(({ data }) => setRating(data?.rating ?? null))
-      .finally(() => setLoading(false));
+
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from("movie_ratings")
+          .select("rating")
+          .eq("user_id", user.id)
+          .eq("movie_id", movieId)
+          .maybeSingle();
+        setRating(data?.rating ?? null);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, [user, movieId]);
 
   const submitRating = async (val: number) => {
