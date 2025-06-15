@@ -1,8 +1,7 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
-import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
 import ReviewInput from "./ReviewInput";
 import ReviewList from "./ReviewList";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,8 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { useMovieRatings } from "@/hooks/useMovieRatings"; // <-- Correctly import the hook
+import { useMovieRatings } from "@/hooks/useMovieRatings";
+import { toast } from "@/hooks/use-toast";
 
 // Helper to calculate average rating from reviews
 function getAverageRating(reviews) {
@@ -32,7 +32,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
   const { reviews, myReview, submitReview, deleteReview, loading, error, refresh } = useMovieReviews(movieId);
-  const { rating: userRating } = useMovieRatings(movieId); // <-- Use the hook properly
+  const { rating: userRating } = useMovieRatings(movieId);
 
   useEffect(() => {
     refresh();
@@ -116,117 +116,110 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   };
 
   return (
-    <Card className="w-full max-w-xl mx-auto mt-8 mb-10 px-2 pb-6 pt-4 bg-gradient-to-t from-background/90 to-background/60 shadow-xl border-none">
-      <CardContent className="p-0">
-        <div className="flex items-center gap-3 mb-2 justify-between">
-          <h3 className="text-lg font-bold tracking-tight">Reviews</h3>
-          <span className="text-muted-foreground text-xs">{reviews.length} reviews</span>
-        </div>
-
-        <ReviewInput
-          user={currentUserInfo}
-          input={input}
-          setInput={setInput}
-          loading={loading}
-          onSubmit={handleSubmit}
-          myReview={myReview}
-        />
-
-        {/* Filters Row with dropdowns */}
-        <div className="mb-4 flex gap-3 items-center flex-wrap">
-          {/* Sort order dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                className="text-xs px-3 py-1 min-w-[120px]"
-              >
-                Sort: {sortOrder === "newest" ? "Newest" : "Oldest"}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="z-[999] bg-background">
-              <DropdownMenuLabel>Sort reviews by</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => setSortOrder("newest")}
-                className={sortOrder === "newest" ? "bg-accent" : ""}
-              >
-                Newest
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setSortOrder("oldest")}
-                className={sortOrder === "oldest" ? "bg-accent" : ""}
-              >
-                Oldest
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Rating filter dropdown */}
-          <Select
-            value={filterRating !== null ? String(filterRating) : "all"}
-            onValueChange={v => setFilterRating(v === "all" ? null : Number(v))}
-          >
-            <SelectTrigger className="w-[140px] text-xs h-8 bg-background">
-              <SelectValue placeholder="Filter by rating" />
-            </SelectTrigger>
-            <SelectContent className="z-[999] bg-background">
-              <SelectItem value="all">All ratings</SelectItem>
-              <SelectItem value="5">5 stars</SelectItem>
-              <SelectItem value="4">4 stars</SelectItem>
-              <SelectItem value="3">3 stars</SelectItem>
-              <SelectItem value="2">2 stars</SelectItem>
-              <SelectItem value="1">1 star</SelectItem>
-            </SelectContent>
-          </Select>
-          {filterRating !== null && (
+    <div className="w-full max-w-3xl"> {/* For a little width constraining, remove Card */}
+      <h2 className="text-2xl font-bold mb-2">Reviews</h2>
+      <div className="mb-4 flex gap-3 items-center flex-wrap">
+        {/* Sort order dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
             <Button
-              size="sm"
-              variant="ghost"
-              className="text-xs text-muted-foreground px-2"
-              onClick={() => setFilterRating(null)}
               type="button"
+              variant="outline"
+              className="text-xs px-3 py-1 min-w-[120px]"
             >
-              Clear
+              Sort: {sortOrder === "newest" ? "Newest" : "Oldest"}
             </Button>
-          )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="z-[999] bg-background">
+            <DropdownMenuLabel>Sort reviews by</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => setSortOrder("newest")}
+              className={sortOrder === "newest" ? "bg-accent" : ""}
+            >
+              Newest
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setSortOrder("oldest")}
+              className={sortOrder === "oldest" ? "bg-accent" : ""}
+            >
+              Oldest
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Rating filter dropdown */}
+        <Select
+          value={filterRating !== null ? String(filterRating) : "all"}
+          onValueChange={v => setFilterRating(v === "all" ? null : Number(v))}
+        >
+          <SelectTrigger className="w-[140px] text-xs h-8 bg-background">
+            <SelectValue placeholder="Filter by rating" />
+          </SelectTrigger>
+          <SelectContent className="z-[999] bg-background">
+            <SelectItem value="all">All ratings</SelectItem>
+            <SelectItem value="5">5 stars</SelectItem>
+            <SelectItem value="4">4 stars</SelectItem>
+            <SelectItem value="3">3 stars</SelectItem>
+            <SelectItem value="2">2 stars</SelectItem>
+            <SelectItem value="1">1 star</SelectItem>
+          </SelectContent>
+        </Select>
+        {filterRating !== null && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-xs text-muted-foreground px-2"
+            onClick={() => setFilterRating(null)}
+            type="button"
+          >
+            Clear
+          </Button>
+        )}
+      </div>
+
+      <ReviewInput
+        user={currentUserInfo}
+        input={input}
+        setInput={setInput}
+        loading={loading}
+        onSubmit={handleSubmit}
+        myReview={myReview}
+      />
+
+      {/* Show errors */}
+      {error && (
+        <div className="text-destructive text-sm mb-2">
+          Failed to load reviews: {error}
         </div>
+      )}
 
-        {/* Show errors */}
-        {error && (
-          <div className="text-destructive text-sm mb-2">
-            Failed to load reviews: {error}
-          </div>
-        )}
+      <ReviewList
+        reviews={displayReviews}
+        user={currentUserInfo}
+        editingReviewId={editingReviewId}
+        editingInput={editingInput}
+        setEditingReviewId={setEditingReviewId}
+        setEditingInput={setEditingInput}
+        loading={loading}
+        onEditSubmit={handleEditSubmit}
+        onStartEdit={startEdit}
+        onCancelEdit={cancelEdit}
+        onDelete={async (id: string) => {
+          await deleteReview(id);
+          setInput("");
+          refresh();
+          toast({ title: "Review deleted." });
+        }}
+        filterRating={filterRating}
+        latestUserReviewId={latestUserReviewId}
+        userRating={userRating}
+      />
 
-        <ReviewList
-          reviews={displayReviews}
-          user={currentUserInfo}
-          editingReviewId={editingReviewId}
-          editingInput={editingInput}
-          setEditingReviewId={setEditingReviewId}
-          setEditingInput={setEditingInput}
-          loading={loading}
-          onEditSubmit={handleEditSubmit}
-          onStartEdit={startEdit}
-          onCancelEdit={cancelEdit}
-          onDelete={async (id: string) => {
-            await deleteReview(id);
-            setInput("");
-            refresh();
-            toast({ title: "Review deleted." });
-          }}
-          filterRating={filterRating}
-          latestUserReviewId={latestUserReviewId}
-          userRating={userRating}
-        />
-
-        {!user && (
-          <div className="text-muted-foreground text-sm my-2 text-center">
-            Sign in to write a review.
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {!user && (
+        <div className="text-muted-foreground text-sm my-2 text-center">
+          Sign in to write a review.
+        </div>
+      )}
+    </div>
   );
 }
