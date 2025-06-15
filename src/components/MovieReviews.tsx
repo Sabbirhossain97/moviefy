@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
@@ -37,18 +36,14 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     // eslint-disable-next-line
   }, [movieId, user]);
 
-  // Compute average rating from reviews (future-proof; for now will be null)
+  // Compute average rating from reviews
   const averageRating = useMemo(() => getAverageRating(reviews), [reviews]);
 
-  // For now, since a rating is not associated with each review, we do not filter by rating.
-  // When/if rating is added per review, can enable this.
-
   // Filtered reviews - currently just shows all, since "rating" not on review record.
-  // Leave code here to support future extension.
+  // When/if rating is added per review, can enable this.
   const filteredReviews = useMemo(() => {
-    if (!filterRating) return reviews;
-    // if reviews had r.rating, filter here:
-    return reviews.filter(r => r.rating === filterRating);
+    // REMOVED: Filtering by rating (since it doesn't exist)
+    return reviews;
   }, [reviews, filterRating]);
 
   // Move myReview to top of list if not filtered out
