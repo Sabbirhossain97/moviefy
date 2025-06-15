@@ -15,6 +15,7 @@ interface ReviewListProps {
   onCancelEdit: () => void;
   onDelete: (id: string) => void;
   filterRating?: number | null;
+  latestUserReviewId?: string | null;
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({
@@ -30,8 +31,9 @@ const ReviewList: React.FC<ReviewListProps> = ({
   onCancelEdit,
   onDelete,
   filterRating,
+  latestUserReviewId,
 }) => {
-  // Now: filter is handled in parent (MovieReviews), so just use reviews directly
+  // Filtering by rating is done in parent already, we just map
 
   return (
     <ul className="space-y-5 mb-4" data-testid="review-list">
@@ -54,6 +56,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
             onStartEdit={onStartEdit}
             onCancelEdit={onCancelEdit}
             onDelete={onDelete}
+            showUserRating={user && r.user_id === user.id && latestUserReviewId === r.id}
           />
         </li>
       ))}

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Pencil, Trash2 } from "lucide-react";
+import { User, Pencil, Trash2, Star } from "lucide-react";
 import dayjs from "dayjs";
 
 interface ReviewCardProps {
@@ -16,6 +16,7 @@ interface ReviewCardProps {
   onStartEdit: (r: any) => void;
   onCancelEdit: () => void;
   onDelete: (id: string) => void;
+  showUserRating?: boolean;
 }
 
 const ReviewCard: React.FC<ReviewCardProps> = ({
@@ -30,6 +31,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   onStartEdit,
   onCancelEdit,
   onDelete,
+  showUserRating,
 }) => {
   const isOwner = user && r.user_id === user.id;
 
@@ -51,7 +53,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           <span
             onClick={() => onDelete(r.id)}
             title="Delete review"
-            className="cursor-pointer text-red-500 hover:text-red-700 transition ml-2"
+            className="cursor-pointer text-primary hover:text-red-400 transition ml-2"
             style={{ display: "flex", alignItems: "center" }}
             tabIndex={0}
             aria-label="Delete review"
@@ -74,6 +76,13 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
         <div className="flex items-center gap-2">
           <span className="font-bold text-base">{r.user?.full_name || "User"}</span>
           <span className="text-xs text-gray-400">{dayjs(r.created_at).format("MMM D, YYYY")}</span>
+          {/* Show user rating only on latest review */}
+          {showUserRating && r.rating && (
+            <span className="flex items-center ml-2 bg-yellow-200/10 px-2 py-0.5 rounded font-medium text-yellow-400 text-xs border border-yellow-700">
+              <Star className="w-4 h-4 mr-1" fill="currentColor" />
+              {r.rating}/5
+            </span>
+          )}
         </div>
         {/* If this user is editing this review */}
         {editingReviewId === r.id ? (

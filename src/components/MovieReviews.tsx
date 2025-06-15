@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,9 +5,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import ReviewInput from "./ReviewInput";
 import ReviewList from "./ReviewList";
-import MovieRating from "@/components/MovieRating";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel
+} from "@/components/ui/dropdown-menu";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
 // Helper to calculate average rating from reviews
 function getAverageRating(reviews) {
@@ -36,6 +42,22 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
 
   // Compute average rating from reviews
   const averageRating = useMemo(() => getAverageRating(reviews), [reviews]);
+
+  // Compute user's most recent review for rating chip logic
+  const latestUserReviewId =
+    user && displayReviews.filter(r => r.user_id === user.id).length
+      ? displayReviews.filter(r => r.user_id === user.id)[0].id
+      : null;
+
+  // List of ratings for filter
+  const filterOptions = [
+    { label: "All ratings", value: null },
+    { label: "5 stars", value: "5" },
+    { label: "4 stars", value: "4" },
+    { label: "3 stars", value: "3" },
+    { label: "2 stars", value: "2" },
+    { label: "1 star", value: "1" }
+  ];
 
   // Filtering and sorting logic
   const filteredReviews = useMemo(() => {
@@ -92,8 +114,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     setEditingInput("");
   };
 
-  const ratingFilters = [5, 4, 3, 2, 1];
-
   return (
     <Card className="w-full max-w-xl mx-auto mt-8 mb-10 px-2 pb-6 pt-4 bg-gradient-to-t from-background/90 to-background/60 shadow-xl border-none">
       <CardContent className="p-0">
@@ -111,68 +131,64 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
           myReview={myReview}
         />
 
-        {/* Show overall average rating */}
-        <div className="mb-2 flex items-center gap-3 justify-between">
-          <div className="flex items-center gap-3">
-            <MovieRating movieId={movieId} />
-            {averageRating ? (
-              <span className="text-xs bg-yellow-200/10 px-2 py-1 rounded font-medium text-yellow-300 border border-yellow-700">
-                Average: {averageRating}/5
-              </span>
-            ) : (
-              <span className="text-xs text-muted-foreground">No ratings yet</span>
-            )}
-          </div>
-        </div>
-
-        {/* Filters Row */}
+        {/* Filters Row with dropdowns */}
         <div className="mb-4 flex gap-3 items-center flex-wrap">
-          <span className="font-semibold text-xs text-muted-foreground mr-1">Filter by rating:</span>
-          {ratingFilters.map((r) => (
+          {/* Sort order dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="text-xs px-3 py-1 min-w-[120px]"
+              >
+                Sort: {sortOrder === "newest" ? "Newest" : "Oldest"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuLabel>Sort reviews by</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => setSortOrder("newest")}
+                className={sortOrder === "newest" ? "bg-accent" : ""}
+              >
+                Newest
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setSortOrder("oldest")}
+                className={sortOrder === "oldest" ? "bg-accent" : ""}
+              >
+                Oldest
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Rating filter dropdown */}
+          <Select
+            value={filterRating !== null ? String(filterRating) : ""}
+            onValueChange={v => setFilterRating(v === "" ? null : Number(v))}
+          >
+            <SelectTrigger className="w-[140px] text-xs h-8">
+              <SelectValue placeholder="Filter by rating" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All ratings</SelectItem>
+              <SelectItem value="5">5 stars</SelectItem>
+              <SelectItem value="4">4 stars</SelectItem>
+              <SelectItem value="3">3 stars</SelectItem>
+              <SelectItem value="2">2 stars</SelectItem>
+              <SelectItem value="1">1 star</SelectItem>
+            </SelectContent>
+          </Select>
+          {filterRating !== null && (
             <Button
-              key={r}
-              size="icon"
-              variant={filterRating === r ? "default" : "outline"}
-              className={`w-8 h-8 px-0 rounded-full border ${filterRating === r ? "bg-yellow-500 text-black border-yellow-600" : "text-yellow-500"}`}
-              onClick={() => setFilterRating(filterRating === r ? null : r)}
-              title={`Show only ${r}-star reviews`}
+              size="sm"
+              variant="ghost"
+              className="text-xs text-muted-foreground px-2"
+              onClick={() => setFilterRating(null)}
               type="button"
             >
-              <span className="text-lg">{r}★</span>
+              Clear
             </Button>
-          ))}
-          <Button
-            size="sm"
-            variant="ghost"
-            className="ml-2 text-xs text-muted-foreground px-2"
-            onClick={() => setFilterRating(null)}
-            disabled={filterRating == null}
-            type="button"
-          >
-            Clear
-          </Button>
-
-          {/* Sort order filter */}
-          <span className="font-semibold text-xs text-muted-foreground ml-6">Sort:</span>
-          <Button
-            onClick={() => setSortOrder(sortOrder === "newest" ? "oldest" : "newest")}
-            size="sm"
-            variant="outline"
-            className="flex items-center gap-1 border border-primary/30 ml-1"
-            type="button"
-          >
-            {sortOrder === "newest" ? (
-              <>
-                <ChevronDown className="w-4 h-4" />
-                Newest
-              </>
-            ) : (
-              <>
-                <ChevronUp className="w-4 h-4" />
-                Oldest
-              </>
-            )}
-          </Button>
+          )}
         </div>
 
         {/* Show errors */}
@@ -200,10 +216,13 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
             toast({ title: "Review deleted." });
           }}
           filterRating={filterRating}
+          latestUserReviewId={latestUserReviewId}
         />
 
         {!user && (
-          <div className="text-muted-foreground text-sm my-2 text-center">Sign in to write a review.</div>
+          <div className="text-muted-foreground text-sm my-2 text-center">
+            Sign in to write a review.
+          </div>
         )}
       </CardContent>
     </Card>

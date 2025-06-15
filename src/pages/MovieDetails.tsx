@@ -270,7 +270,11 @@ const MovieDetails = () => {
               Write a Review
             </Button>
           </div>
-
+          {/* Movie rating star interface moved here */}
+          <div className="mb-2 flex items-center gap-3">
+            <MovieRating movieId={movie.id} />
+            {/* Optional: overall average, up to you if you want to display this here */}
+          </div>
           {/* Overview, Director, Production (vertical) */}
           <div className="mb-2 space-y-4 flex flex-col">
             <div>
