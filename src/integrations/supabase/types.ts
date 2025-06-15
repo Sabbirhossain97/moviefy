@@ -9,6 +9,84 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      movie_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          movie_id: number
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          movie_id: number
+          rating: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          movie_id?: number
+          rating?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      movie_reminders: {
+        Row: {
+          created_at: string
+          id: string
+          movie_id: number
+          remind_by_email: boolean
+          remind_on: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          movie_id: number
+          remind_by_email?: boolean
+          remind_on: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          movie_id?: number
+          remind_by_email?: boolean
+          remind_on?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      movie_reviews: {
+        Row: {
+          created_at: string
+          id: string
+          is_approved: boolean | null
+          movie_id: number
+          review: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_approved?: boolean | null
+          movie_id: number
+          review: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_approved?: boolean | null
+          movie_id?: number
+          review?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
