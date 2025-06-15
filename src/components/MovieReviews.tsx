@@ -9,6 +9,7 @@ import MovieRating from "@/components/MovieRating";
 export default function MovieReviews({ movieId }: { movieId: number }) {
   const { user } = useAuth();
   const [input, setInput] = useState("");
+  const [justSubmitted, setJustSubmitted] = useState(false);
   const { reviews, myReview, submitReview, deleteReview, loading, refresh } = useMovieReviews(movieId);
 
   // After mounting or user changes, always get latest reviews
@@ -17,27 +18,28 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     // eslint-disable-next-line
   }, [movieId, user]);
 
-  // Handle review submission
+  // Show reviews instantly after submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
       await submitReview(input.trim());
       setInput("");
-      await refresh(); // Fetch the latest reviews
+      setJustSubmitted(true);
+      await refresh();
+      setTimeout(() => setJustSubmitted(false), 1000);
     }
   };
 
-  // For all visitors, show reviews. Only allow posting if signed in.
   return (
     <div className="max-w-xl w-full ml-0">
       <div className="flex items-center gap-3 mb-2">
         <h3 className="text-lg font-semibold">Reviews</h3>
         <span className="text-muted-foreground text-xs">{reviews.length} reviews</span>
       </div>
+      {/* Move MovieRating (star) to top here */}
       <div className="mb-2">
         <MovieRating movieId={movieId} />
       </div>
-
       <ul className="space-y-4 mb-4" data-testid="review-list">
         {reviews.length === 0 && (
           <div className="text-muted-foreground text-sm mb-4">No reviews yet.</div>
@@ -49,7 +51,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
           </li>
         ))}
       </ul>
-
       {user && (
         <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
           <input

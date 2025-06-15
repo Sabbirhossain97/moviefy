@@ -225,31 +225,34 @@ const MovieDetails = () => {
                   <PlayCircle className="h-5 w-5" />
                   Watch Trailer
                 </Button>
+                {/* Trailer dialog: only render iframe if showTrailer is true */}
                 <Dialog open={showTrailer} onOpenChange={setShowTrailer}>
-                  <div
-                    className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center"
-                    style={{ display: showTrailer ? "flex" : "none" }}
-                    onClick={() => setShowTrailer(false)}
-                  >
-                    <div className="relative bg-black max-w-2xl w-full rounded shadow-lg" onClick={e => e.stopPropagation()}>
-                      <button
-                        aria-label="Close"
-                        onClick={() => setShowTrailer(false)}
-                        className="absolute top-2 right-2 text-white text-3xl leading-none z-10"
-                      >
-                        &times;
-                      </button>
-                      <iframe
-                        width="560"
-                        height="315"
-                        src={`https://www.youtube.com/embed/${videos[0].key}?autoplay=1`}
-                        allow="autoplay; encrypted-media"
-                        allowFullScreen
-                        title="Movie Trailer"
-                        className="rounded w-full aspect-video"
-                      />
+                  {showTrailer && (
+                    <div
+                      className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center"
+                      style={{ display: showTrailer ? "flex" : "none" }}
+                      onClick={() => setShowTrailer(false)}
+                    >
+                      <div className="relative bg-black max-w-2xl w-full rounded shadow-lg" onClick={e => e.stopPropagation()}>
+                        <button
+                          aria-label="Close"
+                          onClick={() => setShowTrailer(false)}
+                          className="absolute top-2 right-2 text-white text-3xl leading-none z-10"
+                        >
+                          &times;
+                        </button>
+                        <iframe
+                          width="560"
+                          height="315"
+                          src={`https://www.youtube.com/embed/${videos[0].key}?autoplay=1`}
+                          allow="autoplay; encrypted-media"
+                          allowFullScreen
+                          title="Movie Trailer"
+                          className="rounded w-full aspect-video"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </Dialog>
               </>
             )}
@@ -320,7 +323,7 @@ const MovieDetails = () => {
       )}
 
       {/* Reviews section */}
-      <section ref={reviewSectionRef} className="container max-w-3xl mx-auto my-12">
+      <section ref={reviewSectionRef} className="container max-w-3xl mx-0 my-12">
         <MovieReviews movieId={movie.id} />
         <MovieReviewAdminPanel movieId={movie.id} />
       </section>

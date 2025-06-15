@@ -12,6 +12,8 @@ import { User, Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AuthDialog } from '@/components/AuthDialog';
 
+const BUCKET = "avatars"; // For Supabase storage
+
 const Profile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -20,6 +22,7 @@ const Profile = () => {
     full_name: '',
     avatar_url: '',
   });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -49,27 +52,43 @@ const Profile = () => {
     }
   };
 
+  // Upload avatar to Supabase Storage
+  const uploadAvatar = async (file: File) => {
+    if (!user) return null;
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}.${fileExt}`;
+    const { data, error } = await supabase
+      .storage
+      .from(BUCKET)
+      .upload(fileName, file, { upsert: true });
+    if (error) throw error;
+    // Get public URL
+    const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+    return urlData?.publicUrl || null;
+  };
+
   const updateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-
     setLoading(true);
     try {
+      let avatar_url = profile.avatar_url;
+      if (avatarFile) {
+        avatar_url = await uploadAvatar(avatarFile);
+      }
       const { error } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
+        .update({
           full_name: profile.full_name,
-          avatar_url: profile.avatar_url,
-          email: user.email,
-        });
-
+          avatar_url,
+        }).eq('id', user.id);
       if (error) throw error;
-
       toast({
         title: 'Profile updated',
         description: 'Your profile has been updated successfully.',
       });
+      setAvatarFile(null);
+      setProfile(prev => ({ ...prev, avatar_url }));
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -107,7 +126,6 @@ const Profile = () => {
       <main className="container py-8">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-3xl font-bold mb-8">My Profile</h1>
-          
           <Card className="gradient-card">
             <CardHeader>
               <CardTitle>Profile Information</CardTitle>
@@ -122,35 +140,38 @@ const Profile = () => {
                         <User className="w-8 h-8" />
                       </AvatarFallback>
                     </Avatar>
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="outline"
-                      className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full"
-                      onClick={() => {
-                        const url = prompt('Enter avatar URL:');
-                        if (url) {
-                          setProfile(prev => ({ ...prev, avatar_url: url }));
+                    <label htmlFor="avatar-upload">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="outline"
+                        className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full"
+                        asChild
+                      >
+                        <span>
+                          <Camera className="w-4 h-4" />
+                        </span>
+                      </Button>
+                      <input
+                        id="avatar-upload"
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={(e) =>
+                          setAvatarFile(e.target.files?.[0] ?? null)
                         }
-                      }}
-                    >
-                      <Camera className="w-4 h-4" />
-                    </Button>
+                      />
+                    </label>
                   </div>
                   <div className="flex-1">
-                    <Label htmlFor="avatar_url">Avatar URL</Label>
-                    <Input
-                      id="avatar_url"
-                      type="url"
-                      placeholder="https://example.com/avatar.jpg"
-                      value={profile.avatar_url}
-                      onChange={(e) =>
-                        setProfile(prev => ({ ...prev, avatar_url: e.target.value }))
-                      }
-                    />
+                    {/* No avatar URL input here */}
+                    {avatarFile && (
+                      <div className="text-xs text-muted-foreground">
+                        Selected: {avatarFile.name}
+                      </div>
+                    )}
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="full_name">Full Name</Label>
                   <Input
@@ -163,7 +184,6 @@ const Profile = () => {
                     }
                   />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -177,7 +197,6 @@ const Profile = () => {
                     Email cannot be changed
                   </p>
                 </div>
-
                 <Button type="submit" disabled={loading} className="w-full">
                   {loading ? 'Updating...' : 'Update Profile'}
                 </Button>
