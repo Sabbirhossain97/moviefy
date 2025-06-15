@@ -161,14 +161,14 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
 
           {/* Rating filter dropdown - UI only, functionality is not wired as reviews don't have ratings */}
           <Select
-            value={filterRating !== null ? String(filterRating) : ""}
-            onValueChange={v => setFilterRating(v === "" ? null : Number(v))}
+            value={filterRating !== null ? String(filterRating) : "all"}
+            onValueChange={v => setFilterRating(v === "all" ? null : Number(v))}
           >
             <SelectTrigger className="w-[140px] text-xs h-8 bg-background">
               <SelectValue placeholder="Filter by rating" />
             </SelectTrigger>
             <SelectContent className="z-[999] bg-background">
-              <SelectItem value="">All ratings</SelectItem>
+              <SelectItem value="all">All ratings</SelectItem>
               <SelectItem value="5">5 stars</SelectItem>
               <SelectItem value="4">4 stars</SelectItem>
               <SelectItem value="3">3 stars</SelectItem>
