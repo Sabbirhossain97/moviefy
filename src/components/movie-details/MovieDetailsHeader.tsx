@@ -1,4 +1,3 @@
-
 import React, { RefObject } from "react";
 import { Badge } from "@/components/ui/badge";
 import { WishlistButton } from "@/components/WishlistButton";
@@ -159,6 +158,8 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
         overview={movie.overview}
         director={director}
         productionCompanies={movie.production_companies || []}
+        budget={movie.budget}
+        revenue={movie.revenue}
       />
     </div>
   </div>
