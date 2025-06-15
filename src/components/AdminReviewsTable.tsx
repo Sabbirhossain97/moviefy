@@ -18,10 +18,27 @@ export default function AdminReviewsTable() {
   useEffect(() => {
     const fetchReviews = async () => {
       setLoading(true);
-      // Select all reviews and join movie title, user info, and ratings
-      const { data, error } = await supabase.rpc("get_admin_review_table");
-      // get_admin_review_table is a placeholder, user should implement it as a view or function
-      if (!error && data) setRows(data);
+      // Fetch all reviews with user and movie details, joining relevant tables
+      const { data, error } = await supabase
+        .from("movie_reviews")
+        .select(`id, review, rating:movie_ratings(rating), created_at, movie_id, user_id,
+          movie:movies(title), user:profiles(full_name)`)
+        .order("created_at", { ascending: false });
+
+      if (!error && data) {
+        // Defensive map: ensure user_name, movie_title, rating are handled
+        const mappedRows = (data as any[]).map((r: any) => ({
+          id: r.id,
+          movie_title: r.movie?.title || "Unknown",
+          rating: Array.isArray(r.rating) ? (r.rating[0]?.rating ?? null) : r.rating ?? null,
+          review: r.review,
+          user_name: r.user?.full_name || "Unknown",
+          created_at: r.created_at,
+        }));
+        setRows(mappedRows);
+      } else {
+        setRows([]); // Fallback, never boolean
+      }
       setLoading(false);
     };
     fetchReviews();

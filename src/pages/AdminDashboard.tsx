@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Heart, Crown, Calendar } from 'lucide-react';
 import { AuthDialog } from '@/components/AuthDialog';
 import { Button } from '@/components/ui/button';
+import AdminReviewsTable from "@/components/AdminReviewsTable";
 
 interface DashboardStats {
   totalUsers: number;
