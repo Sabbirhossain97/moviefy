@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import AIRecommendations from "./pages/AIRecommendations";
 import Wishlist from "./pages/Wishlist";
 import AdminDashboard from "./pages/AdminDashboard";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/movies/:category" element={<MovieCategory />} />
             <Route path="/recommendations" element={<AIRecommendations />} />
             <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

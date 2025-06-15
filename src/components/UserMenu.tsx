@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthDialog } from '@/components/AuthDialog';
-import { User, Heart, Crown, LogOut } from 'lucide-react';
+import { User, Heart, Crown, LogOut, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const UserMenu = () => {
@@ -39,6 +39,12 @@ export const UserMenu = () => {
           {user.email}
         </div>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/profile" className="cursor-pointer">
+            <Settings className="w-4 h-4 mr-2" />
+            My Profile
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link to="/wishlist" className="cursor-pointer">
             <Heart className="w-4 h-4 mr-2" />
