@@ -1,3 +1,4 @@
+
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
@@ -6,24 +7,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthDialog } from '@/components/AuthDialog';
 import WishlistMovieCard from '@/components/WishlistMovieCard';
-import { useEffect, useRef } from 'react';
 
 const Wishlist = () => {
   const { user } = useAuth();
-  const { wishlist, loading, removeFromWishlist, fetchWishlist } = useWishlist();
+  const { wishlist, loading, removeFromWishlist } = useWishlist();
   const navigate = useNavigate();
-
-  const shouldFetch = useRef(true);
-  useEffect(() => {
-    if (user && shouldFetch.current) {
-      shouldFetch.current = false;
-      fetchWishlist();
-    } else if (!user) {
-      shouldFetch.current = true;
-    }
-    // Only run once on login/logout
-    // eslint-disable-next-line
-  }, [user]);
 
   if (!user) {
     return (
