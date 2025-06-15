@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { WishlistButton } from '@/components/WishlistButton';
 import MovieReviews from "@/components/MovieReviews";
 import MovieReviewAdminPanel from "@/components/MovieReviewAdminPanel";
-// Add this import for MovieRating
 import MovieRating from "@/components/MovieRating";
 import MovieBackdrop from "@/components/movie-details/MovieBackdrop";
 import MovieDetailsHeader from "@/components/movie-details/MovieDetailsHeader";
@@ -15,6 +14,7 @@ import { SimilarMoviesSection } from "@/components/movie-details/SimilarMoviesSe
 import { Film } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MovieReminderButton from "@/components/MovieReminderButton";
+import { TrailerDialog } from "@/components/movie-details/TrailerDialog";
 
 interface CreditsResponse {
   cast: Cast[];
