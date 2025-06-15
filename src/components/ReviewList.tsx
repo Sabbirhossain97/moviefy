@@ -33,7 +33,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
   filterRating,
   latestUserReviewId,
 }) => {
-  // Filtering by rating is done in parent already, we just map
+  // Filtering by rating is unused since Review model has no rating.
 
   return (
     <ul className="space-y-5 mb-4" data-testid="review-list">

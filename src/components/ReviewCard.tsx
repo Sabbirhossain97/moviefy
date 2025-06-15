@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Pencil, Trash2, Star } from "lucide-react";
+import { User, Pencil } from "lucide-react";
 import dayjs from "dayjs";
 
 interface ReviewCardProps {
@@ -37,7 +37,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
 
   return (
     <div className="flex gap-2 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative">
-      {/* Owner action icons in corner */}
+      {/* Owner action icon in corner (now edit only, per requirements) */}
       {isOwner && editingReviewId !== r.id && (
         <div className="absolute top-3 right-3 flex gap-2 z-10">
           <span
@@ -49,16 +49,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
             aria-label="Edit review"
           >
             <Pencil className="w-4 h-4" />
-          </span>
-          <span
-            onClick={() => onDelete(r.id)}
-            title="Delete review"
-            className="cursor-pointer text-primary hover:text-red-400 transition ml-2"
-            style={{ display: "flex", alignItems: "center" }}
-            tabIndex={0}
-            aria-label="Delete review"
-          >
-            <Trash2 className="w-4 h-4" />
           </span>
         </div>
       )}
@@ -76,13 +66,8 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
         <div className="flex items-center gap-2">
           <span className="font-bold text-base">{r.user?.full_name || "User"}</span>
           <span className="text-xs text-gray-400">{dayjs(r.created_at).format("MMM D, YYYY")}</span>
-          {/* Show user rating only on latest review */}
-          {showUserRating && r.rating && (
-            <span className="flex items-center ml-2 bg-yellow-200/10 px-2 py-0.5 rounded font-medium text-yellow-400 text-xs border border-yellow-700">
-              <Star className="w-4 h-4 mr-1" fill="currentColor" />
-              {r.rating}/5
-            </span>
-          )}
+          {/* Show user rating only on latest review - logic could be added if rating is part of review */}
+          {/* No rating rendered since reviews have no rating property */}
         </div>
         {/* If this user is editing this review */}
         {editingReviewId === r.id ? (

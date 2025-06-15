@@ -18,11 +18,8 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 
 // Helper to calculate average rating from reviews
 function getAverageRating(reviews) {
-  const ratingVals = reviews
-    .map(r => r.rating)
-    .filter(r => typeof r === "number");
-  if (ratingVals.length === 0) return null;
-  return (ratingVals.reduce((a, b) => a + b, 0) / ratingVals.length).toFixed(1);
+  // If ratings are not on reviews, this will always return null/undefined.
+  return null;
 }
 
 export default function MovieReviews({ movieId }: { movieId: number }) {
@@ -40,32 +37,16 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     // eslint-disable-next-line
   }, [movieId, user]);
 
-  // Compute average rating from reviews
-  const averageRating = useMemo(() => getAverageRating(reviews), [reviews]);
-
-  // Compute user's most recent review for rating chip logic
-  const latestUserReviewId =
-    user && displayReviews.filter(r => r.user_id === user.id).length
-      ? displayReviews.filter(r => r.user_id === user.id)[0].id
-      : null;
-
-  // List of ratings for filter
-  const filterOptions = [
-    { label: "All ratings", value: null },
-    { label: "5 stars", value: "5" },
-    { label: "4 stars", value: "4" },
-    { label: "3 stars", value: "3" },
-    { label: "2 stars", value: "2" },
-    { label: "1 star", value: "1" }
-  ];
-
   // Filtering and sorting logic
   const filteredReviews = useMemo(() => {
     let filtered = reviews;
-    if (filterRating) {
-      filtered = filtered.filter((r) => r.rating === filterRating);
-    }
-    // Sort reviews by created_at ASC or DESC
+    // No review 'rating', so we ignore filterRating
+    // If rating filtering becomes relevant, add logic here
+    // For now, keep as: [All reviews]
+    // (If you want to enable filtering, update Review type and codebase.)
+    // if (filterRating) {
+    //   filtered = filtered.filter((r) => r.rating === filterRating);
+    // }
     filtered = [...filtered].sort((a, b) => {
       if (sortOrder === "oldest") {
         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
@@ -74,7 +55,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
       }
     });
     return filtered;
-  }, [reviews, filterRating, sortOrder]);
+  }, [reviews, sortOrder]);
 
   // Move myReview to top of list if not filtered out
   let displayReviews = [...filteredReviews];
@@ -84,6 +65,23 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
       ...displayReviews.filter(r => r.user_id !== user.id),
     ];
   }
+
+  // Compute user's most recent review for rating chip logic
+  // We show the "user rating" on the latest review (per requirement)
+  const latestUserReviewId =
+    user && displayReviews.filter(r => r.user_id === user.id).length
+      ? displayReviews.filter(r => r.user_id === user.id)[0].id
+      : null;
+
+  // List of ratings for filter (disabled for now, see above logic)
+  const filterOptions = [
+    { label: "All ratings", value: null },
+    { label: "5 stars", value: "5" },
+    { label: "4 stars", value: "4" },
+    { label: "3 stars", value: "3" },
+    { label: "2 stars", value: "2" },
+    { label: "1 star", value: "1" }
+  ];
 
   // --- Handlers ---
   const handleSubmit = async (e: React.FormEvent) => {
@@ -144,7 +142,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
                 Sort: {sortOrder === "newest" ? "Newest" : "Oldest"}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
+            <DropdownMenuContent align="start" className="z-[999] bg-background">
               <DropdownMenuLabel>Sort reviews by</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => setSortOrder("newest")}
@@ -161,15 +159,15 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Rating filter dropdown */}
+          {/* Rating filter dropdown - UI only, functionality is not wired as reviews don't have ratings */}
           <Select
             value={filterRating !== null ? String(filterRating) : ""}
             onValueChange={v => setFilterRating(v === "" ? null : Number(v))}
           >
-            <SelectTrigger className="w-[140px] text-xs h-8">
+            <SelectTrigger className="w-[140px] text-xs h-8 bg-background">
               <SelectValue placeholder="Filter by rating" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="z-[999] bg-background">
               <SelectItem value="">All ratings</SelectItem>
               <SelectItem value="5">5 stars</SelectItem>
               <SelectItem value="4">4 stars</SelectItem>
