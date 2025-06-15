@@ -14,7 +14,7 @@ import { AuthDialog } from '@/components/AuthDialog';
 const BUCKET = "avatars"; // For Supabase storage
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, profile: userProfile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({
@@ -111,6 +111,7 @@ const Profile = () => {
       setAvatarFile(null);
       setAvatarPreview(null);
       setProfile(prev => ({ ...prev, avatar_url }));
+      await refreshProfile(); // update everywhere globally!
       fetchProfile(); // refresh UI from db
     } catch (error: any) {
       toast({

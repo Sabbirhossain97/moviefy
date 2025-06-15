@@ -11,9 +11,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { AuthDialog } from '@/components/AuthDialog';
 import { User, Heart, Crown, LogOut, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 export const UserMenu = () => {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, signOut, profile } = useAuth();
 
   if (!user) {
     return (
@@ -29,9 +30,18 @@ export const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm">
-          <User className="w-4 h-4 mr-2" />
-          Account
+        <Button variant="outline" size="sm" className="flex items-center px-2 gap-2">
+          {/* Show avatar if available */}
+          <Avatar className="w-7 h-7 mr-2">
+            {profile?.avatar_url ? (
+              <AvatarImage src={profile.avatar_url} alt={profile.full_name || "User"} />
+            ) : (
+              <AvatarFallback>
+                <User className="w-4 h-4" />
+              </AvatarFallback>
+            )}
+          </Avatar>
+          <span className="hidden md:block">Account</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64 max-w-xs break-words">
