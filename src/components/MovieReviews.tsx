@@ -179,7 +179,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
               <div className={`flex gap-2 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative`}>
                 <Avatar className="w-10 h-10 shrink-0">
                   {r.user?.avatar_url ? (
-                    <AvatarImage src={r.user.avatar_url} alt="User avatar" />
+                    <AvatarImage src={r.user?.avatar_url} alt="User avatar" />
                   ) : (
                     <AvatarFallback>
                       <User className="w-4 h-4" />
