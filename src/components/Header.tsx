@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,12 +18,17 @@ interface HeaderProps {
   genres?: Genre[];
 }
 
+const RECENT_SEARCHES_KEY = "recent_movie_searches";
+
 const Header = ({ genres: propGenres = [] }: HeaderProps) => {
   const [genres, setGenres] = useState<Genre[]>(propGenres);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const navigate = useNavigate();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Only fetch genres on mount if not provided by props and genres state is empty
+  // Fetch genres once
   useEffect(() => {
     let isMounted = true;
     if (propGenres.length === 0 && genres.length === 0) {
@@ -40,15 +44,40 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
     }
     return () => { isMounted = false; };
     // eslint-disable-next-line
-  }, [propGenres]); // Only dependency is propGenres
+  }, [propGenres]);
+
+  useEffect(() => {
+    const recent = JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || "[]");
+    setSuggestions(recent);
+  }, []);
+
+  const saveRecentSearch = (q: string) => {
+    let recent: string[] = JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || "[]");
+    recent = recent.filter((item) => item !== q);
+    recent.unshift(q); // add to top
+    if (recent.length > 7) recent.pop();
+    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(recent));
+    setSuggestions(recent);
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      saveRecentSearch(searchQuery.trim());
       navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
+      setShowDropdown(false);
     }
   };
 
+  const handleDropdownSelect = (q: string) => {
+    setSearchQuery(q);
+    saveRecentSearch(q);
+    setShowDropdown(false);
+    inputRef.current?.blur();
+    navigate(`/search?query=${encodeURIComponent(q)}`);
+  };
+
+  // Show dropdown when input is focused and has suggestions
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -134,11 +163,18 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
           {/* Search */}
           <form onSubmit={handleSearch} className="relative w-full max-w-sm">
             <Input
+              ref={inputRef}
               type="search"
               placeholder="Search movies..."
               className="pr-10 bg-muted/50 border-muted-foreground/20 focus:border-movie-primary"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setShowDropdown(true);
+              }}
+              onFocus={() => setShowDropdown(true)}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 130)}
+              autoComplete="off"
             />
             <Button
               type="submit"
@@ -148,6 +184,39 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
             >
               <Search className="h-4 w-4 text-muted-foreground" />
             </Button>
+            {showDropdown && suggestions.length > 0 && (
+              <div className="absolute left-0 top-12 z-40 bg-background border border-muted rounded-md w-full shadow-lg max-h-52 overflow-y-auto">
+                <div className="px-3 py-2 text-xs text-muted-foreground font-medium">
+                  Recent Searches
+                </div>
+                <ul>
+                  {suggestions.map((q) => (
+                    <li
+                      key={q}
+                      className="px-3 py-2 hover:bg-accent transition text-sm cursor-pointer"
+                      onMouseDown={() => handleDropdownSelect(q)}
+                    >
+                      {q}
+                    </li>
+                  ))}
+                </ul>
+                {suggestions.length > 0 && (
+                  <div className="px-3 py-2">
+                    <button
+                      type="button"
+                      className="text-xs text-muted-foreground hover:underline"
+                      onMouseDown={e => {
+                        e.preventDefault();
+                        localStorage.removeItem(RECENT_SEARCHES_KEY);
+                        setSuggestions([]);
+                      }}
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </form>
           
           {/* User Menu */}
@@ -159,4 +228,3 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
 };
 
 export default Header;
-

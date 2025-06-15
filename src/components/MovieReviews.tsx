@@ -12,7 +12,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   const [justSubmitted, setJustSubmitted] = useState(false);
   const { reviews, myReview, submitReview, deleteReview, loading, refresh } = useMovieReviews(movieId);
 
-  // After mounting or user changes, always get latest reviews
+  // Always get latest reviews on mount/movie/user change
   useEffect(() => {
     refresh();
     // eslint-disable-next-line
@@ -25,13 +25,14 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
       await submitReview(input.trim());
       setInput("");
       setJustSubmitted(true);
+      // This calls both fetchReviews and fetchMyReview, but we call refresh just in case.
       await refresh();
       setTimeout(() => setJustSubmitted(false), 1000);
     }
   };
 
   return (
-    <div className="max-w-xl w-full ml-0">
+    <div className="max-w-xl w-full ml-0 md:ml-0">
       <div className="flex items-center gap-3 mb-2">
         <h3 className="text-lg font-semibold">Reviews</h3>
         <span className="text-muted-foreground text-xs">{reviews.length} reviews</span>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,6 +22,7 @@ const Profile = () => {
     avatar_url: '',
   });
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -57,14 +57,25 @@ const Profile = () => {
     if (!user) return null;
     const fileExt = file.name.split('.').pop();
     const fileName = `${user.id}.${fileExt}`;
-    const { data, error } = await supabase
-      .storage
-      .from(BUCKET)
-      .upload(fileName, file, { upsert: true });
-    if (error) throw error;
-    // Get public URL
-    const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
-    return urlData?.publicUrl || null;
+    setAvatarUploading(true);
+    try {
+      // Check that the bucket exists by attempting a list
+      const { data: bucket, error: bucketErr } = await supabase.storage.getBucket(BUCKET);
+      if (!bucket || bucketErr) {
+        throw new Error(`Bucket "${BUCKET}" not found in Supabase Storage. Please create it and make it public.`);
+      }
+      // Upload file, overwrite if exists
+      const { data, error } = await supabase
+        .storage
+        .from(BUCKET)
+        .upload(fileName, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      // Get public URL
+      const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+      return urlData?.publicUrl || null;
+    } finally {
+      setAvatarUploading(false);
+    }
   };
 
   const updateProfile = async (e: React.FormEvent) => {
@@ -89,6 +100,7 @@ const Profile = () => {
       });
       setAvatarFile(null);
       setProfile(prev => ({ ...prev, avatar_url }));
+      fetchProfile(); // refresh UI from db
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -160,11 +172,11 @@ const Profile = () => {
                         onChange={(e) =>
                           setAvatarFile(e.target.files?.[0] ?? null)
                         }
+                        disabled={avatarUploading}
                       />
                     </label>
                   </div>
                   <div className="flex-1">
-                    {/* No avatar URL input here */}
                     {avatarFile && (
                       <div className="text-xs text-muted-foreground">
                         Selected: {avatarFile.name}
@@ -197,8 +209,8 @@ const Profile = () => {
                     Email cannot be changed
                   </p>
                 </div>
-                <Button type="submit" disabled={loading} className="w-full">
-                  {loading ? 'Updating...' : 'Update Profile'}
+                <Button type="submit" disabled={loading || avatarUploading} className="w-full">
+                  {loading ? 'Updating...' : avatarUploading ? "Uploading..." : 'Update Profile'}
                 </Button>
               </form>
             </CardContent>
