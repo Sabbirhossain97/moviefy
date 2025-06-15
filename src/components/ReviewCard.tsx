@@ -5,6 +5,7 @@ import { User, Pencil } from "lucide-react";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea"; // <-- Import Textarea
 
 interface ReviewCardProps {
   review: any;
@@ -109,12 +110,13 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
         {/* If this user is editing this review */}
         {editingReviewId === r.id ? (
           <div className="flex flex-col mt-1 gap-2">
-            <textarea
+            <Textarea
               className="w-full rounded border bg-background text-white p-2 text-sm resize-none focus:ring focus:outline-none"
               value={editingInput}
               onChange={e => setEditingInput(e.target.value)}
               maxLength={500}
               rows={2}
+              autoFocus
             />
             <div className="flex gap-2">
               <button
@@ -144,3 +146,4 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   );
 };
 export default ReviewCard;
+

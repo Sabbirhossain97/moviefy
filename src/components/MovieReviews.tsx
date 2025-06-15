@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,7 +24,7 @@ function getAverageRating(reviews) {
 }
 
 export default function MovieReviews({ movieId }: { movieId: number }) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [input, setInput] = useState("");
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [editingInput, setEditingInput] = useState(""); // For in-place edit
@@ -43,13 +42,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   // Filtering and sorting logic
   const filteredReviews = useMemo(() => {
     let filtered = reviews;
-    // No review 'rating', so we ignore filterRating
-    // If rating filtering becomes relevant, add logic here
-    // For now, keep as: [All reviews]
-    // (If you want to enable filtering, update Review type and codebase.)
-    // if (filterRating) {
-    //   filtered = filtered.filter((r) => r.rating === filterRating);
-    // }
     filtered = [...filtered].sort((a, b) => {
       if (sortOrder === "oldest") {
         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
@@ -70,7 +62,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   }
 
   // Compute user's most recent review for rating chip logic
-  // We show the "user rating" on the latest review (per requirement)
   const latestUserReviewId =
     user && displayReviews.filter(r => r.user_id === user.id).length
       ? displayReviews.filter(r => r.user_id === user.id)[0].id
@@ -85,6 +76,15 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     { label: "2 stars", value: "2" },
     { label: "1 star", value: "1" }
   ];
+
+  // We'll create a single "currentUserInfo" prop that represents the logged-in user's info (merge user+profile as needed)
+  const currentUserInfo = user
+    ? {
+        ...user,
+        full_name: profile?.full_name || user.email || "User",
+        avatar_url: profile?.avatar_url || null
+      }
+    : null;
 
   // --- Handlers ---
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,7 +124,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
         </div>
 
         <ReviewInput
-          user={user}
+          user={currentUserInfo}
           input={input}
           setInput={setInput}
           loading={loading}
@@ -201,7 +201,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
 
         <ReviewList
           reviews={displayReviews}
-          user={user}
+          user={currentUserInfo}
           editingReviewId={editingReviewId}
           editingInput={editingInput}
           setEditingReviewId={setEditingReviewId}
