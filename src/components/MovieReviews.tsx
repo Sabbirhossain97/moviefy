@@ -1,19 +1,17 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Trash2, User, Pencil } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import MovieRating from "@/components/MovieRating";
-import dayjs from "dayjs";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import ReviewInput from "./ReviewInput";
 import ReviewList from "./ReviewList";
+import MovieRating from "@/components/MovieRating";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
-// Helper to calculate average rating from review objects (if ratings are implemented per review in future)
+// Helper to calculate average rating from reviews
 function getAverageRating(reviews) {
-  // If reviews have a "rating" field, use it; else return null
   const ratingVals = reviews
     .map(r => r.rating)
     .filter(r => typeof r === "number");
@@ -26,12 +24,10 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   const [input, setInput] = useState("");
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [editingInput, setEditingInput] = useState(""); // For in-place edit
-  const [filterRating, setFilterRating] = useState<number | null>(null); // Filter by rating
-  const { reviews, myReview, submitReview, deleteReview, loading, error, refresh } = useMovieReviews(movieId);
+  const [filterRating, setFilterRating] = useState<number | null>(null);
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
-  // Mimic review ratings for demo (since built-in review objects don't have rating)
-  // This will be effective if reviews schema is extended to include rating per review.
-  // For now, rely on MovieRating component for user's rating.
+  const { reviews, myReview, submitReview, deleteReview, loading, error, refresh } = useMovieReviews(movieId);
 
   useEffect(() => {
     refresh();
@@ -41,12 +37,22 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   // Compute average rating from reviews
   const averageRating = useMemo(() => getAverageRating(reviews), [reviews]);
 
-  // For when ratings per review exist in schema: filter by rating.
-  // For now, simulate filter (does nothing, only UI).
+  // Filtering and sorting logic
   const filteredReviews = useMemo(() => {
-    // TODO: Enable filtering when reviews have ratings field.
-    return reviews;
-  }, [reviews, filterRating]);
+    let filtered = reviews;
+    if (filterRating) {
+      filtered = filtered.filter((r) => r.rating === filterRating);
+    }
+    // Sort reviews by created_at ASC or DESC
+    filtered = [...filtered].sort((a, b) => {
+      if (sortOrder === "oldest") {
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      } else {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    });
+    return filtered;
+  }, [reviews, filterRating, sortOrder]);
 
   // Move myReview to top of list if not filtered out
   let displayReviews = [...filteredReviews];
@@ -58,8 +64,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   }
 
   // --- Handlers ---
-
-  // Submit new or update review
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
@@ -70,7 +74,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     }
   };
 
-  // Submit review edit
   const handleEditSubmit = async (r: any) => {
     if (!editingInput.trim()) return;
     await submitReview(editingInput.trim());
@@ -79,19 +82,16 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     refresh();
   };
 
-  // Start editing
   const startEdit = (r: any) => {
     setEditingReviewId(r.id);
     setEditingInput(r.review);
   };
 
-  // Cancel editing
   const cancelEdit = () => {
     setEditingReviewId(null);
     setEditingInput("");
   };
 
-  // --- Rating Filters UI ---
   const ratingFilters = [5, 4, 3, 2, 1];
 
   return (
@@ -102,7 +102,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
           <span className="text-muted-foreground text-xs">{reviews.length} reviews</span>
         </div>
 
-        {/* Your review input (write or edit) */}
         <ReviewInput
           user={user}
           input={input}
@@ -127,8 +126,8 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
         </div>
 
         {/* Filters Row */}
-        <div className="mb-4 flex gap-2 items-center">
-          <span className="font-semibold text-xs text-muted-foreground mr-1">Filter:</span>
+        <div className="mb-4 flex gap-3 items-center flex-wrap">
+          <span className="font-semibold text-xs text-muted-foreground mr-1">Filter by rating:</span>
           {ratingFilters.map((r) => (
             <Button
               key={r}
@@ -139,7 +138,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
               title={`Show only ${r}-star reviews`}
               type="button"
             >
-              {/* Unicode star filled for demo */}
               <span className="text-lg">{r}★</span>
             </Button>
           ))}
@@ -153,6 +151,28 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
           >
             Clear
           </Button>
+
+          {/* Sort order filter */}
+          <span className="font-semibold text-xs text-muted-foreground ml-6">Sort:</span>
+          <Button
+            onClick={() => setSortOrder(sortOrder === "newest" ? "oldest" : "newest")}
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1 border border-primary/30 ml-1"
+            type="button"
+          >
+            {sortOrder === "newest" ? (
+              <>
+                <ChevronDown className="w-4 h-4" />
+                Newest
+              </>
+            ) : (
+              <>
+                <ChevronUp className="w-4 h-4" />
+                Oldest
+              </>
+            )}
+          </Button>
         </div>
 
         {/* Show errors */}
@@ -162,7 +182,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
           </div>
         )}
 
-        {/* Review List */}
         <ReviewList
           reviews={displayReviews}
           user={user}

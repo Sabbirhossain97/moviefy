@@ -31,19 +31,16 @@ const ReviewList: React.FC<ReviewListProps> = ({
   onDelete,
   filterRating,
 }) => {
-  // TODO: When review has rating field, filter real reviews
-  const shownReviews = filterRating
-    ? reviews.filter((r) => r.rating === filterRating)
-    : reviews;
+  // Now: filter is handled in parent (MovieReviews), so just use reviews directly
 
   return (
     <ul className="space-y-5 mb-4" data-testid="review-list">
-      {(!shownReviews || shownReviews.length === 0) && (
+      {(!reviews || reviews.length === 0) && (
         <div className="text-muted-foreground text-sm mb-4 py-6 text-center border rounded-lg bg-card/80">
           No reviews yet. Be the first to review!
         </div>
       )}
-      {shownReviews.map((r) => (
+      {reviews.map((r) => (
         <li key={r.id}>
           <ReviewCard
             review={r}

@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { User, Pencil, Trash2 } from "lucide-react";
 import dayjs from "dayjs";
 
@@ -32,36 +31,33 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   onCancelEdit,
   onDelete,
 }) => {
-  // Check ownership
   const isOwner = user && r.user_id === user.id;
 
   return (
     <div className="flex gap-2 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative">
-      {/* Owner action buttons in corner */}
+      {/* Owner action icons in corner */}
       {isOwner && editingReviewId !== r.id && (
         <div className="absolute top-3 right-3 flex gap-2 z-10">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
+          <span
             onClick={() => onStartEdit(r)}
-            disabled={loading}
             title="Edit review"
-            className="text-primary hover:bg-primary/10"
+            className="cursor-pointer text-primary hover:text-yellow-400 transition"
+            style={{ display: "flex", alignItems: "center" }}
+            tabIndex={0}
+            aria-label="Edit review"
           >
             <Pencil className="w-4 h-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            size="icon"
+          </span>
+          <span
             onClick={() => onDelete(r.id)}
-            disabled={loading}
             title="Delete review"
-            className="ml-1"
+            className="cursor-pointer text-red-500 hover:text-red-700 transition ml-2"
+            style={{ display: "flex", alignItems: "center" }}
+            tabIndex={0}
+            aria-label="Delete review"
           >
             <Trash2 className="w-4 h-4" />
-          </Button>
+          </span>
         </div>
       )}
 
@@ -90,12 +86,23 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
               rows={2}
             />
             <div className="flex gap-2">
-              <Button type="button" variant="default" size="sm" onClick={() => onEditSubmit(r)} disabled={loading}>
+              <button
+                type="button"
+                className="bg-primary text-white px-3 py-1 rounded text-sm"
+                onClick={() => onEditSubmit(r)}
+                disabled={loading}
+                style={{ minWidth: 64 }}
+              >
                 Save
-              </Button>
-              <Button type="button" variant="ghost" size="sm" onClick={onCancelEdit}>
+              </button>
+              <button
+                type="button"
+                className="border border-gray-300 text-gray-400 bg-transparent px-3 py-1 rounded text-sm"
+                onClick={onCancelEdit}
+                style={{ minWidth: 64 }}
+              >
                 Cancel
-              </Button>
+              </button>
             </div>
           </div>
         ) : (
