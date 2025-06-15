@@ -158,10 +158,8 @@ const MovieDetails = () => {
         ref={reviewSectionRef}
         className="container relative z-20 max-w-6xl px-4 md:px-6 my-12"
       >
-        <div className="max-w-3xl mx-auto">
-          <MovieReviews movieId={movie.id} />
-          <MovieReviewAdminPanel movieId={movie.id} />
-        </div>
+        <MovieReviews movieId={movie.id} />
+        <MovieReviewAdminPanel movieId={movie.id} />
       </section>
     </div>
   );
