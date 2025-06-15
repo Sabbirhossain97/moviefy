@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { api, Movie, MovieVideo, IMAGE_SIZES, Cast } from '@/services/api';
@@ -6,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { WishlistButton } from '@/components/WishlistButton';
 import MovieReviews from "@/components/MovieReviews";
 import MovieReviewAdminPanel from "@/components/MovieReviewAdminPanel";
+// Add this import for MovieRating
+import MovieRating from "@/components/MovieRating";
 import { MovieHeader } from "@/components/movie-details/MovieHeader";
 import { MovieInfoSection } from "@/components/movie-details/MovieInfoSection";
 import { TrailerDialog } from "@/components/movie-details/TrailerDialog";
