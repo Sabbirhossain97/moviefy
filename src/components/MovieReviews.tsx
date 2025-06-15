@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,6 +16,7 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { useMovieRatings } from "@/hooks/useMovieRatings"; // <-- Correctly import the hook
 
 // Helper to calculate average rating from reviews
 function getAverageRating(reviews) {
@@ -31,7 +33,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
   const { reviews, myReview, submitReview, deleteReview, loading, error, refresh } = useMovieReviews(movieId);
-  const { rating: userRating } = require("@/hooks/useMovieRatings").useMovieRatings(movieId);
+  const { rating: userRating } = useMovieRatings(movieId); // <-- Use the hook properly
 
   useEffect(() => {
     refresh();
