@@ -14,17 +14,16 @@ const Wishlist = () => {
   const navigate = useNavigate();
 
   const shouldFetch = useRef(true);
-useEffect(() => {
-  if (user && shouldFetch.current) {
-    shouldFetch.current = false;
-    fetchWishlist();
-  } else if (!user) {
-    setWishlist([]);
-    shouldFetch.current = true;
-  }
-  // Only run once on login/logout
-  // eslint-disable-next-line
-}, [user]);
+  useEffect(() => {
+    if (user && shouldFetch.current) {
+      shouldFetch.current = false;
+      fetchWishlist();
+    } else if (!user) {
+      shouldFetch.current = true;
+    }
+    // Only run once on login/logout
+    // eslint-disable-next-line
+  }, [user]);
 
   if (!user) {
     return (
