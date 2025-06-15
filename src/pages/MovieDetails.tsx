@@ -182,6 +182,7 @@ const MovieDetails = () => {
             ))}
           </div>
           <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">
+            {/* IMDb Rating */}
             <span className="flex items-center text-yellow-400 font-medium text-lg">
               <svg
                 className="inline w-5 h-5 mr-1"
@@ -192,7 +193,8 @@ const MovieDetails = () => {
                   d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
                 />
               </svg>
-              {movie.vote_average?.toFixed(1)}/10
+              <span className="mr-1 font-bold rounded bg-[#f5c518] text-gray-900 px-2 py-0.5 text-xs shadow-sm">IMDb</span>
+              <span className="ml-1">{movie.vote_average?.toFixed(1)}/10</span>
             </span>
             <span className="flex items-center text-gray-400">
               <CalendarDays className="inline-block w-4 h-4 mr-1" />
