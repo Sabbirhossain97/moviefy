@@ -153,10 +153,15 @@ const MovieDetails = () => {
       {/* Similar movies */}
       <SimilarMoviesSection movies={similarMovies} />
 
-      {/* Reviews section */}
-      <section ref={reviewSectionRef} className="container max-w-3xl mx-0 my-12">
-        <MovieReviews movieId={movie.id} />
-        <MovieReviewAdminPanel movieId={movie.id} />
+      {/* Reviews section (aligned container) */}
+      <section
+        ref={reviewSectionRef}
+        className="container relative z-20 max-w-6xl px-4 md:px-6 my-12"
+      >
+        <div className="max-w-3xl mx-auto">
+          <MovieReviews movieId={movie.id} />
+          <MovieReviewAdminPanel movieId={movie.id} />
+        </div>
       </section>
     </div>
   );
