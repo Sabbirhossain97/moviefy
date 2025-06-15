@@ -13,6 +13,9 @@ import { MovieInfoSection } from "@/components/movie-details/MovieInfoSection";
 import { TrailerDialog } from "@/components/movie-details/TrailerDialog";
 import { CastSection } from "@/components/movie-details/CastSection";
 import { SimilarMoviesSection } from "@/components/movie-details/SimilarMoviesSection";
+import { Film } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import MovieReminderButton from "@/components/MovieReminderButton";
 
 interface CreditsResponse {
   cast: Cast[];
