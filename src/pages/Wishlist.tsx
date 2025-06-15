@@ -1,4 +1,3 @@
-
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
@@ -33,7 +32,8 @@ const Wishlist = () => {
     );
   }
 
-  if (loading) {
+  // Show loading skeleton ONLY if wishlist is empty and loading.
+  if (loading && wishlist.length === 0) {
     return (
       <div className="min-h-screen gradient-bg">
         <Header />
@@ -57,7 +57,14 @@ const Wishlist = () => {
           <div className="flex items-center gap-3 mb-8">
             <Heart className="w-8 h-8 text-red-500" />
             <h1 className="text-3xl font-bold">My Wishlist</h1>
-            <span className="text-muted-foreground">({wishlist.length} movies)</span>
+            <span className="text-muted-foreground">
+              ({wishlist.length} movies)
+            </span>
+            {loading && wishlist.length > 0 && (
+              <span className="ml-2 text-xs text-muted-foreground animate-pulse">
+                (Refreshing...)
+              </span>
+            )}
           </div>
 
           {wishlist.length === 0 ? (
