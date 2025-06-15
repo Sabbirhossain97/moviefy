@@ -97,6 +97,7 @@ const MovieDetails = () => {
   return (
     <div>
       <Header />
+      {/* Fallback solid background for missing backdrop */}
       {backdropUrl ? (
         <div className="relative">
           <div
@@ -110,7 +111,9 @@ const MovieDetails = () => {
           <div className="absolute inset-0 bg-black opacity-20"></div>
         </div>
       ) : (
-        <div className="h-64 md:h-96 w-full bg-gray-800"></div>
+        <div className="h-64 md:h-96 w-full flex items-center justify-center bg-gradient-to-r from-gray-900 to-gray-700 text-gray-300 text-xl font-semibold">
+          No Cover Available
+        </div>
       )}
 
       <main className="container py-6">
@@ -150,8 +153,7 @@ const MovieDetails = () => {
               </span>
             </div>
 
-            {/* Insert below movie title/metadata */}
-            <MovieRating movieId={movie.id} />
+            {/* Remove any "like"/"not for me" button UIs. Only show these components: */}
             <MovieReminderButton movieId={movie.id} releaseDate={movie.release_date} />
 
             {/* Reviews */}

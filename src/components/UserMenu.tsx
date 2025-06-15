@@ -34,8 +34,8 @@ export const UserMenu = () => {
           Account
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <div className="px-2 py-1.5 text-sm font-medium">
+      <DropdownMenuContent align="end" className="w-64 max-w-xs break-words">
+        <div className="px-2 py-1.5 text-sm font-medium truncate max-w-full" title={user.email}>
           {user.email}
         </div>
         <DropdownMenuSeparator />

@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 interface WishlistButtonProps {
   movie: Movie;
-  size?: 'sm' | 'default' | 'lg';
+  size?: 'sm' | 'default' | 'lg' | 'icon';
   variant?: 'default' | 'outline' | 'ghost';
   showText?: boolean;
 }
@@ -35,26 +35,37 @@ export const WishlistButton = ({
   return (
     <Button 
       variant={variant} 
-      size={size} 
+      size={size}
       onClick={handleClick}
       className={cn(
-        "transition-all duration-200",
+        "transition-all duration-200 flex items-center rounded-full p-0 w-9 h-9 justify-center shadow hover:bg-red-100/30",
         inWishlist 
-          ? "text-red-500 border-red-500 hover:bg-red-50 bg-red-50/50" 
-          : "hover:text-red-500 hover:border-red-500",
-        variant === 'ghost' && "bg-black/50 hover:bg-black/70 backdrop-blur-sm"
+          ? "text-red-500 bg-red-100/50 border-red-500"
+          : "hover:text-red-500",
+        variant === 'ghost' && "bg-black/70 hover:bg-black/90 backdrop-blur-sm",
+        size === 'icon' && "w-9 h-9 p-0"
       )}
+      aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
     >
       <Heart 
         className={cn(
           "transition-all duration-200",
-          size === 'sm' ? "w-3 h-3" : size === 'lg' ? "w-5 h-5" : "w-4 h-4",
-          showText && (size === 'sm' ? "mr-1" : "mr-2"),
-          inWishlist && "fill-current"
+          size === 'sm' || size === 'icon' 
+            ? "w-4 h-4" 
+            : size === 'lg' 
+            ? "w-5 h-5" 
+            : "w-4 h-4",
+          // mr-2 for text, but not for icon-only
+          inWishlist && "fill-red-500 text-red-500",
+          !inWishlist && "fill-none"
         )} 
+        fill={inWishlist ? "currentColor" : "none"}
       />
       {showText && (
-        <span className={cn(size === 'sm' && "text-xs")}>
+        <span className={cn(
+          size === 'sm' && "text-xs",
+          "ml-2"
+        )}>
           {inWishlist ? 'Remove' : 'Add to Wishlist'}
         </span>
       )}

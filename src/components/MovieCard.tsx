@@ -14,14 +14,10 @@ interface MovieCardProps {
 }
 
 const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
-  // Format release date to year only
   const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
-  
-  // Generate poster URL or use placeholder
   const posterUrl = movie.poster_path 
     ? `${IMAGE_SIZES.poster.medium}${movie.poster_path}`
     : "/placeholder.svg";
-  
   const cardSizes = {
     sm: "w-[150px]",
     md: "w-[200px]",
@@ -30,16 +26,25 @@ const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
 
   return (
     <Card className={`overflow-hidden movie-card-hover ${cardSizes[size]} gradient-card border-border/50`}>
-      <div className="relative aspect-[2/3] overflow-hidden">
+      <div className="relative aspect-[2/3] overflow-hidden group">
         <Link to={`/movie/${movie.id}`}>
           <img
             src={posterUrl}
             alt={movie.title}
-            className="object-cover w-full h-full transition-transform duration-300"
+            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
             loading="lazy"
           />
         </Link>
-        <div className="absolute top-2 right-2">
+        {/* Wishlist icon button appears on hover, styled as pure icon */}
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+          <WishlistButton 
+            movie={movie} 
+            size="icon"
+            variant="ghost"
+            showText={false}
+          />
+        </div>
+        <div className="absolute top-2 left-2">
           <Badge variant="secondary" className="flex items-center gap-1 font-medium gradient-secondary">
             <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
             {movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
@@ -58,7 +63,6 @@ const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
           </Link>
           <p className="text-xs text-muted-foreground">{releaseYear}</p>
         </div>
-        <WishlistButton movie={movie} size="sm" variant="outline" />
       </CardContent>
     </Card>
   );
