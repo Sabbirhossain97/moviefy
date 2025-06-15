@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -152,7 +151,7 @@ const AdminDashboard = () => {
             <Crown className="w-8 h-8 text-yellow-500" />
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           </div>
-
+          {/* Stats Section */}
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {[...Array(4)].map((_, i) => (
@@ -209,6 +208,7 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {/* Recent Users */}
           <Card className="gradient-card">
             <CardHeader>
               <CardTitle>Recent Users</CardTitle>
@@ -226,6 +226,22 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Admin Reviews Table */}
+          <Card className="gradient-card mt-8">
+            <CardHeader>
+              <CardTitle>All Reviews & Ratings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-sm mb-2 text-muted-foreground">
+                View all user reviews and ratings submitted across all movies.
+              </div>
+              <div>
+                {/* Admin Reviews Table */}
+                <AdminReviewsTable />
               </div>
             </CardContent>
           </Card>

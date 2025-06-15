@@ -20,19 +20,14 @@ export function useMovieReviews(movieId: number) {
   const [myReview, setMyReview] = useState<Review | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch all approved reviews (or all if admin)
+  // Fetch all reviews (no approval logic)
   const fetchReviews = async () => {
     setLoading(true);
-    let query = supabase
+    const { data } = await supabase
       .from("movie_reviews")
       .select("*, user:profiles(full_name)")
       .eq("movie_id", movieId)
       .order("created_at", { ascending: false });
-
-    if (!isAdmin) {
-      query = query.eq("is_approved", true);
-    }
-    const { data } = await query;
     // Defensive mapping: ensure user field always has { full_name }
     const safeData: Review[] = (data || []).map((r: any) => ({
       ...r,
@@ -44,7 +39,7 @@ export function useMovieReviews(movieId: number) {
     setLoading(false);
   };
 
-  // Fetch user's unapproved review if exists
+  // Fetch user's review if exists
   const fetchMyReview = async () => {
     if (!user) return setMyReview(null);
     const { data } = await supabase
@@ -67,7 +62,7 @@ export function useMovieReviews(movieId: number) {
     setLoading(true);
     await supabase
       .from("movie_reviews")
-      .upsert({ user_id: user.id, movie_id: movieId, review, is_approved: false });
+      .upsert({ user_id: user.id, movie_id: movieId, review, is_approved: true });
     await fetchReviews();
     await fetchMyReview();
     setLoading(false);

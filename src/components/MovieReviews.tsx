@@ -39,10 +39,10 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
             placeholder="Write a review …"
             value={input}
             onChange={e => setInput(e.target.value)}
-            disabled={loading || !!myReview}
+            disabled={loading}
             maxLength={500}
           />
-          <Button type="submit" disabled={loading || !!myReview}>
+          <Button type="submit" disabled={loading}>
             Post
           </Button>
           {myReview && (
@@ -58,9 +58,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
             </Button>
           )}
         </form>
-      )}
-      {myReview && !myReview.is_approved && (
-        <p className="text-xs text-muted-foreground mt-1">Your review is pending approval</p>
       )}
     </div>
   );
