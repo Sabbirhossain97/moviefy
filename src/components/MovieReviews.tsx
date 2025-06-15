@@ -41,10 +41,10 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   // Compute average rating from reviews
   const averageRating = useMemo(() => getAverageRating(reviews), [reviews]);
 
-  // Filtered reviews - currently just shows all, since "rating" not on review record.
-  // When/if rating is added per review, can enable this.
+  // For when ratings per review exist in schema: filter by rating.
+  // For now, simulate filter (does nothing, only UI).
   const filteredReviews = useMemo(() => {
-    // REMOVED: Filtering by rating (since it doesn't exist)
+    // TODO: Enable filtering when reviews have ratings field.
     return reviews;
   }, [reviews, filterRating]);
 
@@ -91,9 +91,8 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     setEditingInput("");
   };
 
-  // Review filter UI (if/when per-review rating exists, can enable)
-  // For now, hide.
-  // const ratingFilters = [5,4,3,2,1];
+  // --- Rating Filters UI ---
+  const ratingFilters = [5, 4, 3, 2, 1];
 
   return (
     <Card className="w-full max-w-xl mx-auto mt-8 mb-10 px-2 pb-6 pt-4 bg-gradient-to-t from-background/90 to-background/60 shadow-xl border-none">
@@ -127,6 +126,35 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
           </div>
         </div>
 
+        {/* Filters Row */}
+        <div className="mb-4 flex gap-2 items-center">
+          <span className="font-semibold text-xs text-muted-foreground mr-1">Filter:</span>
+          {ratingFilters.map((r) => (
+            <Button
+              key={r}
+              size="icon"
+              variant={filterRating === r ? "default" : "outline"}
+              className={`w-8 h-8 px-0 rounded-full border ${filterRating === r ? "bg-yellow-500 text-black border-yellow-600" : "text-yellow-500"}`}
+              onClick={() => setFilterRating(filterRating === r ? null : r)}
+              title={`Show only ${r}-star reviews`}
+              type="button"
+            >
+              {/* Unicode star filled for demo */}
+              <span className="text-lg">{r}★</span>
+            </Button>
+          ))}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-2 text-xs text-muted-foreground px-2"
+            onClick={() => setFilterRating(null)}
+            disabled={filterRating == null}
+            type="button"
+          >
+            Clear
+          </Button>
+        </div>
+
         {/* Show errors */}
         {error && (
           <div className="text-destructive text-sm mb-2">
@@ -152,6 +180,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
             refresh();
             toast({ title: "Review deleted." });
           }}
+          filterRating={filterRating}
         />
 
         {!user && (

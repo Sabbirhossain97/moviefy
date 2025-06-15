@@ -14,6 +14,7 @@ interface ReviewListProps {
   onStartEdit: (r: any) => void;
   onCancelEdit: () => void;
   onDelete: (id: string) => void;
+  filterRating?: number | null;
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({
@@ -28,31 +29,39 @@ const ReviewList: React.FC<ReviewListProps> = ({
   onStartEdit,
   onCancelEdit,
   onDelete,
-}) => (
-  <ul className="space-y-5 mb-4" data-testid="review-list">
-    {(!reviews || reviews.length === 0) && (
-      <div className="text-muted-foreground text-sm mb-4 py-6 text-center border rounded-lg bg-card/80">
-        No reviews yet. Be the first to review!
-      </div>
-    )}
-    {reviews.map((r) => (
-      <li key={r.id}>
-        <ReviewCard
-          review={r}
-          user={user}
-          editingReviewId={editingReviewId}
-          editingInput={editingInput}
-          setEditingReviewId={setEditingReviewId}
-          setEditingInput={setEditingInput}
-          loading={loading}
-          onEditSubmit={onEditSubmit}
-          onStartEdit={onStartEdit}
-          onCancelEdit={onCancelEdit}
-          onDelete={onDelete}
-        />
-      </li>
-    ))}
-  </ul>
-);
+  filterRating,
+}) => {
+  // TODO: When review has rating field, filter real reviews
+  const shownReviews = filterRating
+    ? reviews.filter((r) => r.rating === filterRating)
+    : reviews;
+
+  return (
+    <ul className="space-y-5 mb-4" data-testid="review-list">
+      {(!shownReviews || shownReviews.length === 0) && (
+        <div className="text-muted-foreground text-sm mb-4 py-6 text-center border rounded-lg bg-card/80">
+          No reviews yet. Be the first to review!
+        </div>
+      )}
+      {shownReviews.map((r) => (
+        <li key={r.id}>
+          <ReviewCard
+            review={r}
+            user={user}
+            editingReviewId={editingReviewId}
+            editingInput={editingInput}
+            setEditingReviewId={setEditingReviewId}
+            setEditingInput={setEditingInput}
+            loading={loading}
+            onEditSubmit={onEditSubmit}
+            onStartEdit={onStartEdit}
+            onCancelEdit={onCancelEdit}
+            onDelete={onDelete}
+          />
+        </li>
+      ))}
+    </ul>
+  );
+};
 
 export default ReviewList;

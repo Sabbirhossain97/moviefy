@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { User, Pencil, Trash2 } from "lucide-react";
@@ -32,8 +32,39 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   onCancelEdit,
   onDelete,
 }) => {
+  // Check ownership
+  const isOwner = user && r.user_id === user.id;
+
   return (
-    <div className={`flex gap-2 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative`}>
+    <div className="flex gap-2 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative">
+      {/* Owner action buttons in corner */}
+      {isOwner && editingReviewId !== r.id && (
+        <div className="absolute top-3 right-3 flex gap-2 z-10">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => onStartEdit(r)}
+            disabled={loading}
+            title="Edit review"
+            className="text-primary hover:bg-primary/10"
+          >
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            size="icon"
+            onClick={() => onDelete(r.id)}
+            disabled={loading}
+            title="Delete review"
+            className="ml-1"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+
       <Avatar className="w-10 h-10 shrink-0">
         {r.user?.avatar_url ? (
           <AvatarImage src={r.user?.avatar_url} alt="User avatar" />
@@ -69,35 +100,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           </div>
         ) : (
           <div className="text-sm mt-1 text-muted-foreground whitespace-pre-line">{r.review}</div>
-        )}
-        {/* Actions for review owner */}
-        {user && r.user_id === user.id && editingReviewId !== r.id && (
-          <div className="flex gap-2 mt-2 items-center">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => onStartEdit(r)}
-              disabled={loading}
-              title="Edit review"
-              className="text-primary hover:bg-primary/10"
-            >
-              <Pencil className="w-4 h-4 mr-1" />
-              Edit
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              onClick={() => onDelete(r.id)}
-              disabled={loading}
-              title="Delete review"
-              className="ml-1"
-            >
-              <Trash2 className="w-4 h-4 mr-1" />
-              Delete
-            </Button>
-          </div>
         )}
       </div>
     </div>
