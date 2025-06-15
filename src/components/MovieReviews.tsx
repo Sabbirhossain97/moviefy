@@ -1,4 +1,3 @@
-
 // Movie Reviews: Improved, showing all reviews publicly and in a beautiful style
 
 import React, { useState, useEffect } from "react";
@@ -14,7 +13,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   const { user } = useAuth();
   const [input, setInput] = useState("");
   const [justSubmitted, setJustSubmitted] = useState(false);
-  const { reviews, myReview, submitReview, deleteReview, loading, refresh } = useMovieReviews(movieId);
+  const { reviews, myReview, submitReview, deleteReview, loading, error, refresh } = useMovieReviews(movieId);
 
   useEffect(() => {
     refresh();
@@ -38,12 +37,16 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
         <h3 className="text-lg font-semibold">Reviews</h3>
         <span className="text-muted-foreground text-xs">{reviews.length} reviews</span>
       </div>
-      {/* Movie rating summary */}
       <div className="mb-2">
         <MovieRating movieId={movieId} />
       </div>
+      {error && (
+        <div className="text-destructive text-sm mb-2">
+          Failed to load reviews: {error}
+        </div>
+      )}
       <ul className="space-y-4 mb-4" data-testid="review-list">
-        {reviews.length === 0 && (
+        {(!reviews || reviews.length === 0) && !error && (
           <div className="text-muted-foreground text-sm mb-4">No reviews yet. Be the first to review!</div>
         )}
         {reviews.map((r) => (
@@ -115,4 +118,3 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     </div>
   );
 }
-
