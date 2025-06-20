@@ -15,7 +15,7 @@ interface MovieCardProps {
 
 const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
   const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
-  const posterUrl = movie.poster_path 
+  const posterUrl = movie.poster_path
     ? `${IMAGE_SIZES.poster.medium}${movie.poster_path}`
     : "/placeholder.svg";
   const cardSizes = {
@@ -25,7 +25,7 @@ const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
   };
 
   return (
-    <Card className={`overflow-hidden movie-card-hover ${cardSizes[size]} gradient-card border-border/50`}>
+    <Card className={`overflow-hidden movie-card-hover pb-2 gradient-card border-border/50`}>
       <div className="relative aspect-[2/3] overflow-hidden group">
         <Link to={`/movie/${movie.id}`}>
           <img
@@ -35,10 +35,9 @@ const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
             loading="lazy"
           />
         </Link>
-        {/* Wishlist icon button appears on hover, styled as pure icon */}
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-          <WishlistButton 
-            movie={movie} 
+          <WishlistButton
+            movie={movie}
             size="icon"
             variant="ghost"
             showText={false}
@@ -54,7 +53,7 @@ const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
       <CardContent className="p-3 space-y-3">
         <div className="h-[40px] flex flex-col justify-between">
           <Link to={`/movie/${movie.id}`}>
-            <h3 
+            <h3
               className="font-semibold text-sm line-clamp-2 leading-tight hover:underline"
               title={movie.title}
             >

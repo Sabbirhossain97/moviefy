@@ -34,7 +34,7 @@ export const TrailerDialog: React.FC<TrailerDialogProps> = ({
           </button>
           <iframe
             width="560"
-            height="315"
+            height="500"
             src={`https://www.youtube.com/embed/${videoKey}?autoplay=1`}
             allow="autoplay; encrypted-media"
             allowFullScreen

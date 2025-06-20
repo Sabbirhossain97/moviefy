@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
 import ReviewInput from "./ReviewInput";
 import ReviewList from "./ReviewList";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,9 +15,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { useMovieRatings } from "@/hooks/useMovieRatings";
 import { toast } from "@/hooks/use-toast";
 
-// Helper to calculate average rating from reviews
 function getAverageRating(reviews) {
-  // If ratings are not on reviews, this will always return null/undefined.
   return null;
 }
 
@@ -39,7 +35,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     // eslint-disable-next-line
   }, [movieId, user]);
 
-  // Filtering and sorting logic
   const filteredReviews = useMemo(() => {
     let filtered = reviews;
     filtered = [...filtered].sort((a, b) => {
@@ -52,7 +47,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     return filtered;
   }, [reviews, sortOrder]);
 
-  // Move myReview to top of list if not filtered out
   let displayReviews = [...filteredReviews];
   if (user && myReview) {
     displayReviews = [
@@ -61,13 +55,11 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     ];
   }
 
-  // Compute user's most recent review for rating chip logic
   const latestUserReviewId =
     user && displayReviews.filter(r => r.user_id === user.id).length
       ? displayReviews.filter(r => r.user_id === user.id)[0].id
       : null;
 
-  // List of ratings for filter (disabled for now, see above logic)
   const filterOptions = [
     { label: "All ratings", value: null },
     { label: "5 stars", value: "5" },
@@ -77,13 +69,12 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
     { label: "1 star", value: "1" }
   ];
 
-  // We'll create a single "currentUserInfo" prop that represents the logged-in user's info (merge user+profile as needed)
   const currentUserInfo = user
     ? {
-        ...user,
-        full_name: profile?.full_name || user.email || "User",
-        avatar_url: profile?.avatar_url || null
-      }
+      ...user,
+      full_name: profile?.full_name || user.email || "User",
+      avatar_url: profile?.avatar_url || null
+    }
     : null;
 
   // --- Handlers ---
@@ -116,16 +107,15 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   };
 
   return (
-    <div className="w-full max-w-3xl"> {/* For a little width constraining, remove Card */}
+    <div className="w-full max-w-3xl">
       <h2 className="text-2xl font-bold mb-2">Reviews</h2>
       <div className="mb-4 flex gap-3 items-center flex-wrap">
-        {/* Sort order dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               type="button"
               variant="outline"
-              className="text-xs px-3 py-1 min-w-[120px]"
+              className="text-xs px-3 h-8 py-1 min-w-[120px] bg-card/80"
             >
               Sort: {sortOrder === "newest" ? "Newest" : "Oldest"}
             </Button>
@@ -152,7 +142,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
           value={filterRating !== null ? String(filterRating) : "all"}
           onValueChange={v => setFilterRating(v === "all" ? null : Number(v))}
         >
-          <SelectTrigger className="w-[140px] text-xs h-8 bg-background">
+          <SelectTrigger className="w-[140px] text-xs h-8 bg-card/80">
             <SelectValue placeholder="Filter by rating" />
           </SelectTrigger>
           <SelectContent className="z-[999] bg-background">

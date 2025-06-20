@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useMovieReminders } from "@/hooks/useMovieReminders";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ export default function MovieReminderButton({
   if (!user) return null;
 
   return (
-    <div className="flex items-center gap-2 mt-2">
+    <div className="flex items-center gap-2">
       {hasReminder ? (
         <Button
           variant="secondary"

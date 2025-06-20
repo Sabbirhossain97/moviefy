@@ -16,6 +16,7 @@ import AIRecommendations from "./pages/AIRecommendations";
 import Wishlist from "./pages/Wishlist";
 import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
+import OTTUpdates from "./pages/OTTUpdates";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/genre/:id" element={<GenrePage />} />
             <Route path="/genres" element={<GenresList />} />
             <Route path="/movies/:category" element={<MovieCategory />} />
+            <Route path="/ott-updates" element={<OTTUpdates />} />
             <Route path="/recommendations" element={<AIRecommendations />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/profile" element={<Profile />} />

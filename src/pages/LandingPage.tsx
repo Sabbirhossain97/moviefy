@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Movie, Genre } from "@/services/api";
 import Header from "@/components/Header";
@@ -63,7 +63,6 @@ const LandingPage = () => {
       <Header genres={genres} />
       
       <main>
-        {/* Hero Section */}
         <section className="relative pt-24 pb-32 md:pt-32 md:pb-40 text-center bg-gradient-to-b from-background via-black/80 to-black">
           <div className="absolute inset-0 bg-[url('https://image.tmdb.org/t/p/original/h3X1_4t2Yw5Wl9yYI22A3A5iIhv.jpg')] bg-cover bg-center opacity-20"></div>
           <div className="container relative">

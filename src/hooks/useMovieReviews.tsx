@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,7 +35,6 @@ export function useMovieReviews(movieId: number) {
         return;
       }
 
-      // Ensure user info always has { full_name, avatar_url }
       const safeData: Review[] = (data || []).map((r: any) => ({
         ...r,
         user: r.user && typeof r.user === "object"
@@ -44,7 +42,6 @@ export function useMovieReviews(movieId: number) {
           : { full_name: null, avatar_url: null }
       }));
       setReviews(safeData);
-      console.log("Fetched reviews for movie", movieId, safeData);
     } catch (err: any) {
       setError(err.message || "Error fetching reviews.");
       setReviews([]);

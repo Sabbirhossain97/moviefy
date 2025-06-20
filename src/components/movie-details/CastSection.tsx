@@ -18,7 +18,7 @@ export const CastSection: React.FC<CastSectionProps> = ({ cast }) => {
   return (
     <section className="container mt-12 mb-2">
       <h2 className="text-2xl font-semibold mb-2">Cast</h2>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-5 mt-4">
         {cast.slice(0, 10).map((person) => (
           <div key={person.id} className="flex flex-col items-center">
             {person.profile_path ? (

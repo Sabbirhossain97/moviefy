@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
 import { Loader2, Sparkles, Search } from "lucide-react";
 import { geminiAI } from "@/services/geminiAI";
 import { api, Movie } from "@/services/api";

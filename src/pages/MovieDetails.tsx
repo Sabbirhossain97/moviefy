@@ -2,18 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { api, Movie, MovieVideo, IMAGE_SIZES, Cast } from '@/services/api';
 import Header from '@/components/Header';
-import { Badge } from "@/components/ui/badge";
-import { WishlistButton } from '@/components/WishlistButton';
 import MovieReviews from "@/components/MovieReviews";
-import MovieReviewAdminPanel from "@/components/MovieReviewAdminPanel";
-import MovieRating from "@/components/MovieRating";
 import MovieBackdrop from "@/components/movie-details/MovieBackdrop";
 import MovieDetailsHeader from "@/components/movie-details/MovieDetailsHeader";
 import { CastSection } from "@/components/movie-details/CastSection";
 import { SimilarMoviesSection } from "@/components/movie-details/SimilarMoviesSection";
-import { Film } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import MovieReminderButton from "@/components/MovieReminderButton";
 import { TrailerDialog } from "@/components/movie-details/TrailerDialog";
 
 interface CreditsResponse {
@@ -118,11 +111,8 @@ const MovieDetails = () => {
   return (
     <div className="min-h-screen gradient-bg relative">
       <Header />
-      {/* Movie Backdrop */}
       <MovieBackdrop backdropUrl={backdropUrl} title={movie.title} />
-
-      {/* Main Movie Card and Info Row */}
-      <main className="container relative z-20 max-w-6xl px-4 md:px-6 -mt-24">
+      <main className="container relative z-20 max-w-6xl px-4 md:px-6 -mt-48">
         <MovieDetailsHeader
           movie={movie}
           posterUrl={posterUrl}
@@ -136,30 +126,24 @@ const MovieDetails = () => {
           }}
           releaseYear={releaseYear}
           director={director}
-          reviewSectionRef={reviewSectionRef}
         />
       </main>
 
-      {/* Trailer - detached as modal */}
       <TrailerDialog
         show={showTrailer && videos.length > 0}
         onClose={() => setShowTrailer(false)}
         videoKey={videos.length > 0 ? videos[0].key : ""}
       />
 
-      {/* Cast Section */}
       <CastSection cast={credits?.cast || []} />
 
-      {/* Similar movies */}
       <SimilarMoviesSection movies={similarMovies} />
 
-      {/* Reviews section (aligned container) */}
       <section
         ref={reviewSectionRef}
-        className="container relative z-20 max-w-6xl px-4 md:px-6 my-12"
+        className="container relative z-20 px-4 md:px-6 my-12"
       >
         <MovieReviews movieId={movie.id} />
-        <MovieReviewAdminPanel movieId={movie.id} />
       </section>
     </div>
   );

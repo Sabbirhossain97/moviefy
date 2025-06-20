@@ -5,7 +5,7 @@ import { User, Pencil } from "lucide-react";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea"; // <-- Import Textarea
+import { Textarea } from "@/components/ui/textarea";
 
 interface ReviewCardProps {
   review: any;

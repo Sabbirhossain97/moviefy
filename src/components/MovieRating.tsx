@@ -1,5 +1,3 @@
-
-import React from "react";
 import { useMovieRatings } from "@/hooks/useMovieRatings";
 import { useAuth } from "@/hooks/useAuth";
 import { Star } from "lucide-react";

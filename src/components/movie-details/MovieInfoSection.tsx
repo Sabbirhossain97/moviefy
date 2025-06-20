@@ -27,14 +27,13 @@ export const MovieInfoSection: React.FC<MovieInfoSectionProps> = ({
         <h2 className="text-lg font-bold mb-0">Overview</h2>
         <p className="text-gray-300">{overview}</p>
       </div>
-      {/* Director */}
-      <div>
-        <span className="font-bold text-white block mb-0.5">Director</span>
-        <span className="text-gray-300">{director}</span>
-      </div>
-      {/* Budget & Revenue */}
+    
       {(!!budget || !!revenue) && (
         <div className="flex flex-row gap-16 mt-2 mb-1">
+          <div>
+            <span className="font-bold text-white block mb-0.5">Director</span>
+            <span className="text-gray-300">{director}</span>
+          </div>
           {budget !== undefined && (
             <div>
               <span className="block font-bold text-white mb-0.5">Budget</span>
@@ -49,7 +48,6 @@ export const MovieInfoSection: React.FC<MovieInfoSectionProps> = ({
           )}
         </div>
       )}
-      {/* Production */}
       {productionCompanies && productionCompanies.length > 0 && (
         <div>
           <span className="font-bold text-white block mb-0.5">Production</span>

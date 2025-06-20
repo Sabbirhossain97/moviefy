@@ -1,10 +1,8 @@
 
-// API key and base URLs
-const API_KEY = "fa5b2122dd56802fcffc284b2454e64b";
-const BASE_URL = "https://api.themoviedb.org/3";
-const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
+const API_KEY = import.meta.env.VITE_API_KEY;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
-// Image size options
 export const IMAGE_SIZES = {
   poster: {
     small: `${IMAGE_BASE_URL}/w185`,
@@ -26,38 +24,35 @@ export const IMAGE_SIZES = {
   },
 };
 
-// Fetch options with API key
 const fetchOptions = {
   headers: {
     "Content-Type": "application/json",
   },
 };
 
-// Helper function to build URLs with API key
 const buildUrl = (endpoint: string, queryParams?: Record<string, string | number | boolean>) => {
   const url = new URL(`${BASE_URL}${endpoint}`);
   url.searchParams.append("api_key", API_KEY);
-  
+
   if (queryParams) {
     Object.entries(queryParams).forEach(([key, value]) => {
       url.searchParams.append(key, String(value));
     });
   }
-  
+
   return url.toString();
 };
 
-// Generic fetch function with error handling
 const fetchFromApi = async <T>(endpoint: string, queryParams?: Record<string, string | number | boolean>): Promise<T> => {
   const url = buildUrl(endpoint, queryParams);
-  
+
   try {
     const response = await fetch(url, fetchOptions);
-    
+
     if (!response.ok) {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
-    
+
     return await response.json() as T;
   } catch (error) {
     console.error("API fetch error:", error);
@@ -65,7 +60,6 @@ const fetchFromApi = async <T>(endpoint: string, queryParams?: Record<string, st
   }
 };
 
-// Movie interfaces
 export interface Movie {
   id: number;
   title: string;
@@ -138,49 +132,37 @@ export interface ProductionCompany {
   origin_country: string;
 }
 
-// API functions
 export const api = {
-  // Get trending movies for the day or week
-  getTrending: (timeWindow: "day" | "week" = "day") => 
+  getTrending: (timeWindow: "day" | "week" = "day") =>
     fetchFromApi<MoviesResponse>(`/trending/movie/${timeWindow}`),
-  
-  // Get popular movies
-  getPopular: (page: number = 1) => 
+
+  getPopular: (page: number = 1) =>
     fetchFromApi<MoviesResponse>("/movie/popular", { page }),
-  
-  // Get top rated movies
-  getTopRated: (page: number = 1) => 
+
+  getTopRated: (page: number = 1) =>
     fetchFromApi<MoviesResponse>("/movie/top_rated", { page }),
-  
-  // Get upcoming movies
-  getUpcoming: (page: number = 1) => 
+
+  getUpcoming: (page: number = 1) =>
     fetchFromApi<MoviesResponse>("/movie/upcoming", { page }),
-  
-  // Get movie details
-  getMovie: (id: number) => 
+
+  getMovie: (id: number) =>
     fetchFromApi<Movie>(`/movie/${id}`),
-  
-  // Get movie credits (cast & crew)
-  getMovieCredits: (id: number) => 
+
+  getMovieCredits: (id: number) =>
     fetchFromApi<Credit>(`/movie/${id}/credits`),
-  
-  // Get similar movies
-  getSimilarMovies: (id: number, page: number = 1) => 
+
+  getSimilarMovies: (id: number, page: number = 1) =>
     fetchFromApi<MoviesResponse>(`/movie/${id}/similar`, { page }),
-  
-  // Get movie videos
-  getMovieVideos: (id: number) => 
+
+  getMovieVideos: (id: number) =>
     fetchFromApi<{ results: MovieVideo[] }>(`/movie/${id}/videos`),
-  
-  // Search movies
-  searchMovies: (query: string, page: number = 1) => 
+
+  searchMovies: (query: string, page: number = 1) =>
     fetchFromApi<MoviesResponse>("/search/movie", { query, page }),
-  
-  // Get movie genres
-  getGenres: () => 
+
+  getGenres: () =>
     fetchFromApi<GenresResponse>("/genre/movie/list"),
-  
-  // Get movies by genre
-  getMoviesByGenre: (genreId: number, page: number = 1) => 
+
+  getMoviesByGenre: (genreId: number, page: number = 1) =>
     fetchFromApi<MoviesResponse>("/discover/movie", { with_genres: genreId, page }),
 };

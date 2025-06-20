@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Movie, IMAGE_SIZES } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -19,24 +19,17 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
 
   const sliderRef = useRef<HTMLDivElement | null>(null);
 
-  // Drag-related
-  const isDragging = useRef(false);
-  const dragStartX = useRef(0);
-  const dragStartScroll = useRef(0);
 
-  // Validate movies
-  const validMovies = movies.filter((movie): movie is Movie => 
+  const validMovies = movies.filter((movie): movie is Movie =>
     movie != null && typeof movie === 'object' && 'id' in movie && 'title' in movie
   );
   if (validMovies.length === 0) return null;
 
-  // Arrow navigation
   const scrollLeft = () => {
     const container = sliderRef.current;
     if (container) {
       const newPosition = Math.max(0, container.scrollLeft - SCROLL_STEP);
       container.scrollTo({ left: newPosition, behavior: 'smooth' });
-      // In 'scroll' event handler we will updateScrollState, no need to set scrollPosition here.
     }
   };
   const scrollRight = () => {
@@ -45,11 +38,9 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
       const maxScroll = container.scrollWidth - container.clientWidth;
       const newPosition = Math.min(maxScroll, container.scrollLeft + SCROLL_STEP);
       container.scrollTo({ left: newPosition, behavior: 'smooth' });
-      // In 'scroll' event handler we will updateScrollState, no need to set scrollPosition here.
     }
   };
 
-  // Track position & whether at start/end
   const updateScrollState = () => {
     const container = sliderRef.current;
     if (container) {
@@ -60,66 +51,19 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
   };
 
   useEffect(() => {
-    // On mount/resize: check if at end, in case items fit perfectly.
     updateScrollState();
     const handleResize = () => updateScrollState();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Drag/Swipe Scroll Logic
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    isDragging.current = true;
-    dragStartX.current = e.pageX;
-    dragStartScroll.current = sliderRef.current?.scrollLeft ?? 0;
-    document.body.style.userSelect = "none";
-  };
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging.current || !sliderRef.current) return;
-    const dx = e.pageX - dragStartX.current;
-    sliderRef.current.scrollLeft = dragStartScroll.current - dx;
-  };
-  const handleMouseUp = () => {
-    isDragging.current = false;
-    document.body.style.userSelect = "";
-  };
 
-  useEffect(() => {
-    // Attach global move/up when dragging
-    if (isDragging.current) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-    }
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-    // eslint-disable-next-line
-  }, [isDragging.current]);
-
-  // Touch events
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    isDragging.current = true;
-    dragStartX.current = e.touches[0].pageX;
-    dragStartScroll.current = sliderRef.current?.scrollLeft ?? 0;
-  };
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!isDragging.current || !sliderRef.current) return;
-    const dx = e.touches[0].pageX - dragStartX.current;
-    sliderRef.current.scrollLeft = dragStartScroll.current - dx;
-  };
-  const handleTouchEnd = () => {
-    isDragging.current = false;
-  };
-
-  // On scroll: update state for arrows
   const handleScroll = () => updateScrollState();
 
   return (
     <section className={`relative ${className}`}>
       {title && <h2 className="text-2xl font-semibold mb-6">{title}</h2>}
       <div className="relative group select-none">
-        {/* Only show left scroll button if not at the very start */}
         {scrollPosition > 0 && (
           <Button
             variant="outline"
@@ -136,17 +80,13 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
         <div
           ref={sliderRef}
           id={`slider-${title.replace(/\s+/g, '-')}`}
-          className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 cursor-grab active:cursor-grabbing"
+          className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
           onScroll={handleScroll}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
           draggable={false}
         >
           {validMovies.map((movie) => (
-            <div key={movie.id} className="flex-shrink-0 w-[240px] h-[300px]">
+            <div key={movie.id} className="flex-shrink-0 w-[240px] h-full">
               <Link to={`/movie/${movie.id}`} className="block">
                 <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50 h-full">
                   <div className="overflow-hidden h-full">
@@ -161,7 +101,7 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
                     />
                   </div>
                   <div className="p-3 h-[60px] flex flex-col justify-between">
-                    <h3 
+                    <h3
                       className="font-medium text-sm line-clamp-2 leading-tight"
                       title={movie.title}
                     >
@@ -188,7 +128,6 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
             </div>
           ))}
         </div>
-        {/* Only show right scroll button if not at the very end */}
         {!atEnd && (
           <Button
             variant="outline"

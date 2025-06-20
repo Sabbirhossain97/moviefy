@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,6 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch genres once
   useEffect(() => {
     let isMounted = true;
     if (propGenres.length === 0 && genres.length === 0) {
@@ -43,7 +42,6 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
       setGenres(propGenres);
     }
     return () => { isMounted = false; };
-    // eslint-disable-next-line
   }, [propGenres]);
 
   useEffect(() => {
@@ -54,7 +52,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
   const saveRecentSearch = (q: string) => {
     let recent: string[] = JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || "[]");
     recent = recent.filter((item) => item !== q);
-    recent.unshift(q); // add to top
+    recent.unshift(q);
     if (recent.length > 7) recent.pop();
     localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(recent));
     setSuggestions(recent);
@@ -77,12 +75,10 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
     navigate(`/search?query=${encodeURIComponent(q)}`);
   };
 
-  // Show dropdown when input is focused and has suggestions
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-8">
-          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
             <div className="relative">
               <Video className="h-7 w-7 text-movie-primary transition-transform group-hover:scale-110" />
@@ -92,8 +88,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
               Moviefy
             </span>
           </Link>
-          
-          {/* Navigation */}
+
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList className="space-x-1">
               <NavigationMenuItem>
@@ -103,7 +98,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
-              
+
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent">
                   Categories
@@ -155,12 +150,18 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link to="/ott-updates">
+                  <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                    OTT Updates
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-        
+
         <div className="flex items-center gap-4">
-          {/* Search */}
           <form onSubmit={handleSearch} className="relative w-full max-w-sm">
             <Input
               ref={inputRef}
@@ -218,8 +219,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
               </div>
             )}
           </form>
-          
-          {/* User Menu */}
+
           <UserMenu />
         </div>
       </div>

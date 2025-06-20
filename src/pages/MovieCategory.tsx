@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, Movie } from "@/services/api";
 import Header from "@/components/Header";
@@ -60,7 +59,7 @@ const MovieCategory = () => {
 
   const loadMore = async () => {
     if (page >= totalPages) return;
-    
+
     try {
       setLoading(true);
       const nextPage = page + 1;
@@ -93,12 +92,12 @@ const MovieCategory = () => {
   return (
     <>
       <Header />
-      
+
       <main className="container py-8">
         <h1 className="text-3xl font-bold mb-6">
           {categoryInfo.title}
         </h1>
-        
+
         {movies.length === 0 ? (
           <div className="text-center py-16">
             <h2 className="text-xl font-medium mb-2">No movies found</h2>
@@ -109,18 +108,18 @@ const MovieCategory = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
               {movies.map(movie => (
                 <div key={movie.id}>
                   <MovieCard movie={movie} />
                 </div>
               ))}
             </div>
-            
+
             {page < totalPages && (
               <div className="flex justify-center mt-10">
-                <Button 
-                  onClick={loadMore} 
+                <Button
+                  onClick={loadMore}
                   disabled={loading}
                   variant="outline"
                   className="min-w-[150px]"

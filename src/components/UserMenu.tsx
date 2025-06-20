@@ -30,8 +30,7 @@ export const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="flex items-center px-2 gap-2">
-          {/* Show avatar if available */}
+        <Button variant="outline" size="sm" className="flex items-center px-2 h-10 gap-2">
           <Avatar className="w-7 h-7 mr-2">
             {profile?.avatar_url ? (
               <AvatarImage src={profile.avatar_url} alt={profile.full_name || "User"} />
@@ -45,8 +44,13 @@ export const UserMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64 max-w-xs break-words">
-        <div className="px-2 py-1.5 text-sm font-medium truncate max-w-full" title={user.email}>
-          {user.email}
+        <div className='py-1.5'>
+          <div className="px-2 text-sm font-medium truncate max-w-full" title={user.email}>
+            {profile?.full_name}
+          </div>
+          <div className="px-2 text-gray-400 text-sm font-medium truncate max-w-full" title={user.email}>
+            {user.email}
+          </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
