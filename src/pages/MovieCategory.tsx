@@ -77,7 +77,7 @@ const MovieCategory = () => {
     return (
       <>
         <Header />
-        <main className="container py-8">
+        <main className="container py-8 px-4">
           <div className="flex justify-center py-12">
             <div className="animate-pulse flex flex-col items-center">
               <div className="h-12 w-12 rounded-full bg-muted mb-4"></div>
@@ -92,8 +92,7 @@ const MovieCategory = () => {
   return (
     <>
       <Header />
-
-      <main className="container py-8">
+      <main className="container py-8 px-4">
         <h1 className="text-3xl font-bold mb-6">
           {categoryInfo.title}
         </h1>

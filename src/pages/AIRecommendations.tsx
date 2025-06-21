@@ -1,5 +1,3 @@
-
-import React from "react";
 import Header from "@/components/Header";
 import AIMovieSearch from "@/components/AIMovieSearch";
 import { Brain, Sparkles } from "lucide-react";
@@ -8,8 +6,7 @@ const AIRecommendations = () => {
   return (
     <div className="min-h-screen gradient-bg">
       <Header />
-      
-      <main className="container py-8">
+      <main className="container py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -23,7 +20,6 @@ const AIRecommendations = () => {
               Describe the perfect movie for your mood and let AI find it for you
             </p>
           </div>
-
           <AIMovieSearch />
         </div>
       </main>

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,21 +20,17 @@ const AIMovieSearch = () => {
 
     setLoading(true);
     try {
-      // Get AI recommendations
       const aiResponse = await geminiAI.getMovieRecommendations({
         userInput: userInput.trim()
       });
 
-      console.log("AI Response:", aiResponse);
-
-      // Search for each recommended movie
       const moviePromises = aiResponse.recommendations.map(async (title) => {
         try {
           console.log(`Searching for movie: ${title}`);
           const searchResult = await api.searchMovies(title, 1);
           const movie = searchResult.results[0];
           console.log(`Found movie for "${title}":`, movie);
-          return movie || null; // Return null if no movie found
+          return movie || null;
         } catch (error) {
           console.error(`Error searching for movie: ${title}`, error);
           return null;
@@ -43,18 +38,14 @@ const AIMovieSearch = () => {
       });
 
       const movieResults = await Promise.all(moviePromises);
-      console.log("All movie results:", movieResults);
-      
-      // Filter out null/undefined values and ensure valid movie objects
-      const validMovies = movieResults.filter((movie): movie is Movie => 
-        movie != null && 
-        typeof movie === 'object' && 
-        'id' in movie && 
+
+      const validMovies = movieResults.filter((movie): movie is Movie =>
+        movie != null &&
+        typeof movie === 'object' &&
+        'id' in movie &&
         'title' in movie &&
         typeof movie.id === 'number'
       );
-
-      console.log("Valid movies after filtering:", validMovies);
 
       setRecommendations(validMovies);
       setReasoning(aiResponse.reasoning);
@@ -82,7 +73,7 @@ const AIMovieSearch = () => {
           <Sparkles className="h-5 w-5 text-yellow-500" />
           <h2 className="text-xl font-semibold">AI Movie Recommendations</h2>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="movie-description" className="block text-sm font-medium mb-2">
@@ -96,9 +87,9 @@ const AIMovieSearch = () => {
               className="min-h-[100px] gradient-muted border-border/50"
             />
           </div>
-          
-          <Button 
-            type="submit" 
+
+          <Button
+            type="submit"
             disabled={loading || !userInput.trim()}
             className="w-full gradient-primary hover:opacity-90 transition-opacity"
           >
@@ -125,7 +116,7 @@ const AIMovieSearch = () => {
       )}
 
       {recommendations.length > 0 && (
-        <MovieSlider 
+        <MovieSlider
           title="AI Recommended Movies"
           movies={recommendations}
         />

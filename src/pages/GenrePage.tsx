@@ -79,7 +79,7 @@ const GenrePage = () => {
     return (
       <>
         <Header />
-        <main className="container py-8">
+        <main className="container py-8 px-4">
           <div className="flex justify-center py-12">
             <div className="animate-pulse flex flex-col items-center">
               <div className="h-12 w-12 rounded-full bg-muted mb-4"></div>
@@ -95,7 +95,7 @@ const GenrePage = () => {
     <>
       <Header />
       
-      <main className="container py-8">
+      <main className="container py-8 px-4">
         <h1 className="text-3xl font-bold mb-6">
           {genre ? `${genreTitle}` : "Genre Not Found"}
         </h1>
@@ -110,7 +110,7 @@ const GenrePage = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
               {movies.map(movie => (
                 <div key={movie.id}>
                   <MovieCard movie={movie} />

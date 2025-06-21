@@ -62,7 +62,7 @@ const Search = () => {
     <>
       <Header />
 
-      <main className="container py-8">
+      <main className="container py-8 px-4">
         <h1 className="text-3xl font-bold mb-6">
           Search results for: <span className="text-movie-primary">"{query}"</span>
         </h1>
@@ -84,7 +84,7 @@ const Search = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            <div className="grid [@media(max-width:400px)]:grid-cols-1 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
               {movies.map(movie => (
                 <div key={movie.id}>
                   <MovieCard movie={movie} />

@@ -35,7 +35,7 @@ function UpdateCard({ update }: { update: OTTUpdate }) {
                 >
                 </iframe>
             </div>
-            <div className="p-6">
+            <div className="p-4">
                 <div className="flex items-center justify-between mb-3">
                     <h3 className="text-md font-bold line-clamp-2 transition-colors flex-1 mr-2">
                         {update.title}
@@ -47,11 +47,11 @@ function UpdateCard({ update }: { update: OTTUpdate }) {
                 >
                     {update.releasePlatform}
                 </div>
-                <div className="mt-8 p-3 rounded-lg border">
+                <div className="mt-4 p-3 rounded-lg border">
                     <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-teal-600" />
-                        <span className="text-sm font-semibold text-teal-500">Release Date:</span>
-                        <span className="text-sm text-teal-400">{update.releaseDate}</span>
+                        <span className="text-sm font-semibold text-teal-500 whitespace-nowrap">Release Date:</span>
+                        <span className="text-sm text-teal-400 whitespace-nowrap">{update.releaseDate}</span>
                     </div>
                 </div>
             </div>

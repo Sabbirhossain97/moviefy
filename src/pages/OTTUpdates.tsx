@@ -17,7 +17,7 @@ const fetchOptions = {
 
 function OTTUpdates() {
     const [ottData, setOttData] = useState([])
-    const url = "https://ott-scraper-backend-production.up.railway.app/api/ott"
+    const url = import.meta.env.VITE_OTT_SCRAPE_URL
     const fetchOTT = async () => {
         try {
             const response = await fetch(url, fetchOptions);
@@ -37,15 +37,14 @@ function OTTUpdates() {
         fetchOTT()
     }, [])
 
-
     return (
         <>
             <Header />
-            <main className="container py-8">
+            <main className="container py-8 px-4">
                 <h1 className="text-3xl font-bold mb-6">
                     OTT updates this week
                 </h1>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     {ottData.map((update: OTTUpdate, index: number) => (
                         <UpdateCard key={index} update={update} />
                     ))}

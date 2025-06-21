@@ -1,6 +1,6 @@
 
-const GEMINI_API_KEY = "AIzaSyASzz-NrURqsdqRfh640Jt87mD4yYWdsL0";
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_URL = import.meta.env.VITE_GEMINI_API_URL
 
 export interface AIRecommendationRequest {
   userInput: string;
@@ -62,7 +62,6 @@ Only recommend real movies that exist. Make sure the movie titles are exact and 
       const data = await response.json();
       const text = data.candidates[0].content.parts[0].text;
       
-      // Extract JSON from the response
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         throw new Error('Invalid response format from AI');
