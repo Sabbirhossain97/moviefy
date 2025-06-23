@@ -10,7 +10,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { Search, Video, Brain, AlignJustify, X } from "lucide-react";
+import { Search, Video, Brain, AlignJustify } from "lucide-react";
 import { Genre, api } from "@/services/api";
 import { UserMenu } from "@/components/UserMenu";
 import TopNavbar from "./TopNavbar";
@@ -132,48 +132,88 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
             </Link>
             <NavigationMenu className="[@media(max-width:1180px)]:hidden flex">
               <NavigationMenuList className="space-x-1">
-                <NavigationMenuItem className="hidden lg:block">
+                <NavigationMenuItem >
                   <NavigationMenuTrigger className="bg-transparent hover:text-red-500">
-                    Categories
+                    Movies
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-4 w-[450px]">
-                      {genres.slice(0, 12).map((genre) => (
+                    <div className="grid grid-cols-1 gap-2 p-4 w-[220px]">
+                      {[
+                        {
+                          label: "Trending Now",
+                          path: "/movies/trending-now"
+                        },
+                        {
+                          label: "Popular",
+                          path: "/movies/popular"
+                        },
+                        {
+                          label: "Top Rated",
+                          path: "/movies/top-rated"
+                        },
+                        {
+                          label: "Upcoming",
+                          path: "/movies/upcoming"
+                        }
+                      ].map((movie, index) => (
                         <Link
-                          key={genre.id}
-                          to={`/genre/${genre.id}`}
+                          key={index}
+                          to={movie.path}
                           className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground transition-colors"
                         >
-                          <div className="text-sm font-medium">{genre.name}</div>
+                          <div className="text-sm font-medium">{movie.label}</div>
                         </Link>
                       ))}
-                      {genres.length > 12 && (
-                        <Link
-                          to="/genres"
-                          className="block select-none rounded-md p-3 text-movie-primary font-medium hover:bg-accent transition-colors"
-                        >
-                          View all →
-                        </Link>
-                      )}
+                      <Link
+                        to="/genres"
+                        className="block select-none rounded-md p-3 text-movie-primary font-medium hover:bg-accent transition-colors"
+                      >
+                        Browse by genres →
+                      </Link>
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem >
-                  <Link to="/movies/popular">
-                    <NavigationMenuLink className="group hover:text-red-500 inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
-                      Popular
-                    </NavigationMenuLink>
-                  </Link>
+                  <NavigationMenuTrigger className="bg-transparent hover:text-red-500">
+                    TV Series
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid grid-cols-1 gap-2 p-4 w-[220px]">
+                      {[
+                        {
+                          label: "Airing Today",
+                          path: "/tv/airing-today"
+                        },
+                        {
+                          label: "On The Air",
+                          path: "/tv/on-the-air"
+                        },
+                        {
+                          label: "Popular",
+                          path: "/tv/popular"
+                        },
+                        {
+                          label: "Top Rated",
+                          path: "/tv/top-rated"
+                        }
+                      ].map((tv_series, index) => (
+                        <Link
+                          key={index}
+                          to={tv_series.path}
+                          className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground transition-colors"
+                        >
+                          <div className="text-sm font-medium">{tv_series.label}</div>
+                        </Link>
+                      ))}
+                      <Link
+                        to="/genres"
+                        className="block select-none rounded-md p-3 text-movie-primary font-medium hover:bg-accent transition-colors"
+                      >
+                        Browse by genres →
+                      </Link>
+                    </div>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
-
-                <NavigationMenuItem >
-                  <Link to="/movies/top-rated">
-                    <NavigationMenuLink className="group hover:text-red-500 inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
-                      Top Rated
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-
                 <NavigationMenuItem >
                   <Link to="/recommendations">
                     <NavigationMenuLink className="group hover:text-red-500 inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
@@ -223,6 +263,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
               />
               {searchQuery && (
                 <button
+                  type="button"
                   onClick={() => {
                     setSearchQuery("");
                     inputRef.current?.focus();

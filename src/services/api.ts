@@ -75,7 +75,31 @@ export interface Movie {
   status?: string;
   revenue?: number;
   budget?: number;
+  original_language: string;
   production_companies?: ProductionCompany[];
+  production_countries?: ProductionCountries[];
+  spoken_languages?: SpokenLanguages[]
+}
+
+export interface TVSeries {
+  id: number;
+  name: string;
+  original_name: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  overview: string;
+  vote_average: number;
+  vote_count: number;
+  first_air_date?: string;
+  last_air_date?: string;
+  number_of_seasons?: number;
+  number_of_episodes?: number;
+  genres?: Genre[];
+  tagline?: string;
+  status?: string;
+  production_companies?: ProductionCompany[];
+  production_countries?: ProductionCountries[];
+  spoken_languages?: SpokenLanguages[]
 }
 
 export interface MovieVideo {
@@ -89,6 +113,13 @@ export interface MovieVideo {
 export interface MoviesResponse {
   page: number;
   results: Movie[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface TVSeriesResponse {
+  page: number;
+  results: TVSeries[];
   total_pages: number;
   total_results: number;
 }
@@ -124,11 +155,22 @@ export interface Crew {
   profile_path: string | null;
 }
 
+export interface ProductionCountries {
+  iso_3166_1: string,
+  name: string;
+}
+
 export interface ProductionCompany {
   id: number;
   logo_path: string | null;
   name: string;
   origin_country: string;
+}
+
+export interface SpokenLanguages {
+  english_name: string;
+  iso_639_1: string;
+  name: string;
 }
 
 export const api = {
@@ -143,6 +185,18 @@ export const api = {
 
   getUpcoming: (page: number = 1) =>
     fetchFromApi<MoviesResponse>("/movie/upcoming", { page }),
+
+  getAiringToday: (page: number = 1) =>
+    fetchFromApi<TVSeriesResponse>("/tv/airing_today", { page }),
+
+  getOnTheAir: (page: number = 1) =>
+    fetchFromApi<TVSeriesResponse>("/tv/on_the_air", { page }),
+
+  getTvPopular: (page: number = 1) =>
+    fetchFromApi<TVSeriesResponse>("/tv/popular", { page }),
+
+  getTvTopRated: (page: number = 1) =>
+    fetchFromApi<TVSeriesResponse>("/tv/top_rated", { page }),
 
   getMovie: (id: number) =>
     fetchFromApi<Movie>(`/movie/${id}`),

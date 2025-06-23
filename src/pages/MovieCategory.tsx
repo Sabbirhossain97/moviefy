@@ -6,9 +6,19 @@ import MovieCard from "@/components/MovieCard";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
-type CategoryType = "popular" | "top-rated" | "upcoming";
+type CategoryType = "trending-now" | "popular" | "top-rated" | "upcoming";
 
-const categoryMap = {
+const categoryMap: Record<CategoryType, {
+  title: string;
+  apiCall: (page: number) => Promise<{ results: Movie[]; total_pages: number }>;
+}> = {
+  "trending-now": {
+    title: "Trending Now",
+    apiCall: (page: number) => api.getTrending("week").then(res => ({
+      results: res.results,
+      total_pages: res.total_pages,
+    })),
+  },
   "popular": {
     title: "Popular Movies",
     apiCall: api.getPopular,
@@ -31,7 +41,7 @@ const MovieCategory = () => {
   const [totalPages, setTotalPages] = useState(0);
   const { toast } = useToast();
 
-  const categoryType = (category || "popular") as CategoryType;
+  const categoryType = (category || "trending-now") as CategoryType;
   const categoryInfo = categoryMap[categoryType] || categoryMap.popular;
 
   useEffect(() => {

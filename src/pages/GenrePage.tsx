@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, Movie, Genre } from "@/services/api";
 import Header from "@/components/Header";

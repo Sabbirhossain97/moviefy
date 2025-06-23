@@ -17,8 +17,11 @@ const fetchOptions = {
 
 function OTTUpdates() {
     const [ottData, setOttData] = useState([])
-    const url = import.meta.env.VITE_OTT_SCRAPE_URL
+    const url = import.meta.env.VITE_OTT_SCRAPE_URL;
+    const [loading, setLoading] = useState(false);
+
     const fetchOTT = async () => {
+        setLoading(true)
         try {
             const response = await fetch(url, fetchOptions);
 
@@ -30,12 +33,28 @@ function OTTUpdates() {
         } catch (error) {
             console.error("API fetch error:", error);
             throw error;
+        } finally {
+            setLoading(false)
         }
     }
 
     useEffect(() => {
         fetchOTT()
     }, [])
+
+    if (loading) {
+        return (
+            <>
+                <Header />
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="animate-pulse flex flex-col items-center">
+                        <div className="h-12 w-12 rounded-full bg-muted mb-4"></div>
+                        <p className="text-muted-foreground">Loading OTT contents...</p>
+                    </div>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>

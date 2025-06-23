@@ -1,5 +1,3 @@
-
-import React from "react";
 import { Movie, IMAGE_SIZES } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -16,19 +14,19 @@ const HeroBanner = ({ movie, className }: HeroBannerProps) => {
     : "/placeholder.svg";
 
   return (
-    <div 
+    <div
       className={cn(
-        "relative w-full aspect-[21/9] overflow-hidden rounded-lg animate-fade-in", 
+        "relative w-full aspect-[21/7] overflow-hidden rounded-lg animate-fade-in",
         className
       )}
     >
-      <div 
-        className="absolute inset-0 bg-cover bg-center" 
+      <div
+        className="absolute inset-0 bg-cover bg-center [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"
         style={{ backgroundImage: `url(${backdropUrl})` }}
+
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+        <div className="absolute top-0 left-0 bottom-0 w-4 bg-[linear-gradient(to_left,rgba(0,0,0,0)_0%,rgba(0,0,0,1)_90%)]" />
       </div>
-      
       <div className="relative h-full container flex flex-col justify-end p-6 md:p-10">
         <div className="max-w-2xl animate-fade-up">
           <h1 className="text-3xl md:text-5xl font-bold mb-2 text-shadow">{movie.title}</h1>

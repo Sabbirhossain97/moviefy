@@ -1,15 +1,14 @@
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { api, Movie, Genre } from "@/services/api";
 import Header from "@/components/Header";
 import HeroBanner from "@/components/HeroBanner";
 import MovieSlider from "@/components/MovieSlider";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
 import { Video } from "lucide-react";
 
 const Dashboard = () => {
+  const today = new Date().toISOString().split('T')[0];
   const [trending, setTrending] = useState<Movie[]>([]);
   const [popular, setPopular] = useState<Movie[]>([]);
   const [topRated, setTopRated] = useState<Movie[]>([]);
@@ -29,11 +28,10 @@ const Dashboard = () => {
           api.getUpcoming(),
           api.getGenres(),
         ]);
-
         setTrending(trendingRes.results);
         setPopular(popularRes.results);
         setTopRated(topRatedRes.results);
-        setUpcoming(upcomingRes.results);
+        setUpcoming(upcomingRes.results.filter(movie => movie.release_date > today));
         setGenres(genresRes.genres);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -50,9 +48,8 @@ const Dashboard = () => {
     fetchMovies();
   }, [toast]);
 
-  // Feature movie is the first trending movie
   const featuredMovie = trending[0];
-
+  
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -67,10 +64,8 @@ const Dashboard = () => {
   return (
     <>
       <Header genres={genres} />
-      
+      {featuredMovie && <HeroBanner movie={featuredMovie} className="mb-8" />}
       <main className="container py-6">
-        {featuredMovie && <HeroBanner movie={featuredMovie} className="mb-8" />}
-        
         <div className="space-y-8">
           <MovieSlider title="Trending Now" movies={trending} />
           <Separator />
@@ -81,7 +76,7 @@ const Dashboard = () => {
           <MovieSlider title="Upcoming Movies" movies={upcoming} />
         </div>
       </main>
-      
+
       <footer className="border-t mt-12">
         <div className="container py-8 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2">
@@ -90,10 +85,10 @@ const Dashboard = () => {
           </div>
           <p className="text-sm text-muted-foreground mt-4 md:mt-0">
             © {new Date().getFullYear()} Moviefy. All Rights Reserved. Data by{" "}
-            <a 
-              href="https://www.themoviedb.org" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href="https://www.themoviedb.org"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-movie-primary hover:underline"
             >
               The Movie Database (TMDb)

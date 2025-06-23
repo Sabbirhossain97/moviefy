@@ -4,8 +4,6 @@ const GEMINI_API_URL = import.meta.env.VITE_GEMINI_API_URL
 
 export interface AIRecommendationRequest {
   userInput: string;
-  previousLikes?: string[];
-  previousDislikes?: string[];
 }
 
 export interface AIRecommendationResponse {
@@ -15,12 +13,9 @@ export interface AIRecommendationResponse {
 
 export const geminiAI = {
   async getMovieRecommendations(request: AIRecommendationRequest): Promise<AIRecommendationResponse> {
-    const prompt = `You are a movie recommendation expert. Based on the user's description, recommend 10 specific movies that match their preferences.
+    const prompt = `You are a movie recommendation expert. Based on the user's description, recommend minimum 10 specific movies that match their preferences.
 
 User wants: "${request.userInput}"
-
-${request.previousLikes?.length ? `Movies they previously liked: ${request.previousLikes.join(', ')}` : ''}
-${request.previousDislikes?.length ? `Movies they previously disliked: ${request.previousDislikes.join(', ')}` : ''}
 
 Please respond in this exact JSON format:
 {

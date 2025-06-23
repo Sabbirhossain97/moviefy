@@ -33,7 +33,7 @@ function FloatingSearchBar({ isSearchBarOpen, setIsSearchBarOpen, inputRef, hand
                             ref={inputRef}
                             type="text"
                             placeholder="Search movies..."
-                            className="bg-muted/50 lg:hidden h-10 border-muted-foreground/20 focus:border-movie-primary"
+                            className="lg:hidden h-10 border-muted-foreground/20 focus:border-movie-primary"
                             value={searchQuery}
                             onChange={(e) => {
                                 setSearchQuery(e.target.value);
@@ -45,6 +45,7 @@ function FloatingSearchBar({ isSearchBarOpen, setIsSearchBarOpen, inputRef, hand
                         />
                         {searchQuery && (
                             <button
+                                type="button"
                                 onClick={() => {
                                     setSearchQuery("");
                                     inputRef.current?.focus();

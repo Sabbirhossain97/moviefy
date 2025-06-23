@@ -26,10 +26,8 @@ const AIMovieSearch = () => {
 
       const moviePromises = aiResponse.recommendations.map(async (title) => {
         try {
-          console.log(`Searching for movie: ${title}`);
           const searchResult = await api.searchMovies(title, 1);
           const movie = searchResult.results[0];
-          console.log(`Found movie for "${title}":`, movie);
           return movie || null;
         } catch (error) {
           console.error(`Error searching for movie: ${title}`, error);
@@ -68,26 +66,17 @@ const AIMovieSearch = () => {
 
   return (
     <div className="space-y-6">
-      <div className="gradient-card rounded-lg border border-border/50 shadow-lg p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="h-5 w-5 text-yellow-500" />
-          <h2 className="text-xl font-semibold">AI Movie Recommendations</h2>
-        </div>
-
+      <div className="max-w-4xl mx-auto rounded-lg shadow-lg p-0">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="movie-description" className="block text-sm font-medium mb-2">
-              Describe what kind of movie you want to watch:
-            </label>
             <Textarea
               id="movie-description"
               placeholder="e.g., I want a romantic comedy with a happy ending, or a sci-fi thriller with time travel, or something like Inception but lighter..."
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              className="min-h-[100px] gradient-muted border-border/50"
+              className="min-h-[100px] border outline-none gradient-card text-muted-foreground transition duration-300 focus:outline-none focus:border-red-500"
             />
           </div>
-
           <Button
             type="submit"
             disabled={loading || !userInput.trim()}
@@ -106,14 +95,15 @@ const AIMovieSearch = () => {
             )}
           </Button>
         </form>
+        {reasoning && (
+          <div className="mt-6 gradient-card rounded-lg border border-border/50 shadow-lg p-4">
+            <h3 className="font-semibold mb-2">Why these movies?</h3>
+            <p className="text-muted-foreground">{reasoning}</p>
+          </div>
+        )}
       </div>
 
-      {reasoning && (
-        <div className="gradient-card rounded-lg border border-border/50 shadow-lg p-4">
-          <h3 className="font-semibold mb-2">Why these movies?</h3>
-          <p className="text-muted-foreground">{reasoning}</p>
-        </div>
-      )}
+
 
       {recommendations.length > 0 && (
         <MovieSlider

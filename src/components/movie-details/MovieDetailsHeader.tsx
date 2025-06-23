@@ -1,4 +1,4 @@
-import React, { RefObject } from "react";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { WishlistButton } from "@/components/WishlistButton";
 import MovieReminderButton from "@/components/MovieReminderButton";
@@ -36,7 +36,7 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
           <img
             src={posterUrl}
             alt={movie.title}
-            className="w-64 md:w-[330px] h-[500px] object-cover rounded-xl shadow-xl"
+            className="w-64 md:w-[330px] h-[550px] object-cover rounded-xl shadow-xl"
             style={{ background: "#1a1a1a" }}
           />
           <div className="absolute top-3 right-3 drop-shadow-md">
@@ -109,8 +109,7 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
       <div className="flex gap-3 mb-4 flex-wrap">
         {videos.length > 0 && (
           <Button
-            className="min-w-[165px] bg-red-600 hover:bg-red-700 text-white rounded px-5 py-4 font-semibold flex items-center gap-2 shadow-md"
-            style={{ backgroundColor: "#E50914" }}
+            className="min-w-[165px] text-white rounded px-5 py-4 font-semibold flex items-center gap-2 shadow-md"
             size="lg"
             onClick={onPlayTrailer}
           >
@@ -143,7 +142,10 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
       <MovieInfoSection
         overview={movie.overview}
         director={director}
+        productionCountries={movie.production_countries || []}
         productionCompanies={movie.production_companies || []}
+        spokenLanguages={movie.spoken_languages || []}
+        originalLanguage={movie.original_language}
         budget={movie.budget}
         revenue={movie.revenue}
       />
