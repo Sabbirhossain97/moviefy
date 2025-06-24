@@ -18,6 +18,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
 import OTTUpdates from "./pages/OTTUpdates";
 import TVSeriesCategory from "./pages/TVSeriesCategory";
+import TVSeriesDetails from "./pages/TVSeriesDetails";
+import TVSeriesGenresList from "./pages/TVSeriesGenresList";
+import TVSeriesGenrePage from "./pages/TVSeriesGenrePage";
 
 const queryClient = new QueryClient();
 
@@ -31,11 +34,14 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/movie/:id" element={<MovieDetails />} />
+            <Route path="/tv/:id" element={<TVSeriesDetails />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/genre/:id" element={<GenrePage />} />
-            <Route path="/genres" element={<GenresList />} />
+            <Route path="/movie/genre/:id" element={<GenrePage />} />
+            <Route path="/tv/genre/:id" element={<TVSeriesGenrePage />} />
+            <Route path="/movie/genres" element={<GenresList />} />
+            <Route path="/tv/genres" element={<TVSeriesGenresList />} />
             <Route path="/movies/:category" element={<MovieCategory />} />
-            <Route path="/tv/:category" element={<TVSeriesCategory />} />
+            <Route path="/tv-series/:category" element={<TVSeriesCategory />} />
             <Route path="/ott-updates" element={<OTTUpdates />} />
             <Route path="/recommendations" element={<AIRecommendations />} />
             <Route path="/wishlist" element={<Wishlist />} />

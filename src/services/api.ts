@@ -92,13 +92,17 @@ export interface TVSeries {
   vote_count: number;
   first_air_date?: string;
   last_air_date?: string;
+  next_episode_to_air?: object;
   number_of_seasons?: number;
   number_of_episodes?: number;
+  created_by: Creators[];
+  networks: Network[];
   genres?: Genre[];
   tagline?: string;
   status?: string;
   production_companies?: ProductionCompany[];
   production_countries?: ProductionCountries[];
+  original_language?: string;
   spoken_languages?: SpokenLanguages[]
 }
 
@@ -122,6 +126,15 @@ export interface TVSeriesResponse {
   results: TVSeries[];
   total_pages: number;
   total_results: number;
+}
+
+export interface Creators {
+  name: string;
+  profile_path: string | null;
+}
+
+export interface Network {
+  name: string;
 }
 
 export interface Genre {
@@ -201,14 +214,26 @@ export const api = {
   getMovie: (id: number) =>
     fetchFromApi<Movie>(`/movie/${id}`),
 
+  getTvSeries: (id: number) =>
+    fetchFromApi<TVSeries>(`/tv/${id}`),
+
   getMovieCredits: (id: number) =>
     fetchFromApi<Credit>(`/movie/${id}/credits`),
+
+  getTVSeriesCredits: (id: number) =>
+    fetchFromApi<Credit>(`/tv/${id}/credits`),
 
   getSimilarMovies: (id: number, page: number = 1) =>
     fetchFromApi<MoviesResponse>(`/movie/${id}/similar`, { page }),
 
+  getSimilarTVSeries: (id: number, page: number = 1) =>
+    fetchFromApi<TVSeriesResponse>(`/tv/${id}/similar`, { page }),
+
   getMovieVideos: (id: number) =>
     fetchFromApi<{ results: MovieVideo[] }>(`/movie/${id}/videos`),
+
+  getTVSeriesVideos: (id: number) =>
+    fetchFromApi<{ results: MovieVideo[] }>(`/tv/${id}/videos`),
 
   searchMovies: (query: string, page: number = 1) =>
     fetchFromApi<MoviesResponse>("/search/movie", { query, page }),
@@ -216,6 +241,12 @@ export const api = {
   getGenres: () =>
     fetchFromApi<GenresResponse>("/genre/movie/list"),
 
+  getTVSeriesGenres: () =>
+    fetchFromApi<GenresResponse>("/genre/tv/list"),
+
   getMoviesByGenre: (genreId: number, page: number = 1) =>
     fetchFromApi<MoviesResponse>("/discover/movie", { with_genres: genreId, page }),
+
+  getTVSeriesByGenre: (genreId: number, page: number = 1) =>
+    fetchFromApi<TVSeriesResponse>("/discover/tv", { with_genres: genreId, page }),
 };

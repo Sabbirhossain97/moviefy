@@ -36,10 +36,10 @@ export const MovieInfoSection: React.FC<MovieInfoSectionProps> = ({
   }))
   return (
     <div className="mb-2 space-y-4 flex flex-col">
-      <div>
+      {overview && <div>
         <h2 className="text-lg font-bold mb-0">Overview</h2>
         <p className="text-gray-400">{overview}</p>
-      </div>
+      </div>}
 
       {(!!budget || !!revenue) && (
         <div className="flex flex-row gap-16 mt-2 mb-1">

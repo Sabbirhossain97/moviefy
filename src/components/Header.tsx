@@ -165,7 +165,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                         </Link>
                       ))}
                       <Link
-                        to="/genres"
+                        to="/movie/genres"
                         className="block select-none rounded-md p-3 text-movie-primary font-medium hover:bg-accent transition-colors"
                       >
                         Browse by genres →
@@ -182,19 +182,19 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                       {[
                         {
                           label: "Airing Today",
-                          path: "/tv/airing-today"
+                          path: "/tv-series/airing-today"
                         },
                         {
                           label: "On The Air",
-                          path: "/tv/on-the-air"
+                          path: "/tv-series/on-the-air"
                         },
                         {
                           label: "Popular",
-                          path: "/tv/popular"
+                          path: "/tv-series/popular"
                         },
                         {
                           label: "Top Rated",
-                          path: "/tv/top-rated"
+                          path: "/tv-series/top-rated"
                         }
                       ].map((tv_series, index) => (
                         <Link
@@ -206,7 +206,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                         </Link>
                       ))}
                       <Link
-                        to="/genres"
+                        to="/tv/genres"
                         className="block select-none rounded-md p-3 text-movie-primary font-medium hover:bg-accent transition-colors"
                       >
                         Browse by genres →

@@ -3,11 +3,11 @@ import { useParams } from 'react-router-dom';
 import { api, Movie, MovieVideo, IMAGE_SIZES, Cast } from '@/services/api';
 import Header from '@/components/Header';
 import MovieReviews from "@/components/MovieReviews";
-import MovieBackdrop from "@/components/movie-details/MovieBackdrop";
+import Backdrop from "@/components/common/Backdrop";
 import MovieDetailsHeader from "@/components/movie-details/MovieDetailsHeader";
-import { CastSection } from "@/components/movie-details/CastSection";
+import { CastSection } from "@/components/common/CastSection";
 import { SimilarMoviesSection } from "@/components/movie-details/SimilarMoviesSection";
-import { TrailerDialog } from "@/components/movie-details/TrailerDialog";
+import { TrailerDialog } from "@/components/common/TrailerDialog";
 
 interface CreditsResponse {
   cast: Cast[];
@@ -111,7 +111,7 @@ const MovieDetails = () => {
   return (
     <div className="min-h-screen gradient-bg relative">
       <Header />
-      <MovieBackdrop backdropUrl={backdropUrl} title={movie.title} />
+      <Backdrop backdropUrl={backdropUrl} title={movie.title} />
       <main className="container relative z-20 max-w-6xl px-4 md:px-6 -mt-48">
         <MovieDetailsHeader
           movie={movie}

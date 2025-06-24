@@ -57,7 +57,7 @@ const GenresList = () => {
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {genres.map(genre => (
-            <Link key={genre.id} to={`/genre/${genre.id}`}>
+            <Link key={genre.id} to={`/movie/genre/${genre.id}`}>
               <Card className="bg-card h-24 flex items-center justify-center hover:bg-accent transition-colors duration-200">
                 <h2 className="text-lg font-medium">{genre.name}</h2>
               </Card>

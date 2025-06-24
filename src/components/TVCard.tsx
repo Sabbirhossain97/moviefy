@@ -12,7 +12,8 @@ interface TVSeriesCardProps {
 }
 
 const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
-    // const releaseYear = tv_series.release_date ? new Date(tv_series.release_date).getFullYear() : "N/A";
+    const firstAirDate = series.first_air_date ? new Date(series.first_air_date).getFullYear() : "N/A";
+    console.log(series.last_air_date)
     const posterUrl = series.poster_path
         ? `${IMAGE_SIZES.poster.medium}${series.poster_path}`
         : "/placeholder.svg";
@@ -23,9 +24,9 @@ const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
     };
 
     return (
-        <Card className={`overflow-hidden movie-card-hover pb-2 gradient-card border-border/50`}>
+        <Card onClick={()=>console.log(series)} className={`overflow-hidden movie-card-hover pb-2 gradient-card border-border/50`}>
             <div className="relative aspect-[2/3] overflow-hidden group">
-                <Link to={`/movie/${series.id}`}>
+                <Link to={`/tv/${series.id}`}>
                     <img
                         src={posterUrl}
                         alt={series.name}
@@ -58,7 +59,7 @@ const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
                             {series.name}
                         </h3>
                     </Link>
-                    {/* <p className="text-xs text-muted-foreground">{releaseYear}</p> */}
+                    <p className="text-xs pt-1 text-muted-foreground">{firstAirDate}</p>
                 </div>
             </CardContent>
         </Card>
