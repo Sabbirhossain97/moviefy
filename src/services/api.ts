@@ -92,7 +92,7 @@ export interface TVSeries {
   vote_count: number;
   first_air_date?: string;
   last_air_date?: string;
-  next_episode_to_air?: object;
+  next_episode_to_air?: NextEpisode;
   number_of_seasons?: number;
   number_of_episodes?: number;
   created_by: Creators[];
@@ -112,6 +112,11 @@ export interface MovieVideo {
   name: string;
   site: string;
   type: string;
+}
+
+export interface NextEpisode {
+  episode_number: number;
+  air_date: string;
 }
 
 export interface MoviesResponse {
@@ -236,7 +241,10 @@ export const api = {
     fetchFromApi<{ results: MovieVideo[] }>(`/tv/${id}/videos`),
 
   searchMovies: (query: string, page: number = 1) =>
-    fetchFromApi<MoviesResponse>("/search/movie", { query, page }),
+    fetchFromApi<MoviesResponse>(`/search/movie`, { query, page }),
+
+  searchTVSeries: (query: string, page: number = 1) =>
+    fetchFromApi<TVSeriesResponse>("/search/tv", { query, page }),
 
   getGenres: () =>
     fetchFromApi<GenresResponse>("/genre/movie/list"),

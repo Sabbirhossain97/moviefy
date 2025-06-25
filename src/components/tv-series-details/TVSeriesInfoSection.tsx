@@ -13,7 +13,6 @@ interface TVSeriesInfoSectionProps {
     creators: { name: string, profile_path: string | null }[]
 }
 
-
 export const TVSeriesInfoSection: React.FC<TVSeriesInfoSectionProps> = ({
     overview,
     productionCountries,
@@ -43,13 +42,13 @@ export const TVSeriesInfoSection: React.FC<TVSeriesInfoSectionProps> = ({
                 {networks && networks.length > 0 && (
                     <div>
                         <p className="font-bold text-white mb-0.5 flex items-center">Networks</p>
-                        <span className="text-gray-400">
+                        <span className="text-gray-400 whitespace-nowrap">
                             {networks.map((pc) => pc.name).join(", ")}
                         </span>
                     </div>
                 )}
                 {seasons && <div>
-                    <span className="block font-bold text-white mb-0.5">Total Seasons</span>
+                    <span className="block font-bold text-white whitespace-nowrap mb-0.5">Total Seasons</span>
                     <span className="text-gray-400">{seasons}</span>
                 </div>}
             </div>

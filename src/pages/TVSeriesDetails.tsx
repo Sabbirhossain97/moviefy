@@ -102,7 +102,6 @@ const TVSeriesDetails = () => {
     const backdropUrl = tvSeries.backdrop_path ? `${IMAGE_SIZES.backdrop.original}${tvSeries.backdrop_path}` : null;
     const posterUrl = tvSeries.poster_path ? `${IMAGE_SIZES.poster.large}${tvSeries.poster_path}` : null;
     const releaseYear = tvSeries.first_air_date ? new Date(tvSeries.first_air_date).getFullYear() : "N/A";
-    const endYear = tvSeries.status === "Ended" ? new Date(tvSeries.last_air_date).getFullYear() : "Ongoing"
 
     return (
         <div className="min-h-screen gradient-bg relative">
@@ -120,7 +119,6 @@ const TVSeriesDetails = () => {
                         }
                     }}
                     releaseYear={releaseYear}
-                    endYear={endYear}
                 />
             </main>
 

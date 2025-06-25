@@ -86,7 +86,7 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                     draggable={false}
                 >
                     {validTvSeries.map((series) => (
-                        <div key={series.id} className="flex-shrink-0 w-[240px] h-full">
+                        <div key={series.id} className="flex-shrink-0 w-[240px] h-auto">
                             <Link to={`/tv/${series.id}`} className="block">
                                 <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50 h-full">
                                     <div className="overflow-hidden h-full">
@@ -97,7 +97,7 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                                                     : "/placeholder.svg"
                                             }
                                             alt={series.name}
-                                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                            className="w-full min-h-[357px] object-cover hover:scale-105 transition-transform duration-300"
                                         />
                                     </div>
                                     <div className="p-3 h-[60px] flex flex-col justify-between">

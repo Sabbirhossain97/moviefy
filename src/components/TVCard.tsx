@@ -13,7 +13,6 @@ interface TVSeriesCardProps {
 
 const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
     const firstAirDate = series.first_air_date ? new Date(series.first_air_date).getFullYear() : "N/A";
-    console.log(series.last_air_date)
     const posterUrl = series.poster_path
         ? `${IMAGE_SIZES.poster.medium}${series.poster_path}`
         : "/placeholder.svg";
@@ -24,7 +23,7 @@ const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
     };
 
     return (
-        <Card onClick={()=>console.log(series)} className={`overflow-hidden movie-card-hover pb-2 gradient-card border-border/50`}>
+        <Card className={`overflow-hidden movie-card-hover pb-2 gradient-card border-border/50`}>
             <div className="relative aspect-[2/3] overflow-hidden group">
                 <Link to={`/tv/${series.id}`}>
                     <img

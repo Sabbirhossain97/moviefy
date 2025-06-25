@@ -15,6 +15,13 @@ import { Genre, api } from "@/services/api";
 import { UserMenu } from "@/components/UserMenu";
 import TopNavbar from "./TopNavbar";
 import FloatingSearchBar from "./FloatingSearchBar";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "./ui/select";
 
 interface HeaderProps {
   genres?: Genre[];
@@ -26,6 +33,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
   const [genres, setGenres] = useState<Genre[]>(propGenres);
   const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchType, setSearchType] = useState<"movie" | "tv">("movie")
   const [showDropdown, setShowDropdown] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const navigate = useNavigate();
@@ -66,10 +74,10 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       saveRecentSearch(searchQuery.trim());
-      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}&searchType=${searchType || "movies"}`);
       setShowDropdown(false);
       setIsSearchBarOpen(false);
-      setSearchQuery("")
+      // setSearchQuery("")
     }
   };
 
@@ -78,7 +86,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
     saveRecentSearch(q);
     setShowDropdown(false);
     inputRef.current?.blur();
-    navigate(`/search?query=${encodeURIComponent(q)}`);
+    navigate(`/search?query=${encodeURIComponent(q)}&searchType=${searchType || "movies"}`);
   };
 
   useEffect(() => {
@@ -91,8 +99,6 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
     handleResize();
     return () => window.removeEventListener("resize", handleResize)
   }, []);
-
-
 
   return (
     <>
@@ -246,74 +252,92 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                 <Search className="h-4 w-4 text-muted-foreground text-white" />
               </Button>
             </div>
-            <form onSubmit={handleSearch} className="relative hidden sm:block w-full max-w-sm">
-              <Input
-                ref={inputRef}
-                type="text"
-                placeholder="Search movies..."
-                className="pr-16 bg-muted/50 h-10 border-muted-foreground/20 focus:border-movie-primary"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setShowDropdown(true);
-                }}
-                onFocus={() => setShowDropdown(true)}
-                onBlur={() => setTimeout(() => setShowDropdown(false), 130)}
-                autoComplete="off"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery("");
-                    inputRef.current?.focus();
-                  }}
-                  className="absolute right-10 top-1/2 transform -translate-y-1/2 text-red-400 transition"
-                >
-                  &#10005;
-                </button>
-              )}
-              <Button
-                type="submit"
-                size="icon"
-                variant="ghost"
-                className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-              >
-                <Search className="h-4 w-4 text-muted-foreground" />
-              </Button>
-              {showDropdown && suggestions.length > 0 && (
-                <div className="absolute left-0 top-12 z-40 bg-background border border-muted rounded-md w-full shadow-lg max-h-52 overflow-y-auto">
-                  <div className="px-3 py-2 text-xs text-muted-foreground font-medium">
-                    Recent Searches
-                  </div>
-                  <ul>
-                    {suggestions.map((q) => (
-                      <li
-                        key={q}
-                        className="px-3 py-2 hover:bg-accent transition text-sm cursor-pointer"
-                        onMouseDown={() => handleDropdownSelect(q)}
-                      >
-                        {q}
-                      </li>
-                    ))}
-                  </ul>
-                  {suggestions.length > 0 && (
-                    <div className="px-3 py-2">
-                      <button
-                        type="button"
-                        className="text-xs text-muted-foreground hover:underline"
-                        onMouseDown={e => {
-                          e.preventDefault();
-                          localStorage.removeItem(RECENT_SEARCHES_KEY);
-                          setSuggestions([]);
-                        }}
-                      >
-                        Clear all
-                      </button>
+            <form onSubmit={handleSearch} className="hidden sm:block w-full ">
+              <div className="flex ">
+                <div className="relative">
+                  <Input
+                    ref={inputRef}
+                    type="text"
+                    placeholder="Search..."
+                    className="pr-16 bg-muted/50 h-10 border-muted-foreground/20 focus:border-movie-primary"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setShowDropdown(true);
+                    }}
+                    onFocus={() => setShowDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowDropdown(false), 130)}
+                    autoComplete="off"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery("");
+                        inputRef.current?.focus();
+                      }}
+                      className="absolute right-10 top-1/2 transform -translate-y-1/2 text-red-400 transition"
+                    >
+                      &#10005;
+                    </button>
+                  )}
+                  <Button
+                    type="submit"
+                    size="icon"
+                    variant="ghost"
+                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                  >
+                    <Search className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                  {showDropdown && suggestions.length > 0 && (
+                    <div className="absolute left-0 top-12 z-40 bg-background border border-muted rounded-md w-full shadow-lg max-h-52 overflow-y-auto">
+                      <div className="px-3 py-2 text-xs text-muted-foreground font-medium">
+                        Recent Searches
+                      </div>
+                      <ul>
+                        {suggestions.map((q) => (
+                          <li
+                            key={q}
+                            className="px-3 py-2 hover:bg-accent transition text-sm cursor-pointer"
+                            onMouseDown={() => handleDropdownSelect(q)}
+                          >
+                            {q}
+                          </li>
+                        ))}
+                      </ul>
+                      {suggestions.length > 0 && (
+                        <div className="px-3 py-2">
+                          <button
+                            type="button"
+                            className="text-xs text-muted-foreground hover:underline"
+                            onMouseDown={e => {
+                              e.preventDefault();
+                              localStorage.removeItem(RECENT_SEARCHES_KEY);
+                              setSuggestions([]);
+                            }}
+                          >
+                            Clear all
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
-              )}
+                <div>
+                  <Select
+                    value={searchType}
+                    onValueChange={(v) => setSearchType(v as 'movie' | 'tv')}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="movie">Movies</SelectItem>
+                      <SelectItem value="tv">TV Series</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </form>
             <UserMenu />
           </div>

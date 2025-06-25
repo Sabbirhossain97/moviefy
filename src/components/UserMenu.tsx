@@ -19,7 +19,7 @@ export const UserMenu = () => {
   if (!user) {
     return (
       <AuthDialog>
-        <Button variant="outline" size="sm" className='h-10 rounded-full sm:rounded-md'>
+        <Button variant="outline" size="sm" className='h-10 rounded-full bg-muted/50 border-muted-foreground/20 sm:rounded-md'>
           <User className="w-4 h-4 lg:mr-2" />
           <span className='block [@media(max-width:400px)]:hidden'>Sign In</span>
         </Button>
@@ -30,7 +30,7 @@ export const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="flex items-center rounded-full sm:rounded-md px-2 h-10 gap-2">
+        <Button variant="outline" size="sm" className="flex items-center bg-muted/50 border-muted-foreground/20 rounded-full sm:rounded-md px-2 h-10 gap-2">
           <Avatar className="w-7 h-7 [@media(max-width:400px)]:mr-2">
             {profile?.avatar_url ? (
               <AvatarImage src={profile.avatar_url} alt={profile.full_name || "User"} />
