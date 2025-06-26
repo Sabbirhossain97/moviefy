@@ -77,7 +77,6 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
       navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}&searchType=${searchType || "movies"}`);
       setShowDropdown(false);
       setIsSearchBarOpen(false);
-      // setSearchQuery("")
     }
   };
 
@@ -328,12 +327,12 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                     value={searchType}
                     onValueChange={(v) => setSearchType(v as 'movie' | 'tv')}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-r-md">
                       <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="movie">Movies</SelectItem>
-                      <SelectItem value="tv">TV Series</SelectItem>
+                      <SelectItem value="tv">Series</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

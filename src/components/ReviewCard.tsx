@@ -1,5 +1,3 @@
-
-import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Pencil } from "lucide-react";
 import dayjs from "dayjs";
@@ -19,8 +17,8 @@ interface ReviewCardProps {
   onStartEdit: (r: any) => void;
   onCancelEdit: () => void;
   onDelete: (id: string) => void;
-  showUserRating?: boolean; // this review is latest user's review
-  rating?: number | null; // passes the user rating
+  showUserRating?: boolean; 
+  rating?: number | null; 
 }
 
 const ReviewCard: React.FC<ReviewCardProps> = ({
@@ -42,7 +40,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
 
   return (
     <div className="flex gap-2 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative">
-      {/* Owner action icon in corner */}
       {isOwner && editingReviewId !== r.id && (
         <div className="absolute top-3 right-3 flex gap-2 z-10">
           <span
@@ -55,7 +52,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           >
             <Pencil className="w-4 h-4" />
           </span>
-          {/* Add delete button */}
           <Button
             size="icon"
             variant="ghost"

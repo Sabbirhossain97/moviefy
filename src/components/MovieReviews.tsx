@@ -15,37 +15,40 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { useMovieRatings } from "@/hooks/useMovieRatings";
 import { toast } from "@/hooks/use-toast";
 
-function getAverageRating(reviews) {
-  return null;
-}
-
-export default function MovieReviews({ movieId }: { movieId: number }) {
+export default function MovieReviews({ id, type }: { id: number, type: string }) {
   const { user, profile } = useAuth();
   const [input, setInput] = useState("");
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
-  const [editingInput, setEditingInput] = useState(""); // For in-place edit
+  const [editingInput, setEditingInput] = useState("");
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
-
-  const { reviews, myReview, submitReview, deleteReview, loading, error, refresh } = useMovieReviews(movieId);
-  const { rating: userRating } = useMovieRatings(movieId);
+  const { reviews, seriesReviews, myReview, submitReview, deleteReview, loading, error, refresh } = useMovieReviews(id,type);
+  const { rating: userRating } = useMovieRatings(id);
 
   useEffect(() => {
     refresh();
     // eslint-disable-next-line
-  }, [movieId, user]);
+  }, [id, user]);
 
   const filteredReviews = useMemo(() => {
-    let filtered = reviews;
-    filtered = [...filtered].sort((a, b) => {
-      if (sortOrder === "oldest") {
-        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-      } else {
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      }
-    });
-    return filtered;
-  }, [reviews, sortOrder]);
+    if (type === 'movie') {
+      return [...reviews].sort((a, b) => {
+        if (sortOrder === "oldest") {
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        } else {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        }
+      });
+    } else {
+      return [...seriesReviews].sort((a, b) => {
+        if (sortOrder === "oldest") {
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        } else {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        }
+      });
+    }
+  }, [reviews, seriesReviews, sortOrder, type]);
 
   let displayReviews = [...filteredReviews];
   if (user && myReview) {
@@ -60,15 +63,6 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
       ? displayReviews.filter(r => r.user_id === user.id)[0].id
       : null;
 
-  const filterOptions = [
-    { label: "All ratings", value: null },
-    { label: "5 stars", value: "5" },
-    { label: "4 stars", value: "4" },
-    { label: "3 stars", value: "3" },
-    { label: "2 stars", value: "2" },
-    { label: "1 star", value: "1" }
-  ];
-
   const currentUserInfo = user
     ? {
       ...user,
@@ -81,7 +75,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-      await submitReview(input.trim());
+      submitReview(input.trim());
       setInput("");
       refresh();
       toast({ title: "Review posted!" });
@@ -142,7 +136,7 @@ export default function MovieReviews({ movieId }: { movieId: number }) {
           value={filterRating !== null ? String(filterRating) : "all"}
           onValueChange={v => setFilterRating(v === "all" ? null : Number(v))}
         >
-          <SelectTrigger className="w-[140px] text-xs h-8 bg-card/80">
+          <SelectTrigger className="w-[140px] rounded-md text-xs border-muted-foreground/10 h-8 bg-card/80">
             <SelectValue placeholder="Filter by rating" />
           </SelectTrigger>
           <SelectContent className="z-[999] bg-background">

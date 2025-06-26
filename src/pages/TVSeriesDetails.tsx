@@ -136,7 +136,7 @@ const TVSeriesDetails = () => {
                 ref={reviewSectionRef}
                 className="container relative z-20 px-4 md:px-6 my-12"
             >
-                <MovieReviews movieId={tvSeries.id} />
+                <MovieReviews id={tvSeries.id} type='tv' />
             </section>
         </div>
     );

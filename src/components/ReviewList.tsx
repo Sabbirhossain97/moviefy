@@ -31,7 +31,6 @@ const ReviewList: React.FC<ReviewListProps> = ({
   onStartEdit,
   onCancelEdit,
   onDelete,
-  filterRating,
   latestUserReviewId,
   userRating,
 }) => {

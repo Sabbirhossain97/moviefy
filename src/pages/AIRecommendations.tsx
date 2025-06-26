@@ -12,7 +12,7 @@ const AIRecommendations = () => {
             <div className="flex items-center justify-center gap-3 mb-4">
               <Brain className="h-8 w-8 text-movie-primary" />
               <h1 className="text-3xl font-bold text-movie-primary">
-                AI Movie Search
+                AI Search
               </h1>
               <Sparkles className="h-6 w-6 text-yellow-500" />
             </div>

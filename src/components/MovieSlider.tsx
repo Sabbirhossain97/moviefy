@@ -97,7 +97,7 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
                           : "/placeholder.svg"
                       }
                       alt={movie.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      className="w-full min-h-[357px] object-cover hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                   <div className="p-3 h-[60px] flex flex-col justify-between">

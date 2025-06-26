@@ -29,28 +29,26 @@ const TVSeriesDetailsHeader: React.FC<TVSeriesDetailsHeaderProps> = ({
 
   const getCurrentStatus = (series: TVSeries): string => {
     const nextEpDate = series.next_episode_to_air?.air_date;
-    const lastEpDate = series.last_air_date;
+    const lastEpDate = series.last_air_date ? new Date(series.last_air_date) : null;
     const now = new Date();
 
-    if (nextEpDate && lastEpDate) {
-      const nextAir = new Date(nextEpDate);
-      const lastAir = new Date(lastEpDate);
-
-      if (nextAir > now && lastAir < now) {
-        return "Upcoming";
-      }
+    if (nextEpDate && lastEpDate && new Date(nextEpDate) > now && lastEpDate < now) {
+      return "Upcoming";
     }
 
-    return "Streaming now";
+    if (lastEpDate && lastEpDate >= now) {
+      return "Streaming now";
+    }
+
   };
 
   const currentStatus = getCurrentStatus(series);
 
-  const endYear = currentStatus === "Ended"
+  const endYear = series.status === "Ended" || series.status === 'Returning Series'
     ? new Date(series.last_air_date).getFullYear()
     : currentStatus;
 
-  console.log(currentStatus)
+    console.log(endYear)
 
   return (
     <div className="flex flex-col md:flex-row gap-8 bg-transparent">
@@ -81,9 +79,9 @@ const TVSeriesDetailsHeader: React.FC<TVSeriesDetailsHeaderProps> = ({
       <div className="flex-1">
         <h1 className="text-4xl font-bold mb-1 inline-flex leading-tight items-center gap-2">
           <span>{series.name}</span>
-          <span className="rounded-full px-2.5 py-1 text-xs bg-red-700">
+          {currentStatus && <span className="rounded-full px-2.5 py-1 text-xs bg-red-700">
             {currentStatus}
-          </span>
+          </span>}
         </h1>
         {series.tagline && (
           <div className="italic text-md text-gray-300 mb-2">{series.tagline}</div>
@@ -104,7 +102,7 @@ const TVSeriesDetailsHeader: React.FC<TVSeriesDetailsHeaderProps> = ({
               {series.vote_average?.toFixed(1)}/10
             </span>
           </span>
-          {series.status === "Ended" ? <span className="flex items-center text-gray-400">
+          {series.status === "Ended" || series.status === 'Returning Series' ? <span className="flex items-center text-gray-400">
             <span className="inline-block w-4 h-4 mr-1">
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <rect x="3" y="4" width="18" height="18" rx="2" />

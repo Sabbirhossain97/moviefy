@@ -4,6 +4,7 @@ const GEMINI_API_URL = import.meta.env.VITE_GEMINI_API_URL
 
 export interface AIRecommendationRequest {
   userInput: string;
+  type: string;
 }
 
 export interface AIRecommendationResponse {
@@ -12,18 +13,20 @@ export interface AIRecommendationResponse {
 }
 
 export const geminiAI = {
-  async getMovieRecommendations(request: AIRecommendationRequest): Promise<AIRecommendationResponse> {
-    const prompt = `You are a movie recommendation expert. Based on the user's description, recommend minimum 10 specific movies that match their preferences.
+  async getRecommendations(request: AIRecommendationRequest): Promise<AIRecommendationResponse> {
+  const typeText = request.type === 'movie' ? 'movies' : request.type === 'tv' ? 'TV series': 'movies or TV series'
+  
+    const prompt = `You are a ${typeText} recommendation expert. Based on the user's description, recommend minimum 10 specific ${typeText} that match their preferences.
 
 User wants: "${request.userInput}"
 
 Please respond in this exact JSON format:
 {
-  "recommendations": ["Movie Title 1", "Movie Title 2", "Movie Title 3", "Movie Title 4", "Movie Title 5", "Movie Title 6", "Movie Title 7", "Movie Title 8", "Movie Title 9", "Movie Title 10"],
-  "reasoning": "Brief explanation of why these movies were recommended"
+  "recommendations": ["Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7", "Title 8", "Title 9", "Title 10"],
+  "reasoning": "Brief explanation of why these${typeText} were recommended"
 }
 
-Only recommend real movies that exist. Make sure the movie titles are exact and searchable.`;
+Only recommend real ${typeText} or tv series that exist. Make sure the ${typeText} titles are exact and searchable.`;
 
     try {
       const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
@@ -56,7 +59,7 @@ Only recommend real movies that exist. Make sure the movie titles are exact and 
 
       const data = await response.json();
       const text = data.candidates[0].content.parts[0].text;
-      
+
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         throw new Error('Invalid response format from AI');

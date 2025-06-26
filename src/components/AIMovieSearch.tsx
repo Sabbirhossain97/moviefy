@@ -1,56 +1,79 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from "./ui/select";
 import { geminiAI } from "@/services/geminiAI";
-import { api, Movie } from "@/services/api";
+import { api, Movie, TVSeries } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import MovieSlider from "./MovieSlider";
+import TVSeriesSlider from "./TVSeriesSlider";
 
 const AIMovieSearch = () => {
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [recommendations, setRecommendations] = useState<Movie[]>([]);
+  const [searchType, setSearchType] = useState<"movie" | "tv">("movie")
+  const [movieRecommendations, setMovieRecommendations] = useState<Movie[]>([]);
+  const [tvSeriesRecommendations, setTVSeriesRecommendations] = useState<TVSeries[]>([]);
   const [reasoning, setReasoning] = useState("");
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userInput.trim()) return;
-
     setLoading(true);
     try {
-      const aiResponse = await geminiAI.getMovieRecommendations({
-        userInput: userInput.trim()
+      const aiResponse = await geminiAI.getRecommendations({
+        userInput: userInput.trim(),
+        type: searchType,
       });
 
-      const moviePromises = aiResponse.recommendations.map(async (title) => {
+      const contentPromises = aiResponse.recommendations.map(async (title) => {
         try {
-          const searchResult = await api.searchMovies(title, 1);
-          const movie = searchResult.results[0];
-          return movie || null;
+          const searchResult =
+            searchType === "tv"
+              ? await api.searchTVSeries(title, 1)
+              : await api.searchMovies(title, 1);
+
+          const content = searchResult.results[0];
+          return content || null;
         } catch (error) {
-          console.error(`Error searching for movie: ${title}`, error);
+          console.error(`Error searching for ${searchType}: ${title}`, error);
           return null;
         }
       });
 
-      const movieResults = await Promise.all(moviePromises);
+      const contentResults = await Promise.all(contentPromises);
 
-      const validMovies = movieResults.filter((movie): movie is Movie =>
-        movie != null &&
-        typeof movie === 'object' &&
-        'id' in movie &&
-        'title' in movie &&
-        typeof movie.id === 'number'
+      const validItems = contentResults.filter((item): item is Movie | TVSeries =>
+        item != null &&
+        typeof item === 'object' &&
+        'id' in item &&
+        (searchType === 'movie' ? 'title' in item : 'name' in item) &&
+        typeof item.id === 'number'
       );
 
-      setRecommendations(validMovies);
-      setReasoning(aiResponse.reasoning);
-
+      if (searchType === 'movie') {
+        const movieItems = validItems.filter((item): item is Movie => 'title' in item);
+        setMovieRecommendations(movieItems);
+        setTVSeriesRecommendations([]);
+        setReasoning(aiResponse.reasoning);
+      } else {
+        const tvItems = validItems.filter((item): item is TVSeries => 'name' in item);
+        setTVSeriesRecommendations(tvItems);
+        setMovieRecommendations([]);
+        setReasoning(aiResponse.reasoning);
+      }
+    
       toast({
-        title: "AI Recommendations Ready!",
-        description: `Found ${validMovies.length} movies based on your preferences.`,
+        title: `AI ${searchType === 'tv' ? 'TV Series' : 'Movie'} Recommendations Ready!`,
+        description: `Found ${validItems.length} ${searchType === 'tv' ? 'series' : 'movies'} based on your preferences.`,
       });
     } catch (error) {
       console.error("Error getting AI recommendations:", error);
@@ -64,10 +87,29 @@ const AIMovieSearch = () => {
     }
   };
 
+  useEffect(() => {
+    setMovieRecommendations([]);
+    setTVSeriesRecommendations([]);
+    setReasoning("");
+  }, [searchType]);
+
   return (
     <div className="space-y-6">
       <div className="max-w-4xl mx-auto rounded-lg shadow-lg p-0">
         <form onSubmit={handleSubmit} className="space-y-4">
+          <Select
+            value={searchType}
+            required
+            onValueChange={(v) => setSearchType(v as 'movie' | 'tv')}
+          >
+            <SelectTrigger className="w-[150px] rounded-md">
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="movie">Movies</SelectItem>
+              <SelectItem value="tv">TV Series</SelectItem>
+            </SelectContent>
+          </Select>
           <div>
             <Textarea
               id="movie-description"
@@ -97,20 +139,23 @@ const AIMovieSearch = () => {
         </form>
         {reasoning && (
           <div className="mt-6 gradient-card rounded-lg border border-border/50 shadow-lg p-4">
-            <h3 className="font-semibold mb-2">Why these movies?</h3>
+            <h3 className="font-semibold mb-2">Why these {searchType === 'movie' ? 'movies' : 'series'}?</h3>
             <p className="text-muted-foreground">{reasoning}</p>
           </div>
         )}
       </div>
-
-
-
-      {recommendations.length > 0 && (
+      {searchType === 'movie' && movieRecommendations.length > 0 ? (
         <MovieSlider
           title="AI Recommended Movies"
-          movies={recommendations}
+          movies={movieRecommendations}
         />
-      )}
+      ) :
+        searchType === 'tv' && tvSeriesRecommendations.length > 0 && (
+          <TVSeriesSlider
+            name="AI Recommended Series"
+            series={tvSeriesRecommendations}
+          />
+        )}
     </div>
   );
 };
