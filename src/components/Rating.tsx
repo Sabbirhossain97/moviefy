@@ -1,11 +1,11 @@
-import { useMovieRatings } from "@/hooks/useMovieRatings";
+import { useRatings } from "@/hooks/useRatings";
 import { useAuth } from "@/hooks/useAuth";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function MovieRating({ movieId }: { movieId: number }) {
+export default function Rating({ id, type }: { id: number, type: string }) {
   const { user } = useAuth();
-  const { rating, submitRating, loading } = useMovieRatings(movieId);
+  const { rating, submitRating, loading } = useRatings(id, type);
 
   if (!user) return <div className="text-muted-foreground text-sm">Sign in to rate</div>;
 

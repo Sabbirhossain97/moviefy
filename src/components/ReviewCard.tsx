@@ -8,9 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 interface ReviewCardProps {
   review: any;
   user: any;
-  editingReviewId: string | null;
+  editingReviewId: number | null;
   editingInput: string;
-  setEditingReviewId: (id: string | null) => void;
+  setEditingReviewId: (id: number | null) => void;
   setEditingInput: (val: string) => void;
   loading: boolean;
   onEditSubmit: (r: any) => void;

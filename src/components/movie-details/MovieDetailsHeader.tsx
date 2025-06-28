@@ -4,7 +4,7 @@ import { WishlistButton } from "@/components/WishlistButton";
 import MovieReminderButton from "@/components/MovieReminderButton";
 import { Button } from "@/components/ui/button";
 import { Film, Clock4, Play, Clapperboard } from "lucide-react";
-import MovieRating from "@/components/MovieRating";
+import Rating from "@/components/Rating";
 import { MovieInfoSection } from "@/components/movie-details/MovieInfoSection";
 import { Movie } from "@/services/api";
 
@@ -137,7 +137,7 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
         </Button>
       </div>
       <div className="mb-2 flex items-center gap-3">
-        <MovieRating movieId={movie.id} />
+        <Rating id={movie.id} type="movie" />
       </div>
       <MovieInfoSection
         overview={movie.overview}

@@ -74,6 +74,7 @@ export function useMovieReviews(id: number, type: string) {
           console.error("Supabase fetch error:", error);
           return;
         }
+        console.log(data)
 
         const safeData: SeriesReview[] = (data || []).map((r: any) => ({
           ...r,
@@ -95,7 +96,7 @@ export function useMovieReviews(id: number, type: string) {
   // Fetch user's own review if exists
   const fetchMyReview = async () => {
     if (!user) return setMyReview(null);
-    if(type === 'movie'){
+    if (type === 'movie') {
       const { data } = await supabase
         .from("movie_reviews")
         .select("*")
@@ -117,27 +118,33 @@ export function useMovieReviews(id: number, type: string) {
   useEffect(() => {
     fetchReviews();
     fetchMyReview();
-    // eslint-disable-next-line
   }, [id, user]);
 
   const submitReview = async (review: string) => {
     if (!user) return;
     setLoading(true);
-    if (type === 'movie') {
-      await supabase
-        .from("movie_reviews")
-        .upsert({ user_id: user.id, movie_id: id, review });
-      await fetchReviews();
-    } else {
-      await (supabase as any)
-        .from("series_reviews")
-        .upsert({ user_id: user.id, series_id: id, review });
-      await fetchReviews();
-    }
+    const table = type === 'movie' ? 'movie_reviews' : 'series_reviews'
+    const idType = type === 'movie' ? 'movie_id' : 'series_id'
+    await supabase
+      .from(table as any)
+      .insert({ user_id: user.id, [idType]: id, review });
+    await fetchReviews();
     await fetchMyReview();
     setLoading(false);
   };
 
+  const editReview = async (review: string, reviewId: number) => {
+    if (!user) return;
+    setLoading(true);
+    const table = type === 'movie' ? 'movie_reviews' : 'series_reviews'
+    await supabase
+      .from(table as any)
+      .update({ review: review })
+      .eq('id', reviewId)
+    await fetchReviews();
+    await fetchMyReview();
+    setLoading(false);
+  };
 
   const deleteReview = async (id: string) => {
     setLoading(true);
@@ -152,8 +159,8 @@ export function useMovieReviews(id: number, type: string) {
       await fetchMyReview();
       setLoading(false);
     }
-  
+
   };
 
-  return { reviews, seriesReviews, myReview, submitReview, deleteReview, loading, error, refresh: fetchReviews };
+  return { reviews, seriesReviews, myReview, submitReview, editReview, deleteReview, loading, error, refresh: fetchReviews };
 }

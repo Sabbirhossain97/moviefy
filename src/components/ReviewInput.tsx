@@ -11,7 +11,6 @@ interface ReviewInputProps {
   setInput: (val: string) => void;
   loading: boolean;
   onSubmit: (e: React.FormEvent) => void;
-  myReview: any | null;
 }
 const ReviewInput: React.FC<ReviewInputProps> = ({
   user,
@@ -19,7 +18,6 @@ const ReviewInput: React.FC<ReviewInputProps> = ({
   setInput,
   loading,
   onSubmit,
-  myReview,
 }) => {
   if (!user) return null;
   return (
@@ -35,7 +33,7 @@ const ReviewInput: React.FC<ReviewInputProps> = ({
       </Avatar>
       <Textarea
         className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-muted-foreground text-sm min-h-[44px]"
-        placeholder={myReview ? "Edit your review…" : "Write a review…"}
+        placeholder="Write a review…"
         value={input}
         onChange={e => setInput(e.target.value)}
         disabled={loading}
@@ -49,7 +47,7 @@ const ReviewInput: React.FC<ReviewInputProps> = ({
         variant="default"
         className="rounded shadow self-end"
       >
-        {myReview ? "Update" : "Post"}
+        Post
       </Button>
     </form>
   );

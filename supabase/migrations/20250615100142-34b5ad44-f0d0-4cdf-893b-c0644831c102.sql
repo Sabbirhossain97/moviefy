@@ -31,7 +31,7 @@ CREATE TABLE public.movie_reminders (
 );
 
 -- 4. Basic RLS: Only allow users to read their own ratings, reviews, reminders;
---    Admins can view/delete/approve all reviews.
+   Admins can view/delete/approve all reviews.
 ALTER TABLE public.movie_ratings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.movie_reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.movie_reminders ENABLE ROW LEVEL SECURITY;

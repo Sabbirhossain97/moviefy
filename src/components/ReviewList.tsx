@@ -5,9 +5,9 @@ import ReviewCard from "./ReviewCard";
 interface ReviewListProps {
   reviews: any[];
   user: any;
-  editingReviewId: string | null;
+  editingReviewId: number | null;
   editingInput: string;
-  setEditingReviewId: (id: string | null) => void;
+  setEditingReviewId: (id: number | null) => void;
   setEditingInput: (val: string) => void;
   loading: boolean;
   onEditSubmit: (r: any) => void;

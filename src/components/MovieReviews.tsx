@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
 import ReviewInput from "./ReviewInput";
@@ -12,18 +12,18 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { useMovieRatings } from "@/hooks/useMovieRatings";
+import { useRatings } from "@/hooks/useRatings";
 import { toast } from "@/hooks/use-toast";
 
 export default function MovieReviews({ id, type }: { id: number, type: string }) {
   const { user, profile } = useAuth();
   const [input, setInput] = useState("");
-  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [editingReviewId, setEditingReviewId] = useState<number | null>(null);
   const [editingInput, setEditingInput] = useState("");
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
-  const { reviews, seriesReviews, myReview, submitReview, deleteReview, loading, error, refresh } = useMovieReviews(id,type);
-  const { rating: userRating } = useMovieRatings(id);
+  const { reviews, seriesReviews, submitReview, editReview, deleteReview, loading, error, refresh } = useMovieReviews(id, type);
+  const { rating: userRating } = useRatings(id, null);
 
   useEffect(() => {
     refresh();
@@ -51,7 +51,7 @@ export default function MovieReviews({ id, type }: { id: number, type: string })
   }, [reviews, seriesReviews, sortOrder, type]);
 
   let displayReviews = [...filteredReviews];
-  if (user && myReview) {
+  if (user) {
     displayReviews = [
       ...displayReviews.filter(r => r.user_id === user.id),
       ...displayReviews.filter(r => r.user_id !== user.id),
@@ -84,7 +84,7 @@ export default function MovieReviews({ id, type }: { id: number, type: string })
 
   const handleEditSubmit = async (r: any) => {
     if (!editingInput.trim()) return;
-    await submitReview(editingInput.trim());
+    await editReview(editingInput.trim(), r.id);
     setEditingReviewId(null);
     toast({ title: "Review updated!" });
     refresh();
@@ -167,7 +167,7 @@ export default function MovieReviews({ id, type }: { id: number, type: string })
         setInput={setInput}
         loading={loading}
         onSubmit={handleSubmit}
-        myReview={myReview}
+
       />
 
       {/* Show errors */}
