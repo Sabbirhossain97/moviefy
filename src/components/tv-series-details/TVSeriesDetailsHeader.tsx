@@ -1,12 +1,13 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { WishlistButton } from "@/components/WishlistButton";
 import MovieReminderButton from "@/components/MovieReminderButton";
 import { Button } from "@/components/ui/button";
 import { Film, Clock4, Play, Clapperboard } from "lucide-react";
 import Rating from "@/components/Rating";
 import { TVSeries } from "@/services/api";
 import { TVSeriesInfoSection } from "./TVSeriesInfoSection";
+import { TVSeriesWishlistButton } from "@/components/TVSeriesWishlistButton";
 
 interface TVSeriesDetailsHeaderProps {
   series: TVSeries;
@@ -61,14 +62,14 @@ const TVSeriesDetailsHeader: React.FC<TVSeriesDetailsHeaderProps> = ({
               className="w-64 md:w-[330px] h-[550px] object-cover rounded-xl shadow-xl"
               style={{ background: "#1a1a1a" }}
             />
-            {/* <div className="absolute top-3 right-3 drop-shadow-md">
-            <WishlistButton
-              movie={movie}
-              size="icon"
-              variant="ghost"
-              showText={false}
-            />
-          </div> */}
+            <div className="absolute top-3 right-3 drop-shadow-md">
+              <TVSeriesWishlistButton
+                series={series}
+                size="icon"
+                variant="ghost"
+                showText={false}
+              />
+            </div>
           </div>
         ) : (
           <div className="w-64 h-[500px] bg-gray-700 rounded-xl flex items-center justify-center">

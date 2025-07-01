@@ -4,7 +4,6 @@ import { IMAGE_SIZES, TVSeries } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { TVSeriesWishlistButton } from "@/components/TVSeriesWishlistButton";
 
 interface TVSeriesSliderProps {
     name: string;
@@ -18,7 +17,6 @@ const SCROLL_STEP = 300;
 const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSeriesSliderProps) => {
     const [scrollPosition, setScrollPosition] = useState(0);
     const [atEnd, setAtEnd] = useState(false);
-    const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
     const sliderRef = useRef<HTMLDivElement | null>(null);
 
@@ -90,8 +88,6 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                         <div 
                             key={series.id} 
                             className="flex-shrink-0 w-[240px] h-auto"
-                            onMouseEnter={() => setHoveredCard(series.id)}
-                            onMouseLeave={() => setHoveredCard(null)}
                         >
                             <Link to={`/tv/${series.id}`} className="block">
                                 <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50 h-full relative">
@@ -105,9 +101,6 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                                             alt={series.name}
                                             className="w-full min-h-[357px] object-cover hover:scale-105 transition-transform duration-300"
                                         />
-                                        <div className={`absolute top-2 right-2 transition-opacity ${hoveredCard === series.id ? 'opacity-100' : 'opacity-0'}`}>
-                                            <TVSeriesWishlistButton series={series} size="icon" variant="ghost" showText={false} />
-                                        </div>
                                     </div>
                                     <div className="p-3 h-[60px] flex flex-col justify-between">
                                         <h3
