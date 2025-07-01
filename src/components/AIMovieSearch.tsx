@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -83,7 +82,7 @@ const AIMovieSearch = () => {
         setMovieRecommendations([]);
         setReasoning(aiResponse.reasoning);
       }
-    
+
       toast({
         title: `AI ${searchType === 'tv' ? 'TV Series' : 'Movie'} Recommendations Ready!`,
         description: `Found ${validItems.length} ${searchType === 'tv' ? 'series' : 'movies'} based on your preferences.`,
@@ -95,8 +94,7 @@ const AIMovieSearch = () => {
         description: error.message || "There was a problem getting AI recommendations. Please try again.",
         variant: "destructive",
       });
-      
-      // If API key is invalid, show modal
+
       if (error.message && error.message.includes('API key')) {
         setShowApiKeyModal(true);
       }
@@ -140,7 +138,7 @@ const AIMovieSearch = () => {
                 <SelectItem value="tv">TV Series</SelectItem>
               </SelectContent>
             </Select>
-            
+
             <Button
               type="button"
               variant="outline"
@@ -156,7 +154,7 @@ const AIMovieSearch = () => {
               )}
             </Button>
           </div>
-          
+
           <div>
             <Textarea
               id="movie-description"
@@ -166,7 +164,7 @@ const AIMovieSearch = () => {
               className="min-h-[100px] border outline-none gradient-card text-muted-foreground transition duration-300 focus:outline-none focus:border-red-500"
             />
           </div>
-          
+
           <Button
             type="submit"
             disabled={loading || !userInput.trim() || !geminiApiKey}
@@ -190,7 +188,7 @@ const AIMovieSearch = () => {
             )}
           </Button>
         </form>
-        
+
         {reasoning && (
           <div className="mt-6 gradient-card rounded-lg border border-border/50 shadow-lg p-4">
             <h3 className="font-semibold mb-2">Why these {searchType === 'movie' ? 'movies' : 'series'}?</h3>
@@ -198,7 +196,7 @@ const AIMovieSearch = () => {
           </div>
         )}
       </div>
-      
+
       {searchType === 'movie' && movieRecommendations.length > 0 ? (
         <MovieSlider
           title="AI Recommended Movies"
@@ -211,9 +209,9 @@ const AIMovieSearch = () => {
             series={tvSeriesRecommendations}
           />
         )}
-      
-      <ApiKeyModal 
-        open={showApiKeyModal} 
+
+      <ApiKeyModal
+        open={showApiKeyModal}
         onOpenChange={setShowApiKeyModal}
       />
     </div>

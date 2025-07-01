@@ -61,7 +61,7 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
 
     return (
         <section className={`relative ${className}`}>
-            {name && <h2 className="text-2xl font-semibold mb-6">{name}</h2>}
+            {name !== "Trending TV Series" && <h2 className="text-2xl font-semibold mb-6">{name}</h2>}
             <div className="relative group select-none">
                 {scrollPosition > 0 && (
                     <Button

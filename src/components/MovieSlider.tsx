@@ -62,7 +62,7 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
 
   return (
     <section className={`relative ${className}`}>
-      {title && <h2 className="text-2xl font-semibold mb-6">{title}</h2>}
+      {title !== "Trending Movies" && <h2 className="text-2xl font-semibold mb-6">{title}</h2>}
       <div className="relative group select-none">
         {scrollPosition > 0 && (
           <Button
