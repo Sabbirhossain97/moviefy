@@ -48,7 +48,7 @@ Please respond in this exact JSON format:
 
 Only recommend real ${typeText} that exist. Make sure the ${typeText} titles are exact and searchable.`;
 
-    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
     try {
       const response = await fetch(`${GEMINI_API_URL}?key=${apiKeyData.gemini_api_key}`, {
