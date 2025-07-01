@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,16 +18,24 @@ function FloatingSearchBar({ searchType, setSearchType, isSearchBarOpen, setIsSe
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
             if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-                setIsSearchBarOpen(false)
+                // Check if the click is on a select dropdown or its content
+                const selectElements = document.querySelectorAll('[data-radix-select-content]');
+                const isSelectClick = Array.from(selectElements).some(element => 
+                    element.contains(e.target as Node)
+                );
+                
+                if (!isSelectClick) {
+                    setIsSearchBarOpen(false);
+                }
             }
         }
         if (isSearchBarOpen) {
             window.addEventListener('mousedown', handleClickOutside);
         }
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+            window.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [isSearchBarOpen])
+    }, [isSearchBarOpen, setIsSearchBarOpen])
 
     return (
         <>
@@ -72,7 +81,7 @@ function FloatingSearchBar({ searchType, setSearchType, isSearchBarOpen, setIsSe
                                     <Search className="h-4 w-4 text-muted-foreground" />
                                 </Button>
                                 {showDropdown && suggestions.length > 0 && (
-                                    <div className="absolute left-0 top-12 z-40 bg-background border border-muted rounded-md w-full shadow-lg max-h-52 overflow-y-auto">
+                                    <div className="absolute left-0 top-12 z-[60] bg-background border border-muted rounded-md w-full shadow-lg max-h-52 overflow-y-auto">
                                         <div className="px-3 py-2 text-xs text-muted-foreground font-medium">
                                             Recent Searches
                                         </div>
@@ -105,7 +114,7 @@ function FloatingSearchBar({ searchType, setSearchType, isSearchBarOpen, setIsSe
                                     </div>
                                 )}
                             </div>
-                            <div>
+                            <div className="relative z-[70]">
                                 <Select
                                     value={searchType}
                                     onValueChange={(v) => setSearchType(v as 'movie' | 'tv')}
@@ -113,7 +122,7 @@ function FloatingSearchBar({ searchType, setSearchType, isSearchBarOpen, setIsSe
                                     <SelectTrigger className="rounded-r-md">
                                         <SelectValue placeholder="Type" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="z-[80]">
                                         <SelectItem value="movie">Movies</SelectItem>
                                         <SelectItem value="tv">Series</SelectItem>
                                     </SelectContent>
