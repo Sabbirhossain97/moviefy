@@ -178,6 +178,39 @@ export type Database = {
           },
         ]
       }
+      tv_wishlists: {
+        Row: {
+          added_at: string
+          id: string
+          series_first_air_date: string | null
+          series_id: number
+          series_name: string
+          series_poster_path: string | null
+          series_vote_average: number | null
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          id?: string
+          series_first_air_date?: string | null
+          series_id: number
+          series_name: string
+          series_poster_path?: string | null
+          series_vote_average?: number | null
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          id?: string
+          series_first_air_date?: string | null
+          series_id?: number
+          series_name?: string
+          series_poster_path?: string | null
+          series_vote_average?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -196,6 +229,39 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      watched_movies: {
+        Row: {
+          id: string
+          movie_id: number
+          movie_poster_path: string | null
+          movie_release_date: string | null
+          movie_title: string
+          movie_vote_average: number | null
+          user_id: string
+          watched_at: string
+        }
+        Insert: {
+          id?: string
+          movie_id: number
+          movie_poster_path?: string | null
+          movie_release_date?: string | null
+          movie_title: string
+          movie_vote_average?: number | null
+          user_id: string
+          watched_at?: string
+        }
+        Update: {
+          id?: string
+          movie_id?: number
+          movie_poster_path?: string | null
+          movie_release_date?: string | null
+          movie_title?: string
+          movie_vote_average?: number | null
+          user_id?: string
+          watched_at?: string
         }
         Relationships: []
       }

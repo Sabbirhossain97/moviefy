@@ -6,8 +6,7 @@ import HeroBanner from "@/components/HeroBanner";
 import MovieSlider from "@/components/MovieSlider";
 import TVSeriesSlider from "@/components/TVSeriesSlider";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Video } from "lucide-react";
 
@@ -20,7 +19,6 @@ const Dashboard = () => {
   const [upcoming, setUpcoming] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showTVSeries, setShowTVSeries] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -56,18 +54,16 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchTrendingTVSeries = async () => {
-      if (showTVSeries) {
-        try {
-          const trendingTVRes = await api.getTvPopular();
-          setTrendingTVSeries(trendingTVRes.results);
-        } catch (error) {
-          console.error("Error fetching trending TV series:", error);
-        }
+      try {
+        const trendingTVRes = await api.getTvPopular();
+        setTrendingTVSeries(trendingTVRes.results);
+      } catch (error) {
+        console.error("Error fetching trending TV series:", error);
       }
     };
 
     fetchTrendingTVSeries();
-  }, [showTVSeries]);
+  }, []);
 
   const featuredMovie = trending[0];
   
@@ -88,22 +84,20 @@ const Dashboard = () => {
       {featuredMovie && <HeroBanner movie={featuredMovie} className="mb-8" />}
       <main className="container py-6">
         <div className="space-y-8">
-          <div className="flex items-center space-x-2 mb-4">
-            <Switch
-              id="trending-switch"
-              checked={showTVSeries}
-              onCheckedChange={setShowTVSeries}
-            />
-            <Label htmlFor="trending-switch" className="text-lg font-semibold">
-              {showTVSeries ? "Trending TV Series" : "Trending Movies"}
-            </Label>
-          </div>
-          
-          {showTVSeries ? (
-            <TVSeriesSlider name="Trending TV Series" series={trendingTVSeries} />
-          ) : (
-            <MovieSlider title="Trending Now" movies={trending} />
-          )}
+          <Tabs defaultValue="movies" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsTrigger value="movies">Trending Movies</TabsTrigger>
+              <TabsTrigger value="tv">Trending TV Series</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="movies" className="mt-6">
+              <MovieSlider title="Trending Movies" movies={trending} />
+            </TabsContent>
+            
+            <TabsContent value="tv" className="mt-6">
+              <TVSeriesSlider name="Trending TV Series" series={trendingTVSeries} />
+            </TabsContent>
+          </Tabs>
           
           <Separator />
           <MovieSlider title="Popular Movies" movies={popular} />
