@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { api, MovieVideo, IMAGE_SIZES, Cast, TVSeries } from '@/services/api';
 import Header from '@/components/Header';
 import MovieReviews from "@/components/Reviews";
+import Footer from "@/components/Footer";
 import Backdrop from '@/components/common/Backdrop';
 import { CastSection } from "@/components/common/CastSection";
 import { TrailerDialog } from "@/components/common/TrailerDialog";
@@ -67,6 +68,7 @@ const TVSeriesDetails = () => {
                         <div className="h-4 w-32 bg-muted rounded mx-auto"></div>
                     </div>
                 </main>
+                <Footer />
             </div>
         );
     }
@@ -81,6 +83,7 @@ const TVSeriesDetails = () => {
                         <p className="text-muted-foreground">{error}</p>
                     </div>
                 </main>
+                <Footer />
             </div>
         );
     }
@@ -95,6 +98,7 @@ const TVSeriesDetails = () => {
                         <p className="text-muted-foreground">Could not retrieve TV series details.</p>
                     </div>
                 </main>
+                <Footer />
             </div>
         );
     }
@@ -138,6 +142,8 @@ const TVSeriesDetails = () => {
             >
                 <MovieReviews id={tvSeries.id} type='tv' />
             </section>
+            
+            <Footer />
         </div>
     );
 };

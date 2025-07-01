@@ -1,10 +1,11 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { TVSeries } from "@/services/api";
 import { IMAGE_SIZES } from "@/services/api";
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-// import { WishlistButton } from "@/components/WishlistButton";
+import { TVSeriesWishlistButton } from "@/components/TVSeriesWishlistButton";
 
 interface TVSeriesCardProps {
     series: TVSeries;
@@ -34,12 +35,12 @@ const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
                     />
                 </Link>
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                    {/* <WishlistButton
-                        movie={tv_series}
+                    <TVSeriesWishlistButton
+                        series={series}
                         size="icon"
                         variant="ghost"
                         showText={false}
-                    /> */}
+                    />
                 </div>
                 <div className="absolute top-2 left-2">
                     <Badge variant="secondary" className="flex items-center gap-1 font-medium gradient-secondary">
@@ -50,7 +51,7 @@ const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
             </div>
             <CardContent className="p-3 space-y-3">
                 <div className="h-[40px] flex flex-col justify-between">
-                    <Link to={`/movie/${series.id}`}>
+                    <Link to={`/tv/${series.id}`}>
                         <h3
                             className="font-semibold text-sm line-clamp-2 leading-tight hover:underline"
                             title={series.name}

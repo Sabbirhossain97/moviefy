@@ -5,6 +5,7 @@ import { api, Movie, TVSeries } from "@/services/api";
 import Header from "@/components/Header";
 import MovieCard from "@/components/MovieCard";
 import TVCard from "@/components/TVCard";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -140,6 +141,7 @@ const Search = () => {
           </>
         )}
       </main>
+      <Footer />
     </>
   );
 };

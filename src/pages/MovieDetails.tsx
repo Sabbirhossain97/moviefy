@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { api, Movie, MovieVideo, IMAGE_SIZES, Cast } from '@/services/api';
 import Header from '@/components/Header';
 import MovieReviews from "@/components/Reviews";
+import Footer from "@/components/Footer";
 import Backdrop from "@/components/common/Backdrop";
 import MovieDetailsHeader from "@/components/movie-details/MovieDetailsHeader";
 import { CastSection } from "@/components/common/CastSection";
@@ -71,6 +72,7 @@ const MovieDetails = () => {
             <div className="h-4 w-32 bg-muted rounded mx-auto"></div>
           </div>
         </main>
+        <Footer />
       </div>
     );
   }
@@ -85,6 +87,7 @@ const MovieDetails = () => {
             <p className="text-muted-foreground">{error}</p>
           </div>
         </main>
+        <Footer />
       </div>
     );
   }
@@ -99,6 +102,7 @@ const MovieDetails = () => {
             <p className="text-muted-foreground">Could not retrieve movie details.</p>
           </div>
         </main>
+        <Footer />
       </div>
     );
   }
@@ -145,6 +149,8 @@ const MovieDetails = () => {
       >
         <MovieReviews id={movie.id} type='movie' />
       </section>
+      
+      <Footer />
     </div>
   );
 };
