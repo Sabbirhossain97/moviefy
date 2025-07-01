@@ -10,7 +10,20 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { Search, Video, Brain, AlignJustify } from "lucide-react";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DrawerClose,
+} from "@/components/ui/drawer";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Search, Video, Brain, AlignJustify, X, ChevronDown, ChevronRight } from "lucide-react";
 import { Genre, api } from "@/services/api";
 import { UserMenu } from "@/components/UserMenu";
 import TopNavbar from "./TopNavbar";
@@ -39,6 +52,9 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [topNavBarOpen, setTopNavBarOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moviesOpen, setMoviesOpen] = useState(false);
+  const [tvSeriesOpen, setTvSeriesOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -88,6 +104,44 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
     navigate(`/search?query=${encodeURIComponent(q)}&searchType=${searchType}`);
   };
 
+  const movieCategories = [
+    {
+      label: "Trending Now",
+      path: "/movies/trending-now"
+    },
+    {
+      label: "Popular",
+      path: "/movies/popular"
+    },
+    {
+      label: "Top Rated",
+      path: "/movies/top-rated"
+    },
+    {
+      label: "Upcoming",
+      path: "/movies/upcoming"
+    }
+  ];
+
+  const tvSeriesCategories = [
+    {
+      label: "Airing Today",
+      path: "/tv-series/airing-today"
+    },
+    {
+      label: "On The Air",
+      path: "/tv-series/on-the-air"
+    },
+    {
+      label: "Popular",
+      path: "/tv-series/popular"
+    },
+    {
+      label: "Top Rated",
+      path: "/tv-series/top-rated"
+    }
+  ];
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -98,6 +152,12 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
     handleResize();
     return () => window.removeEventListener("resize", handleResize)
   }, []);
+
+  const handleMobileLinkClick = () => {
+    setMobileMenuOpen(false);
+    setMoviesOpen(false);
+    setTvSeriesOpen(false);
+  };
 
   return (
     <>
@@ -121,12 +181,113 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex px-4 h-16 items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
-              className="[@media(max-width:1180px)]:block hidden"
-              onClick={() => setTopNavBarOpen(!topNavBarOpen)}
-            >
-              <AlignJustify className="hover:text-red-500 transition duration-300" />
-            </button>
+            {/* Mobile menu for screens smaller than 1180px */}
+            <div className="[@media(max-width:1180px)]:block hidden">
+              <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <DrawerTrigger asChild>
+                  <Button variant="ghost" size="icon" className="p-0">
+                    <AlignJustify className="h-6 w-6 hover:text-red-500 transition duration-300" />
+                  </Button>
+                </DrawerTrigger>
+                <DrawerContent className="h-[80vh]">
+                  <DrawerHeader className="text-left border-b">
+                    <div className="flex items-center justify-between">
+                      <DrawerTitle className="flex items-center space-x-2">
+                        <Video className="h-6 w-6 text-movie-primary" />
+                        <span className="font-bold text-lg bg-gradient-to-r from-movie-primary to-yellow-500 bg-clip-text text-transparent">
+                          Moviefy <sup className="bg-gradient-to-r from-movie-primary to-yellow-500 bg-clip-text text-transparent">AI</sup>
+                        </span>
+                      </DrawerTitle>
+                      <DrawerClose asChild>
+                        <Button variant="ghost" size="icon">
+                          <X className="h-5 w-5" />
+                        </Button>
+                      </DrawerClose>
+                    </div>
+                  </DrawerHeader>
+                  <div className="flex-1 overflow-y-auto p-4">
+                    <nav className="space-y-2">
+                      {/* Movies Section */}
+                      <Collapsible open={moviesOpen} onOpenChange={setMoviesOpen}>
+                        <CollapsibleTrigger asChild>
+                          <Button variant="ghost" className="w-full justify-between text-left h-12 px-3">
+                            <span className="font-medium">Movies</span>
+                            {moviesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-1 ml-4">
+                          {movieCategories.map((category, index) => (
+                            <Link
+                              key={index}
+                              to={category.path}
+                              onClick={handleMobileLinkClick}
+                              className="block px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors rounded-md"
+                            >
+                              {category.label}
+                            </Link>
+                          ))}
+                          <Link
+                            to="/movie/genres"
+                            onClick={handleMobileLinkClick}
+                            className="block px-3 py-2 text-sm text-movie-primary font-medium hover:bg-accent transition-colors rounded-md"
+                          >
+                            Browse by genres →
+                          </Link>
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* TV Series Section */}
+                      <Collapsible open={tvSeriesOpen} onOpenChange={setTvSeriesOpen}>
+                        <CollapsibleTrigger asChild>
+                          <Button variant="ghost" className="w-full justify-between text-left h-12 px-3">
+                            <span className="font-medium">TV Series</span>
+                            {tvSeriesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-1 ml-4">
+                          {tvSeriesCategories.map((category, index) => (
+                            <Link
+                              key={index}
+                              to={category.path}
+                              onClick={handleMobileLinkClick}
+                              className="block px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors rounded-md"
+                            >
+                              {category.label}
+                            </Link>
+                          ))}
+                          <Link
+                            to="/tv/genres"
+                            onClick={handleMobileLinkClick}
+                            className="block px-3 py-2 text-sm text-movie-primary font-medium hover:bg-accent transition-colors rounded-md"
+                          >
+                            Browse by genres →
+                          </Link>
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Direct Links */}
+                      <Link
+                        to="/recommendations"
+                        onClick={handleMobileLinkClick}
+                        className="flex items-center px-3 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors rounded-md"
+                      >
+                        <Brain className="h-4 w-4 mr-3" />
+                        AI Search
+                      </Link>
+                      
+                      <Link
+                        to="/ott-updates"
+                        onClick={handleMobileLinkClick}
+                        className="block px-3 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors rounded-md"
+                      >
+                        OTT Updates
+                      </Link>
+                    </nav>
+                  </div>
+                </DrawerContent>
+              </Drawer>
+            </div>
+
             <Link to="/" className="flex items-center space-x-2 group">
               <div className="relative">
                 <Video className="h-7 w-7 text-movie-primary transition-transform group-hover:scale-110" />
@@ -135,6 +296,8 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                 Moviefy <sup className="bg-gradient-to-r from-movie-primary to-yellow-500 bg-clip-text text-transparent">AI</sup>
               </span>
             </Link>
+
+            {/* Desktop Navigation Menu */}
             <NavigationMenu className="[@media(max-width:1180px)]:hidden flex">
               <NavigationMenuList className="space-x-1">
                 <NavigationMenuItem >
@@ -143,24 +306,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="grid grid-cols-1 gap-2 p-4 w-[220px]">
-                      {[
-                        {
-                          label: "Trending Now",
-                          path: "/movies/trending-now"
-                        },
-                        {
-                          label: "Popular",
-                          path: "/movies/popular"
-                        },
-                        {
-                          label: "Top Rated",
-                          path: "/movies/top-rated"
-                        },
-                        {
-                          label: "Upcoming",
-                          path: "/movies/upcoming"
-                        }
-                      ].map((movie, index) => (
+                      {movieCategories.map((movie, index) => (
                         <Link
                           key={index}
                           to={movie.path}
@@ -184,24 +330,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="grid grid-cols-1 gap-2 p-4 w-[220px]">
-                      {[
-                        {
-                          label: "Airing Today",
-                          path: "/tv-series/airing-today"
-                        },
-                        {
-                          label: "On The Air",
-                          path: "/tv-series/on-the-air"
-                        },
-                        {
-                          label: "Popular",
-                          path: "/tv-series/popular"
-                        },
-                        {
-                          label: "Top Rated",
-                          path: "/tv-series/top-rated"
-                        }
-                      ].map((tv_series, index) => (
+                      {tvSeriesCategories.map((tv_series, index) => (
                         <Link
                           key={index}
                           to={tv_series.path}
