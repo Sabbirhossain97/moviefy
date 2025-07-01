@@ -23,7 +23,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Search, Video, Brain, AlignJustify, X, ChevronDown, ChevronRight } from "lucide-react";
+import { Search, Video, Brain, AlignJustify, X, ChevronDown } from "lucide-react";
 import { Genre, api } from "@/services/api";
 import { UserMenu } from "@/components/UserMenu";
 import TopNavbar from "./TopNavbar";
@@ -43,13 +43,13 @@ interface HeaderProps {
 const RECENT_SEARCHES_KEY = "recent_movie_searches";
 
 const Header = ({ genres: propGenres = [] }: HeaderProps) => {
+  const navigate = useNavigate();
   const [genres, setGenres] = useState<Genre[]>(propGenres);
   const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState<"movie" | "tv">("movie")
   const [showDropdown, setShowDropdown] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [topNavBarOpen, setTopNavBarOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -162,6 +162,8 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
   return (
     <>
       <FloatingSearchBar
+        searchType={searchType}
+        setSearchType={setSearchType}
         isSearchBarOpen={isSearchBarOpen}
         setIsSearchBarOpen={setIsSearchBarOpen}
         inputRef={inputRef}
@@ -189,7 +191,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                     <AlignJustify className="h-6 w-6 hover:text-red-500 transition duration-300" />
                   </Button>
                 </DrawerTrigger>
-                <DrawerContent className="h-[85vh] top-0 bottom-auto rounded-t-none rounded-b-[10px]">
+                <DrawerContent className="min-h-[40vh] top-0 bottom-auto rounded-t-none rounded-b-[10px]">
                   <DrawerHeader className="text-left border-b">
                     <div className="flex items-center justify-between">
                       <DrawerTitle className="flex items-center space-x-2">
@@ -292,11 +294,11 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
               </Drawer>
             </div>
 
-            <Link to="/" className="flex items-center space-x-2 group">
+            <Link to="/" className="flex items-center space-x-2 group pr-4">
               <div className="relative">
                 <Video className="h-7 w-7 text-movie-primary transition-transform group-hover:scale-110" />
               </div>
-              <span className="font-bold text-xl bg-gradient-to-r from-movie-primary to-yellow-500 bg-clip-text text-transparent">
+              <span className="font-bold text-xl bg-gradient-to-r whitespace-nowrap from-movie-primary to-yellow-500 bg-clip-text text-transparent">
                 Moviefy <sup className="bg-gradient-to-r from-movie-primary to-yellow-500 bg-clip-text text-transparent">AI</sup>
               </span>
             </Link>
@@ -379,7 +381,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                 size="icon"
                 variant="outline"
                 onClick={() => setIsSearchBarOpen(true)}
-                className="h-10 rounded-full px-3"
+                className="h-10 rounded-full px-3 bg-muted/50 border-muted-foreground/20"
               >
                 <Search className="h-4 w-4 text-muted-foreground text-white" />
               </Button>

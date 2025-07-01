@@ -21,7 +21,7 @@ export const UserMenu = () => {
       <AuthDialog>
         <Button variant="outline" size="sm" className='h-10 rounded-full bg-muted/50 border-muted-foreground/20 sm:rounded-md'>
           <User className="w-4 h-4 lg:mr-2" />
-          <span className='block [@media(max-width:400px)]:hidden'>Sign In</span>
+          <span className='hidden md:block'>Sign In</span>
         </Button>
       </AuthDialog>
     );
