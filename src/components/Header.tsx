@@ -74,7 +74,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       saveRecentSearch(searchQuery.trim());
-      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}&searchType=${searchType || "movies"}`);
+      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}&searchType=${searchType}`);
       setShowDropdown(false);
       setIsSearchBarOpen(false);
     }
@@ -85,7 +85,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
     saveRecentSearch(q);
     setShowDropdown(false);
     inputRef.current?.blur();
-    navigate(`/search?query=${encodeURIComponent(q)}&searchType=${searchType || "movies"}`);
+    navigate(`/search?query=${encodeURIComponent(q)}&searchType=${searchType}`);
   };
 
   useEffect(() => {

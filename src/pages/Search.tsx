@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { api, Movie, TVSeries } from "@/services/api";
@@ -10,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 const Search = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
-  const searchType = searchParams.get("searchType");
+  const searchTypeFromUrl = searchParams.get("searchType") || "movie";
   const [movies, setMovies] = useState<Movie[]>([]);
   const [tvSeries, setTvSeries] = useState<TVSeries[]>([]);
   const [loading, setLoading] = useState(false);
@@ -21,26 +22,27 @@ const Search = () => {
   useEffect(() => {
     if (!query) return;
 
-    const fetchMovies = async () => {
+    const fetchResults = async () => {
       try {
         setLoading(true);
-        if (searchType === "movie") {
+        if (searchTypeFromUrl === "movie") {
           const response = await api.searchMovies(query, 1);
           setMovies(response.results);
+          setTvSeries([]); // Clear TV series when searching movies
           setTotalPages(response.total_pages);
           setPage(1);
         } else {
           const response = await api.searchTVSeries(query, 1);
           setTvSeries(response.results);
+          setMovies([]); // Clear movies when searching TV series
           setTotalPages(response.total_pages);
           setPage(1);
         }
-
       } catch (error) {
-        console.error("Error searching movies:", error);
+        console.error("Error searching:", error);
         toast({
           title: "Search failed",
-          description: "There was a problem searching for movies. Please try again later.",
+          description: `There was a problem searching for ${searchTypeFromUrl === "movie" ? "movies" : "TV series"}. Please try again later.`,
           variant: "destructive",
         });
       } finally {
@@ -48,8 +50,8 @@ const Search = () => {
       }
     };
 
-    fetchMovies();
-  }, [query, searchType, toast]);
+    fetchResults();
+  }, [query, searchTypeFromUrl, toast]);
 
   const loadMore = async () => {
     if (page >= totalPages) return;
@@ -57,7 +59,7 @@ const Search = () => {
     try {
       setLoading(true);
       const nextPage = page + 1;
-      if (searchType === "movie") {
+      if (searchTypeFromUrl === "movie") {
         const response = await api.searchMovies(query, nextPage);
         setMovies(prev => [...prev, ...response.results]);
         setPage(nextPage);
@@ -67,11 +69,15 @@ const Search = () => {
         setPage(nextPage);
       }
     } catch (error) {
-      console.error("Error loading more movies:", error);
+      console.error("Error loading more results:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  const currentResults = searchTypeFromUrl === "movie" ? movies : tvSeries;
+  const isInitialLoading = loading && currentResults.length === 0;
+  const hasNoResults = !loading && currentResults.length === 0 && query;
 
   return (
     <>
@@ -79,30 +85,34 @@ const Search = () => {
       <main className="container py-8 px-4">
         <h1 className="text-3xl font-bold mb-6">
           Search results for: <span className="text-movie-primary">"{query}"</span>
+          <span className="text-lg font-normal text-muted-foreground ml-2">
+            in {searchTypeFromUrl === "movie" ? "Movies" : "TV Series"}
+          </span>
         </h1>
-        {loading && ((searchType === "movie" && movies.length === 0) || (searchType === "tv" && tvSeries.length === 0)) ? (
+        
+        {isInitialLoading ? (
           <div className="flex justify-center py-12">
             <div className="animate-pulse flex flex-col items-center">
               <div className="h-12 w-12 rounded-full bg-muted mb-4"></div>
               <p className="text-muted-foreground">
-                Searching {searchType === "movie" ? "movies" : "TV series"}...
+                Searching {searchTypeFromUrl === "movie" ? "movies" : "TV series"}...
               </p>
             </div>
           </div>
-        ) : ((searchType === "movie" && movies.length === 0) || (searchType === "tv" && tvSeries.length === 0)) ? (
+        ) : hasNoResults ? (
           <div className="text-center py-16">
             <h2 className="text-xl font-medium mb-2">
-              No {searchType === "movie" ? "movies" : "TV series"} found
+              No {searchTypeFromUrl === "movie" ? "movies" : "TV series"} found
             </h2>
             <p className="text-muted-foreground">
-              We couldn't find any {searchType === "movie" ? "movies" : "TV series"} matching your search.
+              We couldn't find any {searchTypeFromUrl === "movie" ? "movies" : "TV series"} matching your search.
               Try different keywords or browse our categories.
             </p>
           </div>
         ) : (
           <>
             <div className="grid [@media(max-width:400px)]:grid-cols-1 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {searchType === "movie"
+              {searchTypeFromUrl === "movie"
                 ? movies.map((movie) => (
                   <div key={movie.id}>
                     <MovieCard movie={movie} />
