@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { api, MovieVideo, IMAGE_SIZES, Cast, TVSeries } from '@/services/api';
 import Header from '@/components/Header';
-import MovieReviews from "@/components/MovieReviews";
+import MovieReviews from "@/components/Reviews";
 import Backdrop from '@/components/common/Backdrop';
 import { CastSection } from "@/components/common/CastSection";
 import { TrailerDialog } from "@/components/common/TrailerDialog";

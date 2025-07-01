@@ -27,13 +27,6 @@ export const MovieInfoSection: React.FC<MovieInfoSectionProps> = ({
   budget,
   revenue,
 }) => {
-  console.log(spokenLanguages.map((pc) => {
-    if (pc.iso_639_1 === originalLanguage) {
-      return `${pc.english_name}(Original), `
-    } else {
-      return pc.english_name
-    }
-  }))
   return (
     <div className="mb-2 space-y-4 flex flex-col">
       {overview && <div>

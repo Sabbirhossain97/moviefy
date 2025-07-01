@@ -26,7 +26,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   user,
   editingReviewId,
   editingInput,
-  setEditingReviewId,
   setEditingInput,
   loading,
   onEditSubmit,

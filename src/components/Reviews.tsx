@@ -15,7 +15,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { useRatings } from "@/hooks/useRatings";
 import { toast } from "@/hooks/use-toast";
 
-export default function MovieReviews({ id, type }: { id: number, type: string }) {
+export default function Reviews({ id, type }: { id: number, type: string }) {
   const { user, profile } = useAuth();
   const [input, setInput] = useState("");
   const [editingReviewId, setEditingReviewId] = useState<number | null>(null);

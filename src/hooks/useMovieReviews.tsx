@@ -52,6 +52,7 @@ export function useMovieReviews(id: number, type: string) {
             ? { full_name: r.user.full_name, avatar_url: r.user.avatar_url }
             : { full_name: null, avatar_url: null }
         }));
+
         setReviews(safeData);
       } catch (err: any) {
         setError(err.message || "Error fetching reviews.");
@@ -74,8 +75,7 @@ export function useMovieReviews(id: number, type: string) {
           console.error("Supabase fetch error:", error);
           return;
         }
-        console.log(data)
-
+      
         const safeData: SeriesReview[] = (data || []).map((r: any) => ({
           ...r,
           user: r.user && typeof r.user === "object"

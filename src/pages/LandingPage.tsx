@@ -67,7 +67,7 @@ const LandingPage = () => {
           <div className="absolute inset-0 bg-[url('https://image.tmdb.org/t/p/original/h3X1_4t2Yw5Wl9yYI22A3A5iIhv.jpg')] bg-cover bg-center opacity-20"></div>
           <div className="container relative">
             <h1 className="text-4xl md:text-6xl font-bold mb-4 text-shadow-lg animate-fade-up">
-              Your Universe of Movies, Reimagined.
+              Your Universe of Moviess, Reimagined.
             </h1>
             <p className="max-w-3xl mx-auto text-lg md:text-xl text-muted-foreground mb-8 animate-fade-up" style={{ animationDelay: '0.2s' }}>
               Discover, track, and get personalized recommendations for films you'll love. Powered by AI.
