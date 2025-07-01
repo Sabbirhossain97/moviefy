@@ -1,8 +1,10 @@
+
 import { useState, useRef, useEffect } from "react";
 import { IMAGE_SIZES, TVSeries } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { TVSeriesWishlistButton } from "@/components/TVSeriesWishlistButton";
 
 interface TVSeriesSliderProps {
     name: string;
@@ -18,7 +20,6 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
     const [atEnd, setAtEnd] = useState(false);
 
     const sliderRef = useRef<HTMLDivElement | null>(null);
-
 
     const validTvSeries = series.filter((series): series is TVSeries =>
         series != null && typeof series === 'object' && 'id' in series && 'name' in series
@@ -57,7 +58,6 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-
     const handleScroll = () => updateScrollState();
 
     return (
@@ -88,7 +88,7 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                     {validTvSeries.map((series) => (
                         <div key={series.id} className="flex-shrink-0 w-[240px] h-auto">
                             <Link to={`/tv/${series.id}`} className="block">
-                                <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50 h-full">
+                                <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50 h-full relative group">
                                     <div className="overflow-hidden h-full">
                                         <img
                                             src={
@@ -99,6 +99,9 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                                             alt={series.name}
                                             className="w-full min-h-[357px] object-cover hover:scale-105 transition-transform duration-300"
                                         />
+                                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <TVSeriesWishlistButton series={series} size="icon" variant="ghost" showText={false} />
+                                        </div>
                                     </div>
                                     <div className="p-3 h-[60px] flex flex-col justify-between">
                                         <h3

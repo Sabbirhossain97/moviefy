@@ -1,20 +1,26 @@
+
 import { useEffect, useState } from "react";
-import { api, Movie, Genre } from "@/services/api";
+import { api, Movie, TVSeries, Genre } from "@/services/api";
 import Header from "@/components/Header";
 import HeroBanner from "@/components/HeroBanner";
 import MovieSlider from "@/components/MovieSlider";
+import TVSeriesSlider from "@/components/TVSeriesSlider";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Video } from "lucide-react";
 
 const Dashboard = () => {
   const today = new Date().toISOString().split('T')[0];
   const [trending, setTrending] = useState<Movie[]>([]);
+  const [trendingTVSeries, setTrendingTVSeries] = useState<TVSeries[]>([]);
   const [popular, setPopular] = useState<Movie[]>([]);
   const [topRated, setTopRated] = useState<Movie[]>([]);
   const [upcoming, setUpcoming] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showTVSeries, setShowTVSeries] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -48,6 +54,21 @@ const Dashboard = () => {
     fetchMovies();
   }, [toast]);
 
+  useEffect(() => {
+    const fetchTrendingTVSeries = async () => {
+      if (showTVSeries) {
+        try {
+          const trendingTVRes = await api.getTvPopular();
+          setTrendingTVSeries(trendingTVRes.results);
+        } catch (error) {
+          console.error("Error fetching trending TV series:", error);
+        }
+      }
+    };
+
+    fetchTrendingTVSeries();
+  }, [showTVSeries]);
+
   const featuredMovie = trending[0];
   
   if (loading) {
@@ -67,7 +88,23 @@ const Dashboard = () => {
       {featuredMovie && <HeroBanner movie={featuredMovie} className="mb-8" />}
       <main className="container py-6">
         <div className="space-y-8">
-          <MovieSlider title="Trending Now" movies={trending} />
+          <div className="flex items-center space-x-2 mb-4">
+            <Switch
+              id="trending-switch"
+              checked={showTVSeries}
+              onCheckedChange={setShowTVSeries}
+            />
+            <Label htmlFor="trending-switch" className="text-lg font-semibold">
+              {showTVSeries ? "Trending TV Series" : "Trending Movies"}
+            </Label>
+          </div>
+          
+          {showTVSeries ? (
+            <TVSeriesSlider name="Trending TV Series" series={trendingTVSeries} />
+          ) : (
+            <MovieSlider title="Trending Now" movies={trending} />
+          )}
+          
           <Separator />
           <MovieSlider title="Popular Movies" movies={popular} />
           <Separator />
@@ -101,4 +138,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

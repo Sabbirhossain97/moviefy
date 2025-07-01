@@ -122,6 +122,62 @@ export type Database = {
         }
         Relationships: []
       }
+      series_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          rating: number | null
+          series_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rating?: number | null
+          series_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rating?: number | null
+          series_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      series_reviews: {
+        Row: {
+          created_at: string
+          id: number
+          review: string | null
+          series_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          review?: string | null
+          series_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          review?: string | null
+          series_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
