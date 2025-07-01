@@ -183,13 +183,13 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
           <div className="flex items-center gap-4">
             {/* Mobile menu for screens smaller than 1180px */}
             <div className="[@media(max-width:1180px)]:block hidden">
-              <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} direction="top">
                 <DrawerTrigger asChild>
                   <Button variant="ghost" size="icon" className="p-0">
                     <AlignJustify className="h-6 w-6 hover:text-red-500 transition duration-300" />
                   </Button>
                 </DrawerTrigger>
-                <DrawerContent className="h-[80vh]">
+                <DrawerContent className="h-[85vh] top-0 bottom-auto rounded-t-none rounded-b-[10px]">
                   <DrawerHeader className="text-left border-b">
                     <div className="flex items-center justify-between">
                       <DrawerTitle className="flex items-center space-x-2">
@@ -210,58 +210,62 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                       {/* Movies Section */}
                       <Collapsible open={moviesOpen} onOpenChange={setMoviesOpen}>
                         <CollapsibleTrigger asChild>
-                          <Button variant="ghost" className="w-full justify-between text-left h-12 px-3">
+                          <Button variant="ghost" className="w-full justify-between text-left h-12 px-3 hover:bg-accent/50 transition-all duration-200">
                             <span className="font-medium">Movies</span>
-                            {moviesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                            <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${moviesOpen ? 'rotate-180' : ''}`} />
                           </Button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="space-y-1 ml-4">
-                          {movieCategories.map((category, index) => (
+                        <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                          <div className="space-y-1 ml-4 pt-2">
+                            {movieCategories.map((category, index) => (
+                              <Link
+                                key={index}
+                                to={category.path}
+                                onClick={handleMobileLinkClick}
+                                className="block px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-md transform hover:translate-x-1"
+                              >
+                                {category.label}
+                              </Link>
+                            ))}
                             <Link
-                              key={index}
-                              to={category.path}
+                              to="/movie/genres"
                               onClick={handleMobileLinkClick}
-                              className="block px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors rounded-md"
+                              className="block px-3 py-2 text-sm text-movie-primary font-medium hover:bg-accent transition-all duration-200 rounded-md transform hover:translate-x-1"
                             >
-                              {category.label}
+                              Browse by genres →
                             </Link>
-                          ))}
-                          <Link
-                            to="/movie/genres"
-                            onClick={handleMobileLinkClick}
-                            className="block px-3 py-2 text-sm text-movie-primary font-medium hover:bg-accent transition-colors rounded-md"
-                          >
-                            Browse by genres →
-                          </Link>
+                          </div>
                         </CollapsibleContent>
                       </Collapsible>
 
                       {/* TV Series Section */}
                       <Collapsible open={tvSeriesOpen} onOpenChange={setTvSeriesOpen}>
                         <CollapsibleTrigger asChild>
-                          <Button variant="ghost" className="w-full justify-between text-left h-12 px-3">
+                          <Button variant="ghost" className="w-full justify-between text-left h-12 px-3 hover:bg-accent/50 transition-all duration-200">
                             <span className="font-medium">TV Series</span>
-                            {tvSeriesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                            <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${tvSeriesOpen ? 'rotate-180' : ''}`} />
                           </Button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="space-y-1 ml-4">
-                          {tvSeriesCategories.map((category, index) => (
+                        <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                          <div className="space-y-1 ml-4 pt-2">
+                            {tvSeriesCategories.map((category, index) => (
+                              <Link
+                                key={index}
+                                to={category.path}
+                                onClick={handleMobileLinkClick}
+                                className="block px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-md transform hover:translate-x-1"
+                              >
+                                {category.label}
+                              </Link>
+                            ))}
                             <Link
-                              key={index}
-                              to={category.path}
+                              to="/tv/genres"
                               onClick={handleMobileLinkClick}
-                              className="block px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors rounded-md"
+                              className="block px-3 py-2 text-sm text-movie-primary font-medium hover:bg-accent transition-all duration-200 rounded-md transform hover:translate-x-1"
                             >
-                              {category.label}
+                              Browse by genres →
                             </Link>
-                          ))}
-                          <Link
-                            to="/tv/genres"
-                            onClick={handleMobileLinkClick}
-                            className="block px-3 py-2 text-sm text-movie-primary font-medium hover:bg-accent transition-colors rounded-md"
-                          >
-                            Browse by genres →
-                          </Link>
+                          </div>
                         </CollapsibleContent>
                       </Collapsible>
 
@@ -269,7 +273,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                       <Link
                         to="/recommendations"
                         onClick={handleMobileLinkClick}
-                        className="flex items-center px-3 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors rounded-md"
+                        className="flex items-center px-3 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-md transform hover:translate-x-1"
                       >
                         <Brain className="h-4 w-4 mr-3" />
                         AI Search
@@ -278,7 +282,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                       <Link
                         to="/ott-updates"
                         onClick={handleMobileLinkClick}
-                        className="block px-3 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors rounded-md"
+                        className="block px-3 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-md transform hover:translate-x-1"
                       >
                         OTT Updates
                       </Link>
