@@ -1,3 +1,4 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Pencil } from "lucide-react";
 import dayjs from "dayjs";
@@ -38,24 +39,97 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   const isOwner = user && r.user_id === user.id;
 
   return (
-    <div className="flex gap-2 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative">
+    <div className="flex flex-col gap-3 rounded-lg p-4 bg-gradient-to-r from-card/70 to-background/60 shadow border hover:scale-[1.01] transition-all duration-150 group relative">
+      <div className="flex gap-3">
+        <Avatar className="w-10 h-10 shrink-0">
+          {r.user?.avatar_url ? (
+            <AvatarImage src={r.user?.avatar_url} alt="User avatar" />
+          ) : (
+            <AvatarFallback>
+              <User className="w-4 h-4" />
+            </AvatarFallback>
+          )}
+        </Avatar>
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-base">{r.user?.full_name || "User"}</span>
+              <span className="text-xs text-gray-400">{dayjs(r.created_at).format("MMM D, YYYY")}</span>
+            </div>
+            
+            {/* Show user rating only on latest user review */}
+            {showUserRating && rating ? (
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <Star
+                    key={i}
+                    size={14}
+                    className={i < rating ? "text-yellow-400" : "text-muted-foreground"}
+                    fill={i < rating ? "currentColor" : "none"}
+                  />
+                ))}
+                <span className="text-xs font-semibold text-yellow-500 ml-1">{rating}/5</span>
+              </div>
+            ) : null}
+          </div>
+
+          {/* Review content or edit form */}
+          {editingReviewId === r.id ? (
+            <div className="flex flex-col gap-3">
+              <Textarea
+                className="w-full rounded border bg-background text-white p-2 text-sm resize-none focus:ring focus:outline-none"
+                value={editingInput}
+                onChange={e => setEditingInput(e.target.value)}
+                maxLength={500}
+                rows={3}
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  className="bg-primary text-white px-4 py-2 rounded text-sm font-medium hover:bg-primary/90 transition-colors"
+                  onClick={() => onEditSubmit(r)}
+                  disabled={loading}
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  className="border border-muted-foreground/20 text-muted-foreground bg-transparent px-4 py-2 rounded text-sm hover:bg-muted/50 transition-colors"
+                  onClick={onCancelEdit}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
+              {r.review}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Action buttons - positioned differently on mobile */}
       {isOwner && editingReviewId !== r.id && (
-        <div className="absolute top-3 right-3 flex gap-2 z-10">
-          <span
-            onClick={() => onStartEdit(r)}
-            title="Edit review"
-            className="cursor-pointer text-primary hover:text-yellow-400 transition"
-            style={{ display: "flex", alignItems: "center" }}
-            tabIndex={0}
-            aria-label="Edit review"
-          >
-            <Pencil className="w-4 h-4" />
-          </span>
+        <div className="flex justify-end gap-2 pt-2 border-t border-muted/20 sm:absolute sm:top-3 sm:right-3 sm:border-t-0 sm:pt-0">
           <Button
-            size="icon"
+            size="sm"
             variant="ghost"
             type="button"
-            className="ml-1"
+            className="h-8 w-8 p-0 hover:bg-muted/50"
+            title="Edit review"
+            onClick={() => onStartEdit(r)}
+            aria-label="Edit review"
+          >
+            <Pencil className="w-4 h-4 text-primary" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost" 
+            type="button"
+            className="h-8 w-8 p-0 hover:bg-muted/50"
             title="Delete review"
             onClick={() => onDelete(r.id)}
             aria-label="Delete review"
@@ -73,72 +147,8 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           </Button>
         </div>
       )}
-
-      <Avatar className="w-10 h-10 shrink-0">
-        {r.user?.avatar_url ? (
-          <AvatarImage src={r.user?.avatar_url} alt="User avatar" />
-        ) : (
-          <AvatarFallback>
-            <User className="w-4 h-4" />
-          </AvatarFallback>
-        )}
-      </Avatar>
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-base">{r.user?.full_name || "User"}</span>
-          <span className="text-xs text-gray-400">{dayjs(r.created_at).format("MMM D, YYYY")}</span>
-          {/* Show user rating only on latest user review */}
-          {showUserRating && rating ? (
-            <span className="ml-2 flex items-center gap-1">
-              {Array.from({ length: 5 }, (_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  className={i < rating ? "text-yellow-400" : "text-muted-foreground"}
-                  fill={i < rating ? "currentColor" : "none"}
-                />
-              ))}
-              <span className="text-xs font-semibold text-yellow-500">{rating}/5</span>
-            </span>
-          ) : null}
-        </div>
-        {/* If this user is editing this review */}
-        {editingReviewId === r.id ? (
-          <div className="flex flex-col mt-1 gap-2">
-            <Textarea
-              className="w-full rounded border bg-background text-white p-2 text-sm resize-none focus:ring focus:outline-none"
-              value={editingInput}
-              onChange={e => setEditingInput(e.target.value)}
-              maxLength={500}
-              rows={2}
-              autoFocus
-            />
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className="bg-primary text-white px-3 py-1 rounded text-sm"
-                onClick={() => onEditSubmit(r)}
-                disabled={loading}
-                style={{ minWidth: 64 }}
-              >
-                Save
-              </button>
-              <button
-                type="button"
-                className="border border-gray-300 text-gray-400 bg-transparent px-3 py-1 rounded text-sm"
-                onClick={onCancelEdit}
-                style={{ minWidth: 64 }}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="text-sm mt-1 text-muted-foreground whitespace-pre-line">{r.review}</div>
-        )}
-      </div>
     </div>
   );
 };
-export default ReviewCard;
 
+export default ReviewCard;
