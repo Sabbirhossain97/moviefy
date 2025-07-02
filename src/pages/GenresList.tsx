@@ -1,10 +1,10 @@
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Genre } from "@/services/api";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import Footer from "@/components/Footer";
 
 const GenresList = () => {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -51,10 +51,8 @@ const GenresList = () => {
   return (
     <>
       <Header genres={genres} />
-      
-      <main className="container py-8 px-4">
+      <main className="container min-h-[100vh] py-8 px-4">
         <h1 className="text-3xl font-bold mb-8">Movie Genres</h1>
-        
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {genres.map(genre => (
             <Link key={genre.id} to={`/movie/genre/${genre.id}`}>
@@ -65,6 +63,7 @@ const GenresList = () => {
           ))}
         </div>
       </main>
+      <Footer/>
     </>
   );
 };

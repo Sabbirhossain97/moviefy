@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import AIMovieSearch from "@/components/AIMovieSearch";
 import { Brain, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+
 const AIRecommendations = () => {
   const { user } = useAuth()
   return (

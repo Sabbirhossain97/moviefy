@@ -101,7 +101,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md ">
           <DialogHeader>
             <DialogTitle>Reset Password</DialogTitle>
           </DialogHeader>

@@ -11,7 +11,7 @@ export const SimilarTVSeriesSection: React.FC<SimilarTVSeriesSectionProps> = ({
 }) => {
     if (!series || series.length === 0) return null;
     return (
-        <section className="container mt-10 mb-4">
+        <section className="container px-4 mt-10 mb-4">
             <TVSeriesSlider name="Similar Series" series={series.slice(0, 10)} />
         </section>
     );

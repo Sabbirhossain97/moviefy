@@ -86,7 +86,7 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
           draggable={false}
         >
           {validMovies.map((movie) => (
-            <div key={movie.id} className="flex-shrink-0 w-[240px] h-full">
+            <div key={movie.id} className="flex-shrink-0 w-[200px] sm:w-[240px] h-full">
               <Link to={`/movie/${movie.id}`} className="block">
                 <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50 h-full">
                   <div className="overflow-hidden h-full">

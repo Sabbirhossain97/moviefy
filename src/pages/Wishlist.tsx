@@ -40,7 +40,7 @@ const Wishlist = () => {
   return (
     <div className="min-h-screen gradient-bg">
       <Header />
-      <main className="container py-8">
+      <main className="container px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-3 mb-8">
             <Heart className="w-8 h-8 text-red-500" />

@@ -23,7 +23,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Search, Video, Brain, AlignJustify, X, ChevronDown } from "lucide-react";
+import { Search, Video, Brain, Sparkles, AlignJustify, X, ChevronDown } from "lucide-react";
 import { Genre, api } from "@/services/api";
 import { UserMenu } from "@/components/UserMenu";
 import TopNavbar from "./TopNavbar";
@@ -187,9 +187,9 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
             <div className="[@media(max-width:1180px)]:block hidden">
               <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} direction="top">
                 <DrawerTrigger asChild>
-                  <Button variant="ghost" size="icon" className="p-0">
+                  <button className="p-0 w-7 h-7 mt-1">
                     <AlignJustify className="h-6 w-6 hover:text-red-500 transition duration-300" />
-                  </Button>
+                  </button>
                 </DrawerTrigger>
                 <DrawerContent className="min-h-[40vh] top-0 bottom-auto rounded-t-none rounded-b-[10px]">
                   <DrawerHeader className="text-left border-b">
@@ -280,7 +280,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                         <Brain className="h-4 w-4 mr-3" />
                         AI Search
                       </Link>
-                      
+
                       <Link
                         to="/ott-updates"
                         onClick={handleMobileLinkClick}
@@ -296,7 +296,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
 
             <Link to="/" className="flex items-center space-x-2 group pr-4">
               <div className="relative">
-                <Video className="h-7 w-7 text-movie-primary transition-transform group-hover:scale-110" />
+                <Video className="h-7 w-7 text-movie-primary transition-transform" />
               </div>
               <span className="font-bold text-xl bg-gradient-to-r whitespace-nowrap from-movie-primary to-yellow-500 bg-clip-text text-transparent">
                 Moviefy <sup className="bg-gradient-to-r from-movie-primary to-yellow-500 bg-clip-text text-transparent">AI</sup>
@@ -373,20 +373,20 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
             </NavigationMenu>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center">
             {/* search bar trigger for small screen */}
-            <div className="sm:hidden">
+            <div className="md:hidden">
               <Button
                 type="submit"
                 size="icon"
                 variant="outline"
                 onClick={() => setIsSearchBarOpen(true)}
-                className="h-10 rounded-full px-3 bg-muted/50 border-muted-foreground/20"
+                className="h-10 w-10 rounded-full px-2 bg-muted/50 border-muted-foreground/20"
               >
                 <Search className="h-4 w-4 text-muted-foreground text-white" />
               </Button>
             </div>
-            <form onSubmit={handleSearch} className="hidden sm:block w-full ">
+            <form onSubmit={handleSearch} className="hidden md:block w-full">
               <div className="flex ">
                 <div className="relative">
                   <Input

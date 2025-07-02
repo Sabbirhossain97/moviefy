@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { api, MovieVideo, IMAGE_SIZES, Cast, TVSeries } from '@/services/api';
 import Header from '@/components/Header';
-import MovieReviews from "@/components/Reviews";
+import Reviews from "@/components/Reviews";
 import Footer from "@/components/Footer";
 import Backdrop from '@/components/common/Backdrop';
 import { CastSection } from "@/components/common/CastSection";
@@ -108,43 +108,46 @@ const TVSeriesDetails = () => {
     const releaseYear = tvSeries.first_air_date ? new Date(tvSeries.first_air_date).getFullYear() : "N/A";
 
     return (
-        <div className="min-h-screen gradient-bg relative">
+        <>
             <Header />
-            <Backdrop backdropUrl={backdropUrl} title={tvSeries.name} />
-            <main className="container relative z-20 max-w-6xl px-4 md:px-6 -mt-48">
-                <TVSeriesDetailsHeader
-                    series={tvSeries}
-                    posterUrl={posterUrl}
-                    videos={videos}
-                    onPlayTrailer={() => setShowTrailer(true)}
-                    onWriteReview={() => {
-                        if (reviewSectionRef.current) {
-                            reviewSectionRef.current.scrollIntoView({ behavior: "smooth" });
-                        }
-                    }}
-                    releaseYear={releaseYear}
+            <div className="min-h-screen gradient-bg relative">
+                <Backdrop backdropUrl={backdropUrl} title={tvSeries.name} />
+                <main className="container relative z-20 max-w-6xl px-4 -mt-48">
+                    <TVSeriesDetailsHeader
+                        series={tvSeries}
+                        posterUrl={posterUrl}
+                        videos={videos}
+                        onPlayTrailer={() => setShowTrailer(true)}
+                        onWriteReview={() => {
+                            if (reviewSectionRef.current) {
+                                reviewSectionRef.current.scrollIntoView({ behavior: "smooth" });
+                            }
+                        }}
+                        releaseYear={releaseYear}
+                    />
+                </main>
+
+                <TrailerDialog
+                    show={showTrailer && videos.length > 0}
+                    onClose={() => setShowTrailer(false)}
+                    videoKey={videos.length > 0 ? videos[0].key : ""}
                 />
-            </main>
 
-            <TrailerDialog
-                show={showTrailer && videos.length > 0}
-                onClose={() => setShowTrailer(false)}
-                videoKey={videos.length > 0 ? videos[0].key : ""}
-            />
+                <CastSection cast={credits?.cast || []} />
 
-            <CastSection cast={credits?.cast || []} />
+                <SimilarTVSeriesSection series={similarTVSeries} />
 
-            <SimilarTVSeriesSection series={similarTVSeries} />
+                <section
+                    ref={reviewSectionRef}
+                    className="container px-4 relative z-20 my-12"
+                >
+                    <Reviews id={tvSeries.id} type='tv' />
+                </section>
 
-            <section
-                ref={reviewSectionRef}
-                className="container relative z-20 px-4 md:px-6 my-12"
-            >
-                <MovieReviews id={tvSeries.id} type='tv' />
-            </section>
-            
-            <Footer />
-        </div>
+                <Footer />
+            </div>
+        </>
+
     );
 };
 

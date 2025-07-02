@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Movie, Genre } from "@/services/api";
@@ -8,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { AuthDialog } from "@/components/AuthDialog";
 import { Brain, Heart, Search, Users, Video } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const features = [
   {
@@ -61,10 +61,10 @@ const LandingPage = () => {
   return (
     <div className="bg-background text-foreground">
       <Header genres={genres} />
-      
       <main>
-        <section className="relative pt-24 pb-32 md:pt-32 md:pb-40 text-center bg-gradient-to-b from-background via-black/80 to-black">
-          <div className="absolute inset-0 bg-[url('https://image.tmdb.org/t/p/original/h3X1_4t2Yw5Wl9yYI22A3A5iIhv.jpg')] bg-cover bg-center opacity-20"></div>
+        <section className="relative inset-0 opacity-100 bg-cover bg-left sm:bg-top [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] pt-24 pb-32 md:pt-32 md:pb-40 text-center bg-gradient-to-b from-background via-black/80 to-black"
+          style={{ backgroundImage: `url(/moviefy-banner.png)` }}
+        >
           <div className="container relative">
             <h1 className="text-4xl md:text-6xl font-bold mb-4 text-shadow-lg animate-fade-up">
               Your Universe of Moviess, Reimagined.
@@ -78,7 +78,7 @@ const LandingPage = () => {
                   Get Started
                 </Button>
               </AuthDialog>
-               <AuthDialog>
+              <AuthDialog>
                 <Button size="lg" variant="outline" className="text-lg px-8 py-6">
                   Sign In
                 </Button>
@@ -88,7 +88,7 @@ const LandingPage = () => {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="container py-20">
+        <section id="features" className="container relative py-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Why You'll Love Moviefy</h2>
             <p className="text-muted-foreground mt-2">Everything you need for a perfect movie night.</p>

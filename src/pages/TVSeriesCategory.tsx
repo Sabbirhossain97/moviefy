@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import TVCard from "@/components/TVCard";
+import Footer from "@/components/Footer";
 
 type CategoryType = "airing-today" | "on-the-air" | "popular" | "top-rated";
 
@@ -137,6 +138,7 @@ const MovieCategory = () => {
                     </>
                 )}
             </main>
+            <Footer/>
         </>
     );
 };

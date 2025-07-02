@@ -7,6 +7,7 @@ import TVSeriesSlider from "@/components/TVSeriesSlider";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import Footer from "@/components/Footer";
 
 const Dashboard = () => {
   const today = new Date().toISOString().split('T')[0];
@@ -80,7 +81,7 @@ const Dashboard = () => {
     <>
       <Header genres={genres} />
       {featuredMovie && <HeroBanner movie={featuredMovie} className="mb-8" />}
-      <main className="container py-6">
+      <main className="container px-4 py-6">
         <div className="space-y-8">
           <Tabs defaultValue="movies" className="w-full">
             <TabsList className="grid w-full grid-cols-2 max-w-md">
@@ -105,6 +106,7 @@ const Dashboard = () => {
           <MovieSlider title="Upcoming Movies" movies={upcoming} />
         </div>
       </main>
+      <Footer/>
     </>
   );
 };

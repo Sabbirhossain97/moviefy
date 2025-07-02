@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { api, Movie, MovieVideo, IMAGE_SIZES, Cast } from '@/services/api';
 import Header from '@/components/Header';
-import MovieReviews from "@/components/Reviews";
+import Reviews from "@/components/Reviews";
 import Footer from "@/components/Footer";
 import Backdrop from "@/components/common/Backdrop";
 import MovieDetailsHeader from "@/components/movie-details/MovieDetailsHeader";
@@ -113,45 +113,47 @@ const MovieDetails = () => {
   const director = credits?.crew?.find((c: any) => c.job === "Director")?.name ?? "Unknown";
 
   return (
-    <div className="min-h-screen gradient-bg relative">
+    <>
       <Header />
-      <Backdrop backdropUrl={backdropUrl} title={movie.title} />
-      <main className="container relative z-20 max-w-6xl px-4 md:px-6 -mt-48">
-        <MovieDetailsHeader
-          movie={movie}
-          posterUrl={posterUrl}
-          isReleased={isReleased}
-          videos={videos}
-          onPlayTrailer={() => setShowTrailer(true)}
-          onWriteReview={() => {
-            if (reviewSectionRef.current) {
-              reviewSectionRef.current.scrollIntoView({ behavior: "smooth" });
-            }
-          }}
-          releaseYear={releaseYear}
-          director={director}
+      <div className="min-h-screen overflow-hidden gradient-bg relative">
+        <Backdrop backdropUrl={backdropUrl} title={movie.title} />
+        <main className="container relative z-20 max-w-6xl px-4 -mt-48">
+          <MovieDetailsHeader
+            movie={movie}
+            posterUrl={posterUrl}
+            isReleased={isReleased}
+            videos={videos}
+            onPlayTrailer={() => setShowTrailer(true)}
+            onWriteReview={() => {
+              if (reviewSectionRef.current) {
+                reviewSectionRef.current.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+            releaseYear={releaseYear}
+            director={director}
+          />
+        </main>
+
+        <TrailerDialog
+          show={showTrailer && videos.length > 0}
+          onClose={() => setShowTrailer(false)}
+          videoKey={videos.length > 0 ? videos[0].key : ""}
         />
-      </main>
 
-      <TrailerDialog
-        show={showTrailer && videos.length > 0}
-        onClose={() => setShowTrailer(false)}
-        videoKey={videos.length > 0 ? videos[0].key : ""}
-      />
+        <CastSection cast={credits?.cast || []} />
 
-      <CastSection cast={credits?.cast || []} />
+        <SimilarMoviesSection movies={similarMovies} />
 
-      <SimilarMoviesSection movies={similarMovies} />
+        <section
+          ref={reviewSectionRef}
+          className="container relative z-20 px-4 my-12"
+        >
+          <Reviews id={movie.id} type='movie' />
+        </section>
 
-      <section
-        ref={reviewSectionRef}
-        className="container relative z-20 px-4 md:px-6 my-12"
-      >
-        <MovieReviews id={movie.id} type='movie' />
-      </section>
-      
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 };
 

@@ -11,7 +11,7 @@ export const SimilarMoviesSection: React.FC<SimilarMoviesSectionProps> = ({
 }) => {
   if (!movies || movies.length === 0) return null;
   return (
-    <section className="container mt-10 mb-4">
+    <section className="container px-4 mt-10 mb-4">
       <MovieSlider title="Similar Movies" movies={movies.slice(0, 10)} />
     </section>
   );

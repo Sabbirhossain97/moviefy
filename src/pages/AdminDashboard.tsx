@@ -110,7 +110,7 @@ const AdminDashboard = () => {
     return (
       <div className="min-h-screen gradient-bg">
         <Header />
-        <main className="container py-8">
+        <main className="container px-4 py-8">
           <div className="max-w-2xl mx-auto text-center">
             <Crown className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
             <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
@@ -130,7 +130,7 @@ const AdminDashboard = () => {
     return (
       <div className="min-h-screen gradient-bg">
         <Header />
-        <main className="container py-8">
+        <main className="container px-4 py-8">
           <div className="max-w-2xl mx-auto text-center">
             <Crown className="w-16 h-16 mx-auto mb-4 text-red-500" />
             <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
@@ -146,7 +146,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen gradient-bg">
       <Header />
-      <main className="container py-8">
+      <main className="container px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-3 mb-8">
             <Crown className="w-8 h-8 text-yellow-500" />

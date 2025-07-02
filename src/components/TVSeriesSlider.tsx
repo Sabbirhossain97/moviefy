@@ -87,7 +87,7 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                     {validTvSeries.map((series) => (
                         <div 
                             key={series.id} 
-                            className="flex-shrink-0 w-[240px] h-auto"
+                            className="flex-shrink-0 w-[200px] sm:w-[240px] h-auto"
                         >
                             <Link to={`/tv/${series.id}`} className="block">
                                 <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50 h-full relative">

@@ -3,6 +3,7 @@ import LandingPage from './LandingPage';
 import Dashboard from './Dashboard';
 import { useState, useEffect } from 'react';
 import { Video } from "lucide-react";
+
 const Index = () => {
   const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(true);

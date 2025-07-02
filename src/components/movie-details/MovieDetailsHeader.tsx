@@ -29,14 +29,14 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
   releaseYear,
   director,
 }) => (
-  <div className="flex flex-col md:flex-row gap-8 bg-transparent">
+  <div className="flex flex-col md:flex-row gap-2 bg-transparent">
     <div className="w-full md:w-[350px] shrink-0 flex flex-col items-center md:items-start z-10">
       {posterUrl ? (
         <div className="relative group rounded-xl shadow-2xl">
           <img
             src={posterUrl}
             alt={movie.title}
-            className="w-64 md:w-[330px] h-[550px] object-cover rounded-xl shadow-xl"
+            className="w-64 md:w-[330px] h-[400px] md:h-[550px] object-cover rounded-xl shadow-xl"
             style={{ background: "#1a1a1a" }}
           />
           <div className="absolute top-3 right-3 drop-shadow-md">
@@ -55,23 +55,23 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
       )}
     </div>
     <div className="flex-1">
-      <h1 className="text-4xl font-bold mb-1 leading-tight items-center gap-2">
+      <h1 className="text-4xl text-center md:text-start font-bold mb-1 leading-tight items-center gap-2">
         {movie.title}
         <span className="text-gray-400 text-2xl font-normal ml-2">
           ({releaseYear})
         </span>
       </h1>
       {movie.tagline && (
-        <div className="italic text-md text-gray-300 mb-2">{movie.tagline}</div>
+        <div className="italic text-center md:text-start text-md text-gray-300 mb-2">{movie.tagline}</div>
       )}
-      <div className="flex flex-wrap items-center gap-2 mb-3">
+      <div className="flex flex-wrap justify-center md:justify-start items-center gap-2 mb-3">
         {movie.genres?.map((genre: any) => (
           <Badge className="text-xs bg-gray-700" key={genre.id}>
             {genre.name}
           </Badge>
         ))}
       </div>
-      <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">
+      <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 mb-4 text-sm">
         <span className="flex items-center text-yellow-400 font-medium ">
           <span className="mr-1 font-bold rounded bg-[#f5c518] text-gray-900 px-2 py-0.5 text-xs shadow-sm">
             IMDb
@@ -106,7 +106,7 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
           </div>
         )}
       </div>
-      <div className="flex gap-3 mb-4 flex-wrap">
+      <div className="flex justify-center md:justify-start gap-3 mb-4 flex-wrap">
         {videos.length > 0 && (
           <Button
             className="min-w-[165px] text-white rounded px-5 py-4 font-semibold flex items-center gap-2 shadow-md"
@@ -136,7 +136,7 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
           Write a Review
         </Button>
       </div>
-      <div className="mb-2 flex items-center gap-3">
+      <div className="mb-2 flex justify-center md:justify-start items-center gap-3">
         <Rating id={movie.id} type="movie" />
       </div>
       <MovieInfoSection

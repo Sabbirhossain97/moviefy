@@ -28,26 +28,26 @@ export const MovieInfoSection: React.FC<MovieInfoSectionProps> = ({
   revenue,
 }) => {
   return (
-    <div className="mb-2 space-y-4 flex flex-col">
-      {overview && <div>
+    <div className="mb-2 space-y-4 flex flex-col items-center md:items-start">
+      {overview && <div className="text-center md:text-start">
         <h2 className="text-lg font-bold mb-0">Overview</h2>
         <p className="text-gray-400">{overview}</p>
       </div>}
 
       {(!!budget || !!revenue) && (
-        <div className="flex flex-row gap-16 mt-2 mb-1">
-          <div>
+        <div className="flex [@media(max-width:500px)]:flex-wrap [@media(max-width:500px)]:justify-center [@media(max-width:500px)]:gap-6 flex-row gap-16 mt-2 mb-1">
+          <div className="text-center md:text-start">
             <span className="font-bold text-white block mb-0.5">Director</span>
             <span className="text-gray-400">{director}</span>
           </div>
           {budget !== undefined && (
-            <div>
+            <div className="text-center md:text-start">
               <span className="block font-bold text-white mb-0.5">Budget</span>
               <span className="text-gray-400">{formatCurrency(budget)}</span>
             </div>
           )}
           {revenue !== undefined && (
-            <div>
+            <div className="text-center md:text-start">
               <span className="block font-bold text-white mb-0.5">Revenue</span>
               <span className="text-gray-400">{formatCurrency(revenue)}</span>
             </div>
@@ -55,14 +55,22 @@ export const MovieInfoSection: React.FC<MovieInfoSectionProps> = ({
         </div>
       )}
       {productionCompanies && productionCompanies.length > 0 && (
-        <div>
-          <p className="font-bold text-white mb-0.5 flex items-center">Production
-            {productionCountries.map((pc) =>
-            (
-              <Badge className="text-[10px] bg-gray-700 ml-2 py-0" >
-                {pc.name}
-              </Badge>
-            ))}
+        <div className="text-center md:text-start">
+          <p className="font-bold text-white mb-0.5 flex justify-center md:justify-start items-center">Production
+            <span className="hidden md:block">
+              {productionCountries.map((pc) =>
+              (
+                <Badge className="text-[10px] bg-gray-700 ml-2 py-0" >
+                  {pc.name}
+                </Badge>
+              ))}</span>
+          </p>
+          <p className="md:hidden mb-1">{productionCountries.map((pc) =>
+          (
+            <Badge className="text-[10px] bg-gray-700 ml-2 py-0" >
+              {pc.name}
+            </Badge>
+          ))}
           </p>
           <span className="text-gray-400">
             {productionCompanies.map((pc) => pc.name).join(", ")}
