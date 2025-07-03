@@ -1,8 +1,10 @@
+
 import { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
 import ReviewInput from "./ReviewInput";
 import ReviewList from "./ReviewList";
+import AverageRating from "./AverageRating";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,7 +19,7 @@ import { toast } from "@/hooks/use-toast";
 export default function Reviews({ id, type }: { id: number, type: string }) {
   const { user, profile } = useAuth();
   const [input, setInput] = useState("");
-  const [editingReviewId, setEditingReviewId] = useState<number | null>(null);
+  const [editingReviewId, setEditingReviewId] = useState<string | number | null>(null);
   const [editingInput, setEditingInput] = useState("");
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
@@ -28,28 +30,30 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
     // eslint-disable-next-line
   }, [id, user]);
 
-  const filteredReviews = useMemo(() => {
-    if (type === 'movie') {
-      return [...reviews].sort((a, b) => {
-        if (sortOrder === "oldest") {
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-        } else {
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        }
-      });
-    } else {
-      return [...seriesReviews].sort((a, b) => {
-        if (sortOrder === "oldest") {
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-        } else {
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        }
-      });
+  const allReviews = type === 'movie' ? reviews : seriesReviews;
+
+  const filteredAndSortedReviews = useMemo(() => {
+    let filtered = [...allReviews];
+
+    // Filter by rating if a rating filter is selected
+    if (filterRating !== null) {
+      filtered = filtered.filter(review => review.user_rating === filterRating);
     }
-  }, [reviews, seriesReviews, sortOrder, type]);
 
+    // Sort reviews
+    filtered.sort((a, b) => {
+      if (sortOrder === "oldest") {
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      } else {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    });
 
-  let displayReviews = [...filteredReviews];
+    return filtered;
+  }, [allReviews, filterRating, sortOrder]);
+
+  // Move current user's reviews to the top
+  let displayReviews = [...filteredAndSortedReviews];
   if (user) {
     displayReviews = [
       ...displayReviews.filter(r => r.user_id === user.id),
@@ -64,6 +68,12 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
       avatar_url: profile?.avatar_url || null
     }
     : null;
+
+  // Calculate average rating
+  const ratingsWithValues = allReviews.filter(review => review.user_rating !== null && review.user_rating !== undefined);
+  const averageRating = ratingsWithValues.length > 0 
+    ? ratingsWithValues.reduce((sum, review) => sum + (review.user_rating || 0), 0) / ratingsWithValues.length 
+    : 0;
 
   // --- Handlers ---
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,7 +106,14 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
 
   return (
     <div className="w-full max-w-3xl">
-      <h2 className="text-2xl font-bold mb-2">Reviews</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold">Reviews</h2>
+        <AverageRating 
+          averageRating={averageRating} 
+          totalReviews={ratingsWithValues.length}
+        />
+      </div>
+      
       <div className="mb-4 flex gap-3 items-center flex-wrap">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -175,13 +192,13 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
         user={currentUserInfo}
         editingReviewId={editingReviewId}
         editingInput={editingInput}
-        setEditingReviewId={(id: string | number) => setEditingReviewId(Number(id))}
+        setEditingReviewId={setEditingReviewId}
         setEditingInput={setEditingInput}
         loading={loading}
         onEditSubmit={handleEditSubmit}
         onStartEdit={startEdit}
         onCancelEdit={cancelEdit}
-        onDelete={async (id: number) => {
+        onDelete={async (id: string | number) => {
           await deleteReview(id);
           setInput("");
           refresh();
