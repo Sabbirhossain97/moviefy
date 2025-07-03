@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { AuthDialog } from '@/components/AuthDialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WishlistMovieCard from '@/components/WishlistMovieCard';
-import { TVSeriesWatchedButton } from '@/components/TVSeriesWatchedButton';
 import { IMAGE_SIZES } from '@/services/api';
 
 const Wishlist = () => {
@@ -19,6 +18,7 @@ const Wishlist = () => {
   const { wishlist: movieWishlist, loading: movieLoading, removeFromWishlist: removeMovie } = useWishlist();
   const { wishlist: tvWishlist, loading: tvLoading, removeFromWishlist: removeTVSeries } = useTVSeriesWishlist();
   const { addToWatchedList: addMovieToWatched } = useWatchedList();
+  const { addToWatchedList: addTVSeriesToWatched } = useTVSeriesWatchedList();
   const navigate = useNavigate();
 
   const handleMarkMovieAsWatched = (item: any) => {
@@ -39,6 +39,24 @@ const Wishlist = () => {
       vote_count: 0
     };
     addMovieToWatched(movieData);
+  };
+
+  const handleMarkTVSeriesAsWatched = (item: any) => {
+    const seriesData = {
+      id: item.series_id,
+      name: item.series_name,
+      original_name: item.series_name,
+      poster_path: item.series_poster_path,
+      first_air_date: item.series_first_air_date,
+      vote_average: item.series_vote_average,
+      vote_count: 0,
+      overview: '',
+      backdrop_path: null,
+      original_language: '',
+      created_by: [],
+      networks: []
+    };
+    addTVSeriesToWatched(seriesData);
   };
 
   if (!user) {
@@ -203,27 +221,16 @@ const Wishlist = () => {
                         >
                           <Heart className="w-5 h-5 fill-red-500" />
                         </button>
-                        <div onClick={e => e.stopPropagation()}>
-                          <TVSeriesWatchedButton
-                            series={{
-                              id: item.series_id,
-                              name: item.series_name,
-                              original_name: item.series_name,
-                              poster_path: item.series_poster_path,
-                              first_air_date: item.series_first_air_date,
-                              vote_average: item.series_vote_average,
-                              vote_count: 0,
-                              overview: '',
-                              backdrop_path: null,
-                              original_language: '',
-                              created_by: [],
-                              networks: []
-                            }}
-                            size="icon"
-                            variant="ghost"
-                            showText={false}
-                          />
-                        </div>
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleMarkTVSeriesAsWatched(item);
+                          }}
+                          className="rounded-full bg-white/70 hover:bg-green-100 p-2 text-green-600 shadow-xl"
+                          title="Mark as watched"
+                        >
+                          <CheckCircle className="w-5 h-5" />
+                        </button>
                       </div>
                       <div className="p-4">
                         <div className="font-semibold mb-1 line-clamp-2">{item.series_name}</div>
