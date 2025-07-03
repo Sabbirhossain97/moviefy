@@ -5,15 +5,15 @@ import ReviewCard from "./ReviewCard";
 interface ReviewListProps {
   reviews: any[];
   user: any;
-  editingReviewId: number | null;
+  editingReviewId: string | number | null;
   editingInput: string;
-  setEditingReviewId: (id: number | null) => void;
+  setEditingReviewId: (id: string | number | null) => void;
   setEditingInput: (val: string) => void;
   loading: boolean;
   onEditSubmit: (r: any) => void;
   onStartEdit: (r: any) => void;
   onCancelEdit: () => void;
-  onDelete: (id: string | number) => void; // Updated to accept both string and number
+  onDelete: (id: string | number) => void;
   filterRating?: number | null;
   latestUserReviewId?: string | null;
 }

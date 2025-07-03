@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,7 +14,7 @@ export interface Review {
 }
 
 export interface SeriesReview {
-  id: number; // Changed from string to number to match database schema
+  id: number;
   user_id: string;
   series_id: number;
   review: string;
@@ -35,31 +36,44 @@ export function useMovieReviews(id: number, type: string) {
     setError(null);
     if (type === 'movie') {
       try {
-        const { data, error } = await supabase
+        // First fetch the movie reviews with user profiles
+        const { data: reviewsData, error: reviewsError } = await supabase
           .from("movie_reviews")
           .select(`
             *, 
-            user:profiles(full_name, avatar_url),
-            user_rating:movie_ratings!inner(rating)
+            user:profiles(full_name, avatar_url)
           `)
           .eq("movie_id", id)
-          .eq("movie_ratings.movie_id", id)
           .order("created_at", { ascending: false });
 
-        if (error) {
-          setError(error.message || "Failed to fetch reviews.");
+        if (reviewsError) {
+          setError(reviewsError.message || "Failed to fetch reviews.");
           setReviews([]);
-          console.error("Supabase fetch error:", error);
+          console.error("Supabase fetch error:", reviewsError);
           return;
         }
 
-        const safeData: Review[] = (data || []).map((r: any) => ({
-          ...r,
-          user: r.user && typeof r.user === "object"
-            ? { full_name: r.user.full_name, avatar_url: r.user.avatar_url }
-            : { full_name: null, avatar_url: null },
-          user_rating: r.user_rating?.[0]?.rating || null
-        }));
+        // Then fetch the ratings separately
+        const { data: ratingsData, error: ratingsError } = await supabase
+          .from("movie_ratings")
+          .select("user_id, rating")
+          .eq("movie_id", id);
+
+        if (ratingsError) {
+          console.error("Error fetching ratings:", ratingsError);
+        }
+
+        // Combine the data
+        const safeData: Review[] = (reviewsData || []).map((r: any) => {
+          const userRating = ratingsData?.find(rating => rating.user_id === r.user_id);
+          return {
+            ...r,
+            user: r.user && typeof r.user === "object"
+              ? { full_name: r.user.full_name, avatar_url: r.user.avatar_url }
+              : { full_name: null, avatar_url: null },
+            user_rating: userRating?.rating || null
+          };
+        });
 
         setReviews(safeData);
       } catch (err: any) {

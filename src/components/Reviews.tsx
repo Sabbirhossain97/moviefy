@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,7 +18,7 @@ import { toast } from "@/hooks/use-toast";
 export default function Reviews({ id, type }: { id: number, type: string }) {
   const { user, profile } = useAuth();
   const [input, setInput] = useState("");
-  const [editingReviewId, setEditingReviewId] = useState<number | null>(null);
+  const [editingReviewId, setEditingReviewId] = useState<string | number | null>(null);
   const [editingInput, setEditingInput] = useState("");
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
@@ -168,7 +167,6 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
         setInput={setInput}
         loading={loading}
         onSubmit={handleSubmit}
-
       />
 
       {/* Show errors */}
@@ -196,7 +194,7 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
           toast({ title: "Review deleted." });
         }}
         filterRating={filterRating}
-        latestUserReviewId={latestUserReviewId}
+        latestUserReviewId={String(latestUserReviewId)}
       />
 
       {!user && (
