@@ -72,31 +72,45 @@ export function useMovieReviews(id: number, type: string) {
       }
     } else {
       try {
-        const { data, error } = await (supabase as any)
+        // First fetch the series reviews
+        const { data: reviewsData, error: reviewsError } = await supabase
           .from("series_reviews")
           .select(`
             *, 
-            user:profiles(full_name, avatar_url),
-            user_rating:series_ratings!inner(rating)
+            user:profiles(full_name, avatar_url)
           `)
           .eq("series_id", id)
-          .eq("series_ratings.series_id", id)
-          .order("created_at", { ascending: false })
+          .order("created_at", { ascending: false });
 
-        if (error) {
-          setError(error.message || "Failed to fetch reviews.");
+        if (reviewsError) {
+          setError(reviewsError.message || "Failed to fetch reviews.");
           setSeriesReviews([]);
-          console.error("Supabase fetch error:", error);
+          console.error("Supabase fetch error:", reviewsError);
           return;
         }
-      
-        const safeData: SeriesReview[] = (data || []).map((r: any) => ({
-          ...r,
-          user: r.user && typeof r.user === "object"
-            ? { full_name: r.user.full_name, avatar_url: r.user.avatar_url }
-            : { full_name: null, avatar_url: null },
-          user_rating: r.user_rating?.[0]?.rating || null
-        }));
+
+        // Then fetch the ratings separately
+        const { data: ratingsData, error: ratingsError } = await supabase
+          .from("series_ratings")
+          .select("user_id, rating")
+          .eq("series_id", id);
+
+        if (ratingsError) {
+          console.error("Error fetching ratings:", ratingsError);
+        }
+
+        // Combine the data
+        const safeData: SeriesReview[] = (reviewsData || []).map((r: any) => {
+          const userRating = ratingsData?.find(rating => rating.user_id === r.user_id);
+          return {
+            ...r,
+            user: r.user && typeof r.user === "object"
+              ? { full_name: r.user.full_name, avatar_url: r.user.avatar_url }
+              : { full_name: null, avatar_url: null },
+            user_rating: userRating?.rating || null
+          };
+        });
+
         setSeriesReviews(safeData);
       } catch (err: any) {
         setError(err.message || "Error fetching reviews.");
@@ -120,7 +134,7 @@ export function useMovieReviews(id: number, type: string) {
         .maybeSingle();
       setMyReview(data || null);
     } else {
-      const { data } = await (supabase as any)
+      const { data } = await supabase
         .from("series_reviews")
         .select("*")
         .eq("series_id", id)
@@ -169,12 +183,11 @@ export function useMovieReviews(id: number, type: string) {
       await fetchMyReview();
       setLoading(false);
     } else {
-      await (supabase as any).from("series_reviews").delete().eq("id", id);
+      await supabase.from("series_reviews").delete().eq("id", id);
       await fetchReviews();
       await fetchMyReview();
       setLoading(false);
     }
-
   };
 
   return { reviews, seriesReviews, myReview, submitReview, editReview, deleteReview, loading, error, refresh: fetchReviews };
