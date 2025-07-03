@@ -216,7 +216,6 @@ const Wishlist = () => {
                               overview: '',
                               backdrop_path: null,
                               original_language: '',
-                              popularity: 0,
                               created_by: [],
                               networks: []
                             }}
