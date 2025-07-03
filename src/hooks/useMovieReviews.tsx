@@ -188,10 +188,10 @@ export function useMovieReviews(id: number, type: string) {
     setLoading(false);
   };
 
-  const deleteReview = async (reviewId: string | number) => {
+  const deleteReview = async (reviewId: number) => {
     setLoading(true);
     if (type === 'movie') {
-      await supabase.from("movie_reviews").delete().eq("id", reviewId);
+      await supabase.from("movie_reviews").delete().eq("id", reviewId.toString());
       await fetchReviews();
       await fetchMyReview();
       setLoading(false);

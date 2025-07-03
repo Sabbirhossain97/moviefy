@@ -5,7 +5,7 @@ import ReviewCard from "./ReviewCard";
 interface ReviewListProps {
   reviews: any[];
   user: any;
-  editingReviewId: string | number | null;
+  editingReviewId: number | null;
   editingInput: string;
   setEditingReviewId: (id: string | number | null) => void;
   setEditingInput: (val: string) => void;
@@ -15,7 +15,6 @@ interface ReviewListProps {
   onCancelEdit: () => void;
   onDelete: (id: string | number) => void;
   filterRating?: number | null;
-  latestUserReviewId?: string | null;
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({
@@ -30,7 +29,6 @@ const ReviewList: React.FC<ReviewListProps> = ({
   onStartEdit,
   onCancelEdit,
   onDelete,
-  latestUserReviewId,
 }) => {
   return (
     <ul className="space-y-5 mb-4" data-testid="review-list">
@@ -53,7 +51,6 @@ const ReviewList: React.FC<ReviewListProps> = ({
             onStartEdit={onStartEdit}
             onCancelEdit={onCancelEdit}
             onDelete={onDelete}
-            showUserRating={true}
             rating={r.user_rating}
           />
         </li>

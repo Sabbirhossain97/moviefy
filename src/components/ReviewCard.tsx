@@ -19,7 +19,6 @@ interface ReviewCardProps {
   onStartEdit: (r: any) => void;
   onCancelEdit: () => void;
   onDelete: (id: string | number) => void; // Updated to accept both string and number
-  showUserRating?: boolean;
   rating?: number | null;
 }
 
@@ -34,7 +33,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   onStartEdit,
   onCancelEdit,
   onDelete,
-  showUserRating,
   rating,
 }) => {
   const isOwner = user && r.user_id === user.id;

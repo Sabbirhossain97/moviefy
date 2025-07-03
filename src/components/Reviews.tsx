@@ -12,18 +12,16 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { useRatings } from "@/hooks/useRatings";
 import { toast } from "@/hooks/use-toast";
 
 export default function Reviews({ id, type }: { id: number, type: string }) {
   const { user, profile } = useAuth();
   const [input, setInput] = useState("");
-  const [editingReviewId, setEditingReviewId] = useState<string | number | null>(null);
+  const [editingReviewId, setEditingReviewId] = useState<number | null>(null);
   const [editingInput, setEditingInput] = useState("");
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const { reviews, seriesReviews, submitReview, editReview, deleteReview, loading, error, refresh } = useMovieReviews(id, type);
-  const { rating: userRating } = useRatings(id, null);
 
   useEffect(() => {
     refresh();
@@ -50,6 +48,7 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
     }
   }, [reviews, seriesReviews, sortOrder, type]);
 
+
   let displayReviews = [...filteredReviews];
   if (user) {
     displayReviews = [
@@ -57,11 +56,6 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
       ...displayReviews.filter(r => r.user_id !== user.id),
     ];
   }
-
-  const latestUserReviewId =
-    user && displayReviews.filter(r => r.user_id === user.id).length
-      ? displayReviews.filter(r => r.user_id === user.id)[0].id
-      : null;
 
   const currentUserInfo = user
     ? {
@@ -181,20 +175,19 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
         user={currentUserInfo}
         editingReviewId={editingReviewId}
         editingInput={editingInput}
-        setEditingReviewId={setEditingReviewId}
+        setEditingReviewId={(id: string | number) => setEditingReviewId(Number(id))}
         setEditingInput={setEditingInput}
         loading={loading}
         onEditSubmit={handleEditSubmit}
         onStartEdit={startEdit}
         onCancelEdit={cancelEdit}
-        onDelete={async (id: string | number) => {
+        onDelete={async (id: number) => {
           await deleteReview(id);
           setInput("");
           refresh();
           toast({ title: "Review deleted." });
         }}
         filterRating={filterRating}
-        latestUserReviewId={String(latestUserReviewId)}
       />
 
       {!user && (
