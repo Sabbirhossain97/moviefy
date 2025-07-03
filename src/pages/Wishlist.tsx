@@ -1,9 +1,10 @@
-
 import { useWishlist } from '@/hooks/useWishlist';
 import { useTVSeriesWishlist } from '@/hooks/useTVSeriesWishlist';
+import { useWatchedList } from '@/hooks/useWatchedList';
+import { useTVSeriesWatchedList } from '@/hooks/useTVSeriesWatchedList';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
-import { Heart, Film, Tv } from 'lucide-react';
+import { Heart, Film, Tv, CheckCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthDialog } from '@/components/AuthDialog';
@@ -15,7 +16,26 @@ const Wishlist = () => {
   const { user } = useAuth();
   const { wishlist: movieWishlist, loading: movieLoading, removeFromWishlist: removeMovie } = useWishlist();
   const { wishlist: tvWishlist, loading: tvLoading, removeFromWishlist: removeTVSeries } = useTVSeriesWishlist();
+  const { addToWatchedList: addTVSeriesToWatched } = useTVSeriesWatchedList();
   const navigate = useNavigate();
+
+  const handleMarkTVSeriesAsWatched = (item: any) => {
+    const seriesData = {
+      id: item.series_id,
+      name: item.series_name,
+      original_name: item.series_name,
+      poster_path: item.series_poster_path,
+      first_air_date: item.series_first_air_date,
+      vote_average: item.series_vote_average,
+      vote_count: 0,
+      overview: '',
+      backdrop_path: null,
+      original_language: '',
+      created_by: [],
+      networks: []
+    };
+    addTVSeriesToWatched(seriesData);
+  };
 
   if (!user) {
     return (
@@ -126,7 +146,7 @@ const Wishlist = () => {
                         alt={item.series_name}
                         className="object-cover w-full h-64"
                       />
-                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex flex-col gap-2">
                         <button
                           onClick={e => {
                             e.stopPropagation();
@@ -136,6 +156,16 @@ const Wishlist = () => {
                           title="Remove from wishlist"
                         >
                           <Heart className="w-5 h-5 fill-red-500" />
+                        </button>
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleMarkTVSeriesAsWatched(item);
+                          }}
+                          className="rounded-full bg-white/70 hover:bg-green-100 p-2 text-green-600 shadow-xl"
+                          title="Mark as watched"
+                        >
+                          <CheckCircle className="w-5 h-5" />
                         </button>
                       </div>
                       <div className="p-4">
