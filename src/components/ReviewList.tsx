@@ -13,7 +13,7 @@ interface ReviewListProps {
   onEditSubmit: (r: any) => void;
   onStartEdit: (r: any) => void;
   onCancelEdit: () => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string | number) => void; // Updated to accept both string and number
   filterRating?: number | null;
   latestUserReviewId?: string | null;
 }

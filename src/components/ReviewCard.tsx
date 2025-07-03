@@ -1,3 +1,4 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Pencil, MoreVertical, Trash2 } from "lucide-react";
 import dayjs from "dayjs";
@@ -17,7 +18,7 @@ interface ReviewCardProps {
   onEditSubmit: (r: any) => void;
   onStartEdit: (r: any) => void;
   onCancelEdit: () => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string | number) => void; // Updated to accept both string and number
   showUserRating?: boolean;
   rating?: number | null;
 }

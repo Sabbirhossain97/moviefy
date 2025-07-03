@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
@@ -188,7 +189,7 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
         onEditSubmit={handleEditSubmit}
         onStartEdit={startEdit}
         onCancelEdit={cancelEdit}
-        onDelete={async (id: string) => {
+        onDelete={async (id: string | number) => {
           await deleteReview(id);
           setInput("");
           refresh();
