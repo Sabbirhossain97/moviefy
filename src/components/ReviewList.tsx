@@ -1,3 +1,4 @@
+
 import React from "react";
 import ReviewCard from "./ReviewCard";
 
@@ -15,7 +16,6 @@ interface ReviewListProps {
   onDelete: (id: string) => void;
   filterRating?: number | null;
   latestUserReviewId?: string | null;
-  userRating?: number | null;
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({
@@ -31,10 +31,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
   onCancelEdit,
   onDelete,
   latestUserReviewId,
-  userRating,
 }) => {
-  // Filtering by rating is unused since Review model has no rating.
-
   return (
     <ul className="space-y-5 mb-4" data-testid="review-list">
       {(!reviews || reviews.length === 0) && (
@@ -56,8 +53,8 @@ const ReviewList: React.FC<ReviewListProps> = ({
             onStartEdit={onStartEdit}
             onCancelEdit={onCancelEdit}
             onDelete={onDelete}
-            showUserRating={user && r.user_id === user.id && latestUserReviewId === r.id}
-            rating={user && r.user_id === user.id && latestUserReviewId === r.id ? userRating : undefined}
+            showUserRating={true}
+            rating={r.user_rating}
           />
         </li>
       ))}

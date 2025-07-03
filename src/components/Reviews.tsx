@@ -196,7 +196,6 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
         }}
         filterRating={filterRating}
         latestUserReviewId={latestUserReviewId}
-        userRating={userRating}
       />
 
       {!user && (

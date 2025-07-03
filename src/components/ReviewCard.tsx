@@ -57,7 +57,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
             <div className="flex justify-between items-center [@media(max-width:500px)]:items-start gap-2 mb-1">
               <div className="flex [@media(max-width:500px)]:flex-col [@media(max-width:500px)]:gap-1 gap-2 [@media(max-width:500px)]:items-start items-center">
                 <span className="font-bold text-base">{r.user?.full_name || "User"}</span>
-                {showUserRating && rating ? (
+                {rating && (
                   <div className="flex items-center gap-1">
                     {Array.from({ length: 5 }, (_, i) => (
                       <Star
@@ -68,7 +68,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
                       />
                     ))}
                   </div>
-                ) : null}
+                )}
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
@@ -149,7 +149,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           </div>
         </div>
       </div>
-
     </div>
   );
 };

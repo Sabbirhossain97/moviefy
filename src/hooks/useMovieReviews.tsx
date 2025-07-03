@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +10,7 @@ export interface Review {
   review: string;
   created_at: string;
   user?: { full_name: string | null; avatar_url?: string | null };
+  user_rating?: number | null;
 }
 
 export interface SeriesReview {
@@ -18,6 +20,7 @@ export interface SeriesReview {
   review: string;
   created_at: string;
   user?: { full_name: string | null; avatar_url?: string | null };
+  user_rating?: number | null;
 }
 
 export function useMovieReviews(id: number, type: string) {
@@ -35,8 +38,13 @@ export function useMovieReviews(id: number, type: string) {
       try {
         const { data, error } = await supabase
           .from("movie_reviews")
-          .select("*, user:profiles(full_name, avatar_url)")
+          .select(`
+            *, 
+            user:profiles(full_name, avatar_url),
+            user_rating:movie_ratings!inner(rating)
+          `)
           .eq("movie_id", id)
+          .eq("movie_ratings.movie_id", id)
           .order("created_at", { ascending: false });
 
         if (error) {
@@ -50,7 +58,8 @@ export function useMovieReviews(id: number, type: string) {
           ...r,
           user: r.user && typeof r.user === "object"
             ? { full_name: r.user.full_name, avatar_url: r.user.avatar_url }
-            : { full_name: null, avatar_url: null }
+            : { full_name: null, avatar_url: null },
+          user_rating: r.user_rating?.[0]?.rating || null
         }));
 
         setReviews(safeData);
@@ -65,13 +74,18 @@ export function useMovieReviews(id: number, type: string) {
       try {
         const { data, error } = await (supabase as any)
           .from("series_reviews")
-          .select("*, user:profiles(full_name, avatar_url)")
+          .select(`
+            *, 
+            user:profiles(full_name, avatar_url),
+            user_rating:series_ratings!inner(rating)
+          `)
           .eq("series_id", id)
+          .eq("series_ratings.series_id", id)
           .order("created_at", { ascending: false })
 
         if (error) {
           setError(error.message || "Failed to fetch reviews.");
-          setReviews([]);
+          setSeriesReviews([]);
           console.error("Supabase fetch error:", error);
           return;
         }
@@ -80,12 +94,13 @@ export function useMovieReviews(id: number, type: string) {
           ...r,
           user: r.user && typeof r.user === "object"
             ? { full_name: r.user.full_name, avatar_url: r.user.avatar_url }
-            : { full_name: null, avatar_url: null }
+            : { full_name: null, avatar_url: null },
+          user_rating: r.user_rating?.[0]?.rating || null
         }));
         setSeriesReviews(safeData);
       } catch (err: any) {
         setError(err.message || "Error fetching reviews.");
-        setReviews([]);
+        setSeriesReviews([]);
         console.error("Catch error in fetchReviews:", err);
       } finally {
         setLoading(false);
