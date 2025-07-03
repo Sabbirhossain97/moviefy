@@ -86,7 +86,7 @@ export default function AdminReviewsTable() {
         if (!movieError && movieReviews) {
           const mappedMovieRows = movieReviews.map((r: any) => ({
             id: r.id,
-            movie_title: `Movie ID: ${r.movie_id}`,
+            movie_title: `ID: ${r.movie_id}`,
             rating: null,
             review: r.review,
             user_name: r.profiles?.full_name || "Unknown User",
@@ -99,7 +99,7 @@ export default function AdminReviewsTable() {
         if (!ratingError && movieRatings) {
           const mappedRatings = movieRatings.map((r: any) => ({
             id: `rating-${r.movie_id}-${r.user_id}`,
-            movie_title: `Movie ID: ${r.movie_id}`,
+            movie_title: `ID: ${r.movie_id}`,
             rating: r.rating,
             review: null,
             user_name: r.profiles?.full_name || "Unknown User",
@@ -114,7 +114,7 @@ export default function AdminReviewsTable() {
         if (!tvError && tvReviews) {
           const mappedTVRows = tvReviews.map((r: any) => ({
             id: r.id.toString(),
-            series_name: `TV Series ID: ${r.series_id}`,
+            series_name: `ID: ${r.series_id}`,
             rating: null,
             review: r.review,
             user_name: r.profiles?.full_name || "Unknown User",
@@ -127,7 +127,7 @@ export default function AdminReviewsTable() {
         if (!tvRatingError && tvRatings) {
           const mappedTVRatings = tvRatings.map((r: any) => ({
             id: `tv-rating-${r.series_id}-${r.user_id}`,
-            series_name: `TV Series ID: ${r.series_id}`,
+            series_name: `ID: ${r.series_id}`,
             rating: r.rating,
             review: null,
             user_name: r.profiles?.full_name || "Unknown User",
@@ -154,7 +154,7 @@ export default function AdminReviewsTable() {
     <div className="overflow-x-auto">
       <table className="min-w-full text-xs border border-muted">
         <thead>
-          <tr className="bg-muted">
+          <tr className="bg-muted whitespace-nowrap">
             <th className="px-2 py-2 text-left font-medium">Movie</th>
             <th className="px-2 py-2 text-left font-medium">User</th>
             <th className="px-2 py-2 text-left font-medium">Rating</th>
@@ -164,7 +164,7 @@ export default function AdminReviewsTable() {
         </thead>
         <tbody>
           {rows.map(row => (
-            <tr key={row.id} className="border-t">
+            <tr key={row.id} className="border-t whitespace-nowrap">
               <td className="px-2 py-1">{row.movie_title}</td>
               <td className="px-2 py-1">{row.user_name}</td>
               <td className="px-2 py-1">{row.rating ?? "-"}</td>
@@ -181,7 +181,7 @@ export default function AdminReviewsTable() {
     <div className="overflow-x-auto">
       <table className="min-w-full text-xs border border-muted">
         <thead>
-          <tr className="bg-muted">
+          <tr className="bg-muted whitespace-nowrap">
             <th className="px-2 py-2 text-left font-medium">TV Series</th>
             <th className="px-2 py-2 text-left font-medium">User</th>
             <th className="px-2 py-2 text-left font-medium">Rating</th>
@@ -191,7 +191,7 @@ export default function AdminReviewsTable() {
         </thead>
         <tbody>
           {rows.map(row => (
-            <tr key={row.id} className="border-t">
+            <tr key={row.id} className="border-t whitespace-nowrap">
               <td className="px-2 py-1">{row.series_name}</td>
               <td className="px-2 py-1">{row.user_name}</td>
               <td className="px-2 py-1">{row.rating ?? "-"}</td>
@@ -207,8 +207,8 @@ export default function AdminReviewsTable() {
   return (
     <Tabs defaultValue="movies" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="movies">Movie Reviews & Ratings</TabsTrigger>
-        <TabsTrigger value="tv">TV Series Reviews & Ratings</TabsTrigger>
+        <TabsTrigger value="movies">Movie</TabsTrigger>
+        <TabsTrigger value="tv">TV Series</TabsTrigger>
       </TabsList>
       
       <TabsContent value="movies" className="mt-4">

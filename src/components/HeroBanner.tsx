@@ -25,7 +25,7 @@ const HeroBanner = ({ movie, className }: HeroBannerProps) => {
         style={{ backgroundImage: `url(${backdropUrl})` }}
       >
       </div>
-      <div className="relative h-full container flex flex-col justify-end p-4 md:p-10">
+      <div className="relative h-full container flex flex-col justify-end px-4 py-10">
         <div className="max-w-2xl animate-fade-up">
           <h1 className="text-3xl md:text-5xl font-bold mb-2 text-shadow">{movie.title}</h1>
           <p className="text-sm md:text-base line-clamp-3 mb-6 text-gray-200 max-w-xl text-shadow">
