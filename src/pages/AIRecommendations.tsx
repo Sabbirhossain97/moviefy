@@ -19,7 +19,7 @@ const AIRecommendations = () => {
               <Sparkles className="h-6 w-6 text-yellow-500" />
             </div>
             <p className="text-muted-foreground text-lg">
-              Describe the perfect movie for your mood and let AI find it for you
+              Describe the perfect movie or series for your mood and let AI find it for you
             </p>
           </div>}
           <AIMovieSearch />

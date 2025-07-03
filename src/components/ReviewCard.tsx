@@ -70,7 +70,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
                 )}
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex pt-1 items-center gap-2 shrink-0">
                 <span className={`text-xs text-gray-400 whitespace-nowrap`}>
                   {dayjs(r.created_at).format("MMM D, YYYY")}
                 </span>

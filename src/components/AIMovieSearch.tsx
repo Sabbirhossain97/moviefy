@@ -144,7 +144,7 @@ const AIMovieSearch = () => {
               variant="outline"
               size="sm"
               onClick={() => setShowApiKeyModal(true)}
-              className="flex items-center gap-2"
+              className="flex items-center bg-input/50 gap-2"
               disabled={apiKeyLoading}
             >
               <Key className="h-4 w-4" />

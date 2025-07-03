@@ -19,7 +19,7 @@ import { toast } from "@/hooks/use-toast";
 export default function Reviews({ id, type }: { id: number, type: string }) {
   const { user, profile } = useAuth();
   const [input, setInput] = useState("");
-  const [editingReviewId, setEditingReviewId] = useState<string | number | null>(null);
+  const [editingReviewId, setEditingReviewId] = useState<number | null>(null);
   const [editingInput, setEditingInput] = useState("");
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
@@ -71,8 +71,8 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
 
   // Calculate average rating
   const ratingsWithValues = allReviews.filter(review => review.user_rating !== null && review.user_rating !== undefined);
-  const averageRating = ratingsWithValues.length > 0 
-    ? ratingsWithValues.reduce((sum, review) => sum + (review.user_rating || 0), 0) / ratingsWithValues.length 
+  const averageRating = ratingsWithValues.length > 0
+    ? ratingsWithValues.reduce((sum, review) => sum + (review.user_rating || 0), 0) / ratingsWithValues.length
     : 0;
 
   // --- Handlers ---
@@ -108,68 +108,72 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
     <div className="w-full max-w-3xl">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Reviews</h2>
-        <AverageRating 
-          averageRating={averageRating} 
-          totalReviews={ratingsWithValues.length}
-        />
       </div>
-      
-      <div className="mb-4 flex gap-3 items-center flex-wrap">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              className="text-xs px-3 h-8 py-1 min-w-[120px] bg-card/80"
-            >
-              Sort: {sortOrder === "newest" ? "Newest" : "Oldest"}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="z-[999] bg-background">
-            <DropdownMenuLabel>Sort reviews by</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => setSortOrder("newest")}
-              className={sortOrder === "newest" ? "bg-accent" : ""}
-            >
-              Newest
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setSortOrder("oldest")}
-              className={sortOrder === "oldest" ? "bg-accent" : ""}
-            >
-              Oldest
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
 
-        {/* Rating filter dropdown */}
-        <Select
-          value={filterRating !== null ? String(filterRating) : "all"}
-          onValueChange={v => setFilterRating(v === "all" ? null : Number(v))}
-        >
-          <SelectTrigger className="w-[140px] rounded-md text-xs border-muted-foreground/10 h-8 bg-card/80">
-            <SelectValue placeholder="Filter by rating" />
-          </SelectTrigger>
-          <SelectContent className="z-[999] bg-background">
-            <SelectItem value="all">All ratings</SelectItem>
-            <SelectItem value="5">5 stars</SelectItem>
-            <SelectItem value="4">4 stars</SelectItem>
-            <SelectItem value="3">3 stars</SelectItem>
-            <SelectItem value="2">2 stars</SelectItem>
-            <SelectItem value="1">1 star</SelectItem>
-          </SelectContent>
-        </Select>
-        {filterRating !== null && (
-          <Button
-            size="sm"
-            variant="ghost"
-            className="text-xs text-muted-foreground px-2"
-            onClick={() => setFilterRating(null)}
-            type="button"
+      <div className="mb-4 mt-4 flex justify-between gap-3 items-center flex-wrap">
+        <div>
+          <AverageRating
+            averageRating={averageRating}
+            totalReviews={ratingsWithValues.length}
+          />
+        </div>
+        <div className="flex gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="text-xs px-3 h-8 py-1 min-w-[120px] bg-card/80"
+              >
+                Sort: {sortOrder === "newest" ? "Newest" : "Oldest"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="z-[999] bg-background">
+              <DropdownMenuLabel>Sort reviews by</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => setSortOrder("newest")}
+                className={sortOrder === "newest" ? "bg-accent" : ""}
+              >
+                Newest
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setSortOrder("oldest")}
+                className={sortOrder === "oldest" ? "bg-accent" : ""}
+              >
+                Oldest
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Rating filter dropdown */}
+          <Select
+            value={filterRating !== null ? String(filterRating) : "all"}
+            onValueChange={v => setFilterRating(v === "all" ? null : Number(v))}
           >
-            Clear
-          </Button>
-        )}
+            <SelectTrigger className="w-[140px] rounded-md text-xs border-muted-foreground/10 h-8 bg-card/80">
+              <SelectValue placeholder="Filter by rating" />
+            </SelectTrigger>
+            <SelectContent className="z-[999] bg-background">
+              <SelectItem value="all">All ratings</SelectItem>
+              <SelectItem value="5">5 stars</SelectItem>
+              <SelectItem value="4">4 stars</SelectItem>
+              <SelectItem value="3">3 stars</SelectItem>
+              <SelectItem value="2">2 stars</SelectItem>
+              <SelectItem value="1">1 star</SelectItem>
+            </SelectContent>
+          </Select>
+          {filterRating !== null && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="text-xs text-muted-foreground px-2"
+              onClick={() => setFilterRating(null)}
+              type="button"
+            >
+              Clear
+            </Button>
+          )}
+        </div>
       </div>
 
       <ReviewInput
@@ -192,13 +196,13 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
         user={currentUserInfo}
         editingReviewId={editingReviewId}
         editingInput={editingInput}
-        setEditingReviewId={setEditingReviewId}
+        setEditingReviewId={(id: number) => setEditingReviewId(typeof id === "string" ? Number(id) : id)}
         setEditingInput={setEditingInput}
         loading={loading}
         onEditSubmit={handleEditSubmit}
         onStartEdit={startEdit}
         onCancelEdit={cancelEdit}
-        onDelete={async (id: string | number) => {
+        onDelete={async (id: number) => {
           await deleteReview(id);
           setInput("");
           refresh();
