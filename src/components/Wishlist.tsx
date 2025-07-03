@@ -237,8 +237,7 @@ const Wishlist = () => {
                           <div className="text-xs text-yellow-500 font-medium">
                             {item.series_vote_average.toFixed(1)} / 10
                           </div>
-                        </div>
-                      )}
+                        )}
                       </div>
                     </div>
                   ))}
