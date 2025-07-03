@@ -1,4 +1,3 @@
-
 import { useWishlist } from '@/hooks/useWishlist';
 import { useTVSeriesWishlist } from '@/hooks/useTVSeriesWishlist';
 import { useWatchedList } from '@/hooks/useWatchedList';
