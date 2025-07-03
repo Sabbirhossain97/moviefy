@@ -212,7 +212,7 @@ const Wishlist = () => {
                               first_air_date: item.series_first_air_date,
                               vote_average: item.series_vote_average,
                               overview: '',
-                              genre_ids: [],
+                              genres: [],
                               adult: false,
                               backdrop_path: null,
                               origin_country: [],
