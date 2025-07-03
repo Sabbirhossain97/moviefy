@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,7 +26,7 @@ export function useMovieReviews(id: number, type: string) {
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [seriesReviews, setSeriesReviews] = useState<SeriesReview[]>([]);
-  const [myReview, setMyReview] = useState<Review | null>(null);
+  const [myReview, setMyReview] = useState<Review | SeriesReview | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -162,7 +161,7 @@ export function useMovieReviews(id: number, type: string) {
     setLoading(false);
   };
 
-  const editReview = async (review: string, reviewId: number) => {
+  const editReview = async (review: string, reviewId: string) => {
     if (!user) return;
     setLoading(true);
     const table = type === 'movie' ? 'movie_reviews' : 'series_reviews'
@@ -175,15 +174,15 @@ export function useMovieReviews(id: number, type: string) {
     setLoading(false);
   };
 
-  const deleteReview = async (id: string) => {
+  const deleteReview = async (reviewId: string) => {
     setLoading(true);
     if (type === 'movie') {
-      await supabase.from("movie_reviews").delete().eq("id", id);
+      await supabase.from("movie_reviews").delete().eq("id", reviewId);
       await fetchReviews();
       await fetchMyReview();
       setLoading(false);
     } else {
-      await supabase.from("series_reviews").delete().eq("id", id);
+      await supabase.from("series_reviews").delete().eq("id", reviewId);
       await fetchReviews();
       await fetchMyReview();
       setLoading(false);
