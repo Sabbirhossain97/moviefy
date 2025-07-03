@@ -13,7 +13,7 @@ export interface Review {
 }
 
 export interface SeriesReview {
-  id: string;
+  id: number; // Changed from string to number to match database schema
   user_id: string;
   series_id: number;
   review: string;
@@ -161,7 +161,7 @@ export function useMovieReviews(id: number, type: string) {
     setLoading(false);
   };
 
-  const editReview = async (review: string, reviewId: string) => {
+  const editReview = async (review: string, reviewId: string | number) => {
     if (!user) return;
     setLoading(true);
     const table = type === 'movie' ? 'movie_reviews' : 'series_reviews'
@@ -174,7 +174,7 @@ export function useMovieReviews(id: number, type: string) {
     setLoading(false);
   };
 
-  const deleteReview = async (reviewId: string) => {
+  const deleteReview = async (reviewId: string | number) => {
     setLoading(true);
     if (type === 'movie') {
       await supabase.from("movie_reviews").delete().eq("id", reviewId);
