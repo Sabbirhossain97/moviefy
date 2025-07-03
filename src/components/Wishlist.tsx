@@ -1,3 +1,4 @@
+
 import { useWishlist } from '@/hooks/useWishlist';
 import { useTVSeriesWishlist } from '@/hooks/useTVSeriesWishlist';
 import { useWatchedList } from '@/hooks/useWatchedList';
@@ -207,18 +208,15 @@ const Wishlist = () => {
                             series={{
                               id: item.series_id,
                               name: item.series_name,
+                              original_name: item.series_name,
                               poster_path: item.series_poster_path,
                               first_air_date: item.series_first_air_date,
                               vote_average: item.series_vote_average,
-                              overview: '',
-                              genres: [],
-                              adult: false,
-                              backdrop_path: null,
-                              origin_country: [],
-                              original_language: '',
-                              original_name: item.series_name,
-                              popularity: 0,
                               vote_count: 0,
+                              overview: '',
+                              backdrop_path: null,
+                              original_language: '',
+                              popularity: 0,
                               created_by: [],
                               networks: []
                             }}
@@ -239,7 +237,8 @@ const Wishlist = () => {
                           <div className="text-xs text-yellow-500 font-medium">
                             {item.series_vote_average.toFixed(1)} / 10
                           </div>
-                        )}
+                        </div>
+                      )}
                       </div>
                     </div>
                   ))}
