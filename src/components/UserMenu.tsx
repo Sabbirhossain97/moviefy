@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthDialog } from '@/components/AuthDialog';
-import { User, Heart, Crown, LogOut, Settings } from 'lucide-react';
+import { User, Heart, Crown, LogOut, Settings, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
@@ -62,6 +63,12 @@ export const UserMenu = () => {
           <Link to="/wishlist" className="cursor-pointer">
             <Heart className="w-4 h-4 mr-2" />
             My Wishlist
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/watched" className="cursor-pointer">
+            <Eye className="w-4 h-4 mr-2" />
+            My Watched List
           </Link>
         </DropdownMenuItem>
         {isAdmin && (

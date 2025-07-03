@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Search, Key } from "lucide-react";
+import { Loader2, Search, Key, RotateCcw } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -29,6 +30,14 @@ const AIMovieSearch = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const { geminiApiKey, loading: apiKeyLoading } = useUserApiKeys();
+
+  const handleReset = () => {
+    setUserInput("");
+    setSearchType("movie");
+    setMovieRecommendations([]);
+    setTVSeriesRecommendations([]);
+    setReasoning("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,6 +129,8 @@ const AIMovieSearch = () => {
     );
   }
 
+  const hasResults = movieRecommendations.length > 0 || tvSeriesRecommendations.length > 0;
+
   return (
     <div className="space-y-6">
       <div className="max-w-4xl mx-auto rounded-lg shadow-lg p-0">
@@ -139,20 +150,34 @@ const AIMovieSearch = () => {
               </SelectContent>
             </Select>
 
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setShowApiKeyModal(true)}
-              className="flex items-center bg-input/50 gap-2"
-              disabled={apiKeyLoading}
-            >
-              <Key className="h-4 w-4" />
-              {geminiApiKey ? 'Manage API Key' : 'Add API Key'}
-              {geminiApiKey && (
-                <div className="w-2 h-2 bg-green-500 rounded-full" />
+            <div className="flex items-center gap-2">
+              {hasResults && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleReset}
+                  className="flex items-center gap-2"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Reset
+                </Button>
               )}
-            </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowApiKeyModal(true)}
+                className="flex items-center bg-input/50 gap-2"
+                disabled={apiKeyLoading}
+              >
+                <Key className="h-4 w-4" />
+                {geminiApiKey ? 'Manage API Key' : 'Add API Key'}
+                {geminiApiKey && (
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                )}
+              </Button>
+            </div>
           </div>
 
           <div>

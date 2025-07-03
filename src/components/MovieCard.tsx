@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Movie } from "@/services/api";
 import { IMAGE_SIZES } from "@/services/api";
@@ -5,6 +6,7 @@ import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { WishlistButton } from "@/components/WishlistButton";
+import { WatchedButton } from "@/components/WatchedButton";
 
 interface MovieCardProps {
   movie: Movie;
@@ -33,8 +35,14 @@ const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
             loading="lazy"
           />
         </Link>
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex flex-col gap-2">
           <WishlistButton
+            movie={movie}
+            size="icon"
+            variant="ghost"
+            showText={false}
+          />
+          <WatchedButton
             movie={movie}
             size="icon"
             variant="ghost"

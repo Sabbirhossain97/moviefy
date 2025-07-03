@@ -14,6 +14,7 @@ import MovieCategory from "./pages/MovieCategory";
 import NotFound from "./pages/NotFound";
 import AIRecommendations from "./pages/AIRecommendations";
 import Wishlist from "./pages/Wishlist";
+import WatchedList from "./pages/WatchedList";
 import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
 import OTTUpdates from "./pages/OTTUpdates";
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/ott-updates" element={<OTTUpdates />} />
             <Route path="/recommendations" element={<AIRecommendations />} />
             <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/watched" element={<WatchedList />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
