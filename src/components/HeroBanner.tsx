@@ -16,7 +16,7 @@ const HeroBanner = ({ movie, className }: HeroBannerProps) => {
   return (
     <div
       className={cn(
-        "relative w-full aspect-[21/16] sm:aspect-[21/14] md:aspect-[21/12] lg:aspect-[21/10] xl:aspect-[21/7] overflow-hidden animate-fade-in",
+        "relative w-full aspect-[21/21] sm:aspect-[21/14] md:aspect-[21/12] lg:aspect-[21/10] xl:aspect-[21/7] overflow-hidden animate-fade-in",
         className
       )}
     >
@@ -25,7 +25,7 @@ const HeroBanner = ({ movie, className }: HeroBannerProps) => {
         style={{ backgroundImage: `url(${backdropUrl})` }}
       >
       </div>
-      <div className="relative h-full container flex flex-col justify-end px-4 py-10">
+      <div className="relative h-full container flex flex-col justify-end px-4 py-0 lg:py-10">
         <div className="max-w-2xl animate-fade-up">
           <h1 className="text-3xl md:text-5xl font-bold mb-2 text-shadow">{movie.title}</h1>
           <p className="text-sm md:text-base line-clamp-3 mb-6 text-gray-200 max-w-xl text-shadow">

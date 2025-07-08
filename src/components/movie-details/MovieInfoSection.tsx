@@ -78,8 +78,8 @@ export const MovieInfoSection: React.FC<MovieInfoSectionProps> = ({
         </div>
       )}
       {spokenLanguages && spokenLanguages.length > 0 && (
-        <div>
-          <p className="font-bold text-white mb-0.5 flex items-center">Spoken Languages</p>
+        <div className="flex flex-col justify-center">
+          <p className="font-bold text-white mb-0.5 text-center md:text-start">Spoken Languages</p>
           <span className="text-gray-400">
             {spokenLanguages.map((pc) => {
               if (pc.iso_639_1 === originalLanguage) {

@@ -17,7 +17,6 @@ import Wishlist from "./pages/Wishlist";
 import WatchedList from "./pages/WatchedList";
 import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
-import OTTUpdates from "./pages/OTTUpdates";
 import TVSeriesCategory from "./pages/TVSeriesCategory";
 import TVSeriesDetails from "./pages/TVSeriesDetails";
 import TVSeriesGenresList from "./pages/TVSeriesGenresList";
@@ -43,7 +42,6 @@ const App = () => (
             <Route path="/tv/genres" element={<TVSeriesGenresList />} />
             <Route path="/movies/:category" element={<MovieCategory />} />
             <Route path="/tv-series/:category" element={<TVSeriesCategory />} />
-            <Route path="/ott-updates" element={<OTTUpdates />} />
             <Route path="/recommendations" element={<AIRecommendations />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/watched" element={<WatchedList />} />

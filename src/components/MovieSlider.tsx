@@ -3,6 +3,7 @@ import { Movie, IMAGE_SIZES } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { WishlistButton } from "./WishlistButton";
 
 interface MovieSliderProps {
   title: string;
@@ -63,12 +64,12 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
   return (
     <section className={`relative ${className}`}>
       {title !== "Trending Movies" && <h2 className="text-2xl font-semibold mb-6">{title}</h2>}
-      <div className="relative group select-none">
+      <div className="relative group/slider select-none">
         {scrollPosition > 0 && (
           <Button
             variant="outline"
             size="icon"
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 transition-opacity gradient-card backdrop-blur-sm border-border/50 opacity-0 group-hover:opacity-100"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 transition-opacity gradient-card backdrop-blur-sm border-border/50 opacity-0 group-hover/slider:opacity-100"
             onClick={scrollLeft}
             tabIndex={0}
             aria-disabled={false}
@@ -86,10 +87,10 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
           draggable={false}
         >
           {validMovies.map((movie) => (
-            <div key={movie.id} className="flex-shrink-0 w-[200px] sm:w-[240px] h-full">
+            <div key={movie.id} className="flex-shrink-0 w-[200px] sm:w-[240px] h-full group/movie">
               <Link to={`/movie/${movie.id}`} className="block">
                 <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50 h-full">
-                  <div className="overflow-hidden h-full">
+                  <div className="overflow-hidden h-full relative">
                     <img
                       src={
                         movie.poster_path
@@ -99,6 +100,14 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
                       alt={movie.title}
                       className="w-full min-h-[357px] object-cover hover:scale-105 transition-transform duration-300"
                     />
+                    <div className="absolute top-2 right-2 opacity-0 group-hover/movie:opacity-100 transition-opacity z-10 flex flex-col gap-2">
+                      <WishlistButton
+                        movie={movie}
+                        size="icon"
+                        variant="ghost"
+                        showText={false}
+                      />
+                    </div>
                   </div>
                   <div className="p-3 h-[60px] flex flex-col justify-between">
                     <h3
@@ -132,7 +141,7 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
           <Button
             variant="outline"
             size="icon"
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity gradient-card backdrop-blur-sm border-border/50"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover/slider:opacity-100 transition-opacity gradient-card backdrop-blur-sm border-border/50"
             onClick={scrollRight}
             tabIndex={0}
             aria-disabled={false}

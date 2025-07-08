@@ -270,7 +270,6 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                           </div>
                         </CollapsibleContent>
                       </Collapsible>
-
                       {/* Direct Links */}
                       <Link
                         to="/recommendations"
@@ -279,14 +278,6 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                       >
                         <Brain className="h-4 w-4 mr-3" />
                         AI Search
-                      </Link>
-
-                      <Link
-                        to="/ott-updates"
-                        onClick={handleMobileLinkClick}
-                        className="block px-3 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-md transform hover:translate-x-1"
-                      >
-                        OTT Updates
                       </Link>
                     </nav>
                   </div>
@@ -359,13 +350,6 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
                     <NavigationMenuLink className="group hover:text-red-500 inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                       <Brain className="h-4 w-4 mr-1.5" />
                       AI Search
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link to="/ott-updates">
-                    <NavigationMenuLink className="group hover:text-red-500 inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
-                      OTT Updates
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
