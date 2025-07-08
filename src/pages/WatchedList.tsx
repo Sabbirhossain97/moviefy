@@ -40,7 +40,7 @@ const WatchedList = () => {
     <div className="min-h-screen gradient-bg">
       <Header />
       <main className="container px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="mx-auto">
           <div className="flex items-center gap-3 mb-8">
             <Eye className="w-8 h-8 text-green-500" />
             <h1 className="text-3xl font-bold">My Watched List</h1>
@@ -109,10 +109,6 @@ const WatchedList = () => {
                               {item.movie_vote_average.toFixed(1)}
                             </div>
                           )}
-                          <div className="flex items-center gap-1">
-                            <Eye className="w-4 h-4" />
-                            Watched on {new Date(item.watched_at).toLocaleDateString()}
-                          </div>
                         </div>
                       </div>
                       <Button

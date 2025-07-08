@@ -147,7 +147,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen gradient-bg">
       <Header />
       <main className="container px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="mx-auto">
           <div className="flex items-center gap-3 mb-8">
             <Crown className="w-8 h-8 text-yellow-500" />
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>

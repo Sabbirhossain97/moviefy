@@ -62,12 +62,12 @@ const LandingPage = () => {
     <div className="bg-background text-foreground">
       <Header genres={genres} />
       <main>
-        <section className="relative inset-0 opacity-100 bg-cover bg-left sm:bg-top [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] pt-24 pb-32 md:pt-32 md:pb-40 text-center bg-gradient-to-b from-background via-black/80 to-black"
+        <section className="relative inset-0 bg-cover bg-left sm:bg-top [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] pt-24 pb-32 md:pt-32 md:pb-40 text-center bg-gradient-to-b from-background via-black/80 to-black"
           style={{ backgroundImage: `url(/moviefy-banner.png)` }}
         >
           <div className="container relative">
             <h1 className="text-4xl md:text-6xl font-bold mb-4 text-shadow-lg animate-fade-up">
-              Your Universe of Moviess, Reimagined.
+              Your Universe of Movies, Reimagined.
             </h1>
             <p className="max-w-3xl mx-auto text-lg md:text-xl text-muted-foreground mb-8 animate-fade-up" style={{ animationDelay: '0.2s' }}>
               Discover, track, and get personalized recommendations for films you'll love. Powered by AI.

@@ -1,6 +1,5 @@
 import { useWishlist } from '@/hooks/useWishlist';
 import { useTVSeriesWishlist } from '@/hooks/useTVSeriesWishlist';
-import { useWatchedList } from '@/hooks/useWatchedList';
 import { useTVSeriesWatchedList } from '@/hooks/useTVSeriesWatchedList';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
@@ -61,7 +60,7 @@ const Wishlist = () => {
     <div className="min-h-screen gradient-bg">
       <Header />
       <main className="container px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="mx-auto">
           <div className="flex items-center gap-3 mb-8">
             <Heart className="w-8 h-8 text-red-500" />
             <h1 className="text-3xl font-bold">My Wishlist</h1>
@@ -99,7 +98,7 @@ const Wishlist = () => {
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid [@media(max-width:450px)]:grid-cols-1 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                   {movieWishlist.map((item) => (
                     <WishlistMovieCard
                       key={item.id}
@@ -132,7 +131,7 @@ const Wishlist = () => {
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid [@media(max-width:450px)]:grid-cols-1 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                   {tvWishlist.map((item) => (
                     <div
                       key={item.id}
