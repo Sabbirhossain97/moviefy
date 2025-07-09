@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { WishlistButton } from "./WishlistButton";
+import { WatchedButton } from "./WatchedButton";
 
 interface MovieSliderProps {
   title: string;
@@ -106,6 +107,11 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
                         size="icon"
                         variant="ghost"
                         showText={false}
+                      />
+                      <WatchedButton
+                        movie={movie}
+                        size="icon"
+                        variant="ghost"
                       />
                     </div>
                   </div>

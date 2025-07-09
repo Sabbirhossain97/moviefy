@@ -1,7 +1,5 @@
-
 import { useState } from 'react';
 import { useWatchedList } from '@/hooks/useWatchedList';
-import { useTVSeriesWatchedList } from '@/hooks/useTVSeriesWatchedList';
 import { useFavoriteMovies } from '@/hooks/useFavoriteMovies';
 import { useFavoriteTVSeries } from '@/hooks/useFavoriteTVSeries';
 import { useAuth } from '@/hooks/useAuth';
@@ -16,8 +14,7 @@ import { IMAGE_SIZES } from '@/services/api';
 
 const WatchedList = () => {
   const { user } = useAuth();
-  const { watchedList: movieWatchedList, loading: movieLoading, removeFromWatchedList: removeMovie } = useWatchedList();
-  const { watchedList: tvWatchedList, loading: tvLoading, removeFromWatchedList: removeTVSeries } = useTVSeriesWatchedList();
+  const { watchedList: movieWatchedList, watchedTVList: tvWatchedList, loading, removeFromWatchedList: removeMovie, removeFromTVWatchedList: removeTVSeries } = useWatchedList();
   const { addToFavorites: addMovieToFavorites, removeFromFavorites: removeMovieFromFavorites, isFavorite: isMovieFavorite } = useFavoriteMovies();
   const { addToFavorites: addTVToFavorites, removeFromFavorites: removeTVFromFavorites, isFavorite: isTVFavorite } = useFavoriteTVSeries();
   const navigate = useNavigate();
@@ -26,11 +23,11 @@ const WatchedList = () => {
   const [movieFilter, setMovieFilter] = useState<'all' | 'favorites'>('all');
   const [tvFilter, setTVFilter] = useState<'all' | 'favorites'>('all');
 
-  const filteredMovies = movieWatchedList.filter(movie => 
+  const filteredMovies = movieWatchedList.filter(movie =>
     movieFilter === 'all' || isMovieFavorite(movie.movie_id)
   );
 
-  const filteredTVSeries = tvWatchedList.filter(series => 
+  const filteredTVSeries = tvWatchedList.filter(series =>
     tvFilter === 'all' || isTVFavorite(series.series_id)
   );
 
@@ -153,10 +150,10 @@ const WatchedList = () => {
     return (
       <div
         key={item.id}
-        className={`${viewMode === 'grid' 
-          ? 'p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group text-center' 
+        className={`${viewMode === 'grid'
+          ? 'p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group text-center'
           : 'flex items-center gap-4 p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group'
-        }`}
+          }`}
         onClick={() => navigate(`/movie/${item.movie_id}`)}
       >
         {content}
@@ -191,10 +188,6 @@ const WatchedList = () => {
                 {item.series_vote_average.toFixed(1)}
               </div>
             )}
-            <div className="flex items-center gap-1">
-              <Eye className="w-4 h-4" />
-              Watched on {new Date(item.watched_at).toLocaleDateString()}
-            </div>
           </div>
         </div>
         <div className={`flex gap-2 ${viewMode === 'grid' ? 'mt-2 justify-center' : 'opacity-0 group-hover:opacity-100 transition-opacity'}`}>
@@ -225,10 +218,10 @@ const WatchedList = () => {
     return (
       <div
         key={item.id}
-        className={`${viewMode === 'grid' 
-          ? 'p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group text-center' 
+        className={`${viewMode === 'grid'
+          ? 'p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group text-center'
           : 'flex items-center gap-4 p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group'
-        }`}
+          }`}
         onClick={() => navigate(`/tv/${item.series_id}`)}
       >
         {content}
@@ -245,28 +238,6 @@ const WatchedList = () => {
             <Eye className="w-8 h-8 text-green-500" />
             <h1 className="text-3xl font-bold">My Watched List</h1>
           </div>
-
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="w-4 h-4 mr-2" />
-                List
-              </Button>
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-              >
-                <Grid3x3 className="w-4 h-4 mr-2" />
-                Grid
-              </Button>
-            </div>
-          </div>
-
           <Tabs defaultValue="movies" className="w-full">
             <TabsList className="grid w-full grid-cols-2 max-w-md">
               <TabsTrigger value="movies" className="flex items-center gap-2">
@@ -280,23 +251,46 @@ const WatchedList = () => {
             </TabsList>
 
             <TabsContent value="movies" className="mt-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4" />
-                  <span className="text-sm font-medium">Filter:</span>
+
+              <div className="flex justify-between items-center gap-4 mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant={viewMode === 'list' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setViewMode('list')}
+                    >
+                      <List className="w-4 h-4 mr-2" />
+                      List
+                    </Button>
+                    <Button
+                      variant={viewMode === 'grid' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setViewMode('grid')}
+                    >
+                      <Grid3x3 className="w-4 h-4 mr-2" />
+                      Grid
+                    </Button>
+                  </div>
                 </div>
-                <Select value={movieFilter} onValueChange={(value: 'all' | 'favorites') => setMovieFilter(value)}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Filter movies" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Movies</SelectItem>
-                    <SelectItem value="favorites">Favorites Only</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className='flex gap-2'>
+                  <div className="flex items-center gap-1">
+                    <Filter className="w-4 h-4" />
+                    <span className="text-sm font-medium">Filter:</span>
+                  </div>
+                  <Select value={movieFilter} onValueChange={(value: 'all' | 'favorites') => setMovieFilter(value)}>
+                    <SelectTrigger className="w-40 h-8 rounded-md">
+                      <SelectValue placeholder="Filter movies" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Movies</SelectItem>
+                      <SelectItem value="favorites">Favorites Only</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              {movieLoading && filteredMovies.length === 0 ? (
+              {loading && filteredMovies.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="animate-pulse">
                     <div className="h-8 w-48 bg-muted rounded mx-auto mb-4"></div>
@@ -310,7 +304,7 @@ const WatchedList = () => {
                     {movieFilter === 'favorites' ? 'No favorite movies found' : 'Your watched movies list is empty'}
                   </h2>
                   <p className="text-muted-foreground mb-6">
-                    {movieFilter === 'favorites' 
+                    {movieFilter === 'favorites'
                       ? 'Mark some of your watched movies as favorites to see them here'
                       : 'Start marking movies as watched to keep track of what you\'ve seen'
                     }
@@ -333,7 +327,7 @@ const WatchedList = () => {
                   <span className="text-sm font-medium">Filter:</span>
                 </div>
                 <Select value={tvFilter} onValueChange={(value: 'all' | 'favorites') => setTVFilter(value)}>
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="w-40 h-8 rounded-md">
                     <SelectValue placeholder="Filter TV series" />
                   </SelectTrigger>
                   <SelectContent>
@@ -343,7 +337,7 @@ const WatchedList = () => {
                 </Select>
               </div>
 
-              {tvLoading && filteredTVSeries.length === 0 ? (
+              {loading && filteredTVSeries.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="animate-pulse">
                     <div className="h-8 w-48 bg-muted rounded mx-auto mb-4"></div>
@@ -357,7 +351,7 @@ const WatchedList = () => {
                     {tvFilter === 'favorites' ? 'No favorite TV series found' : 'Your watched TV series list is empty'}
                   </h2>
                   <p className="text-muted-foreground mb-6">
-                    {tvFilter === 'favorites' 
+                    {tvFilter === 'favorites'
                       ? 'Mark some of your watched TV series as favorites to see them here'
                       : 'Start marking TV series as watched to keep track of what you\'ve seen'
                     }

@@ -1,6 +1,6 @@
 import { useWishlist } from '@/hooks/useWishlist';
 import { useTVSeriesWishlist } from '@/hooks/useTVSeriesWishlist';
-import { useTVSeriesWatchedList } from '@/hooks/useTVSeriesWatchedList';
+import { useWatchedList } from '@/hooks/useWatchedList';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import { Heart, Film, Tv, CheckCircle } from 'lucide-react';
@@ -15,7 +15,7 @@ const Wishlist = () => {
   const { user } = useAuth();
   const { wishlist: movieWishlist, loading: movieLoading, removeFromWishlist: removeMovie } = useWishlist();
   const { wishlist: tvWishlist, loading: tvLoading, removeFromWishlist: removeTVSeries } = useTVSeriesWishlist();
-  const { addToWatchedList: addTVSeriesToWatched } = useTVSeriesWatchedList();
+  const { addToTVWatchedList: addTVSeriesToWatched } = useWatchedList();
   const navigate = useNavigate();
 
   const handleMarkTVSeriesAsWatched = (item: any) => {
@@ -131,7 +131,7 @@ const Wishlist = () => {
                   </Link>
                 </div>
               ) : (
-                    <div className="grid [@media(max-width:450px)]:grid-cols-1 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <div className="grid [@media(max-width:450px)]:grid-cols-1 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                   {tvWishlist.map((item) => (
                     <div
                       key={item.id}

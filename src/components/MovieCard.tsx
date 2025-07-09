@@ -46,7 +46,6 @@ const MovieCard = ({ movie, size = "md" }: MovieCardProps) => {
             movie={movie}
             size="icon"
             variant="ghost"
-            showText={false}
           />
         </div>
         <div className="absolute top-2 left-2">

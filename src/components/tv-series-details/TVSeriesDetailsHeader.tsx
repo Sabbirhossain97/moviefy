@@ -8,6 +8,7 @@ import Rating from "@/components/Rating";
 import { TVSeries } from "@/services/api";
 import { TVSeriesInfoSection } from "./TVSeriesInfoSection";
 import { TVSeriesWishlistButton } from "@/components/TVSeriesWishlistButton";
+import { TVWatchedButton } from "../TVWatchedButton";
 
 interface TVSeriesDetailsHeaderProps {
   series: TVSeries;
@@ -62,12 +63,17 @@ const TVSeriesDetailsHeader: React.FC<TVSeriesDetailsHeaderProps> = ({
               className="w-64 md:w-[330px] h-[400px] md:h-[550px] object-cover rounded-xl shadow-xl"
               style={{ background: "#1a1a1a" }}
             />
-            <div className="absolute top-3 right-3 drop-shadow-md">
+            <div className="absolute top-3 right-3 drop-shadow-md flex flex-col gap-2">
               <TVSeriesWishlistButton
                 series={series}
                 size="icon"
                 variant="ghost"
                 showText={false}
+              />
+              <TVWatchedButton
+                series={series}
+                size="icon"
+                variant="ghost"
               />
             </div>
           </div>

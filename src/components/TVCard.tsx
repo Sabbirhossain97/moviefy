@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { TVSeries } from "@/services/api";
 import { IMAGE_SIZES } from "@/services/api";
@@ -6,6 +5,7 @@ import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { TVSeriesWishlistButton } from "@/components/TVSeriesWishlistButton";
+import { TVWatchedButton } from "./TVWatchedButton";
 
 interface TVSeriesCardProps {
     series: TVSeries;
@@ -34,12 +34,17 @@ const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
                         loading="lazy"
                     />
                 </Link>
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex flex-col gap-2">
                     <TVSeriesWishlistButton
                         series={series}
                         size="icon"
                         variant="ghost"
                         showText={false}
+                    />
+                    <TVWatchedButton
+                        series={series}
+                        size="icon"
+                        variant="ghost"
                     />
                 </div>
                 <div className="absolute top-2 left-2">

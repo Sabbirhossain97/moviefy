@@ -4,6 +4,8 @@ import { IMAGE_SIZES, TVSeries } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { TVSeriesWishlistButton } from "./TVSeriesWishlistButton";
+import { TVWatchedButton } from "./TVWatchedButton";
 
 interface TVSeriesSliderProps {
     name: string;
@@ -62,12 +64,12 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
     return (
         <section className={`relative ${className}`}>
             {name !== "Trending TV Series" && <h2 className="text-2xl font-semibold mb-6">{name}</h2>}
-            <div className="relative group select-none">
+            <div className="relative group/slider select-none">
                 {scrollPosition > 0 && (
                     <Button
                         variant="outline"
                         size="icon"
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 transition-opacity gradient-card backdrop-blur-sm border-border/50 opacity-0 group-hover:opacity-100"
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 transition-opacity gradient-card backdrop-blur-sm border-border/50 opacity-0 group-hover/slider:opacity-100"
                         onClick={scrollLeft}
                         tabIndex={0}
                         aria-disabled={false}
@@ -85,9 +87,9 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                     draggable={false}
                 >
                     {validTvSeries.map((series) => (
-                        <div 
-                            key={series.id} 
-                            className="flex-shrink-0 w-[200px] sm:w-[240px] h-auto"
+                        <div
+                            key={series.id}
+                            className="flex-shrink-0 w-[200px] sm:w-[240px] h-auto group/series"
                         >
                             <Link to={`/tv/${series.id}`} className="block">
                                 <div className="gradient-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-border/50 h-full relative">
@@ -101,6 +103,19 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                                             alt={series.name}
                                             className="w-full min-h-[357px] object-cover hover:scale-105 transition-transform duration-300"
                                         />
+                                        <div className="absolute top-2 right-2 opacity-0 group-hover/series:opacity-100 transition-opacity z-10 flex flex-col gap-2">
+                                            <TVSeriesWishlistButton
+                                                series={series}
+                                                size="icon"
+                                                variant="ghost"
+                                                showText={false}
+                                            />
+                                            <TVWatchedButton
+                                                series={series}
+                                                size="icon"
+                                                variant="ghost"
+                                            />
+                                        </div>
                                     </div>
                                     <div className="p-3 h-[60px] flex flex-col justify-between">
                                         <h3
@@ -134,7 +149,7 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                     <Button
                         variant="outline"
                         size="icon"
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity gradient-card backdrop-blur-sm border-border/50"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 opacity-0 group-hover/slider:opacity-100 transition-opacity gradient-card backdrop-blur-sm border-border/50"
                         onClick={scrollRight}
                         tabIndex={0}
                         aria-disabled={false}

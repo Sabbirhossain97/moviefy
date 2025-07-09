@@ -7,6 +7,7 @@ import { Film, Clock4, Play, Clapperboard } from "lucide-react";
 import Rating from "@/components/Rating";
 import { MovieInfoSection } from "@/components/movie-details/MovieInfoSection";
 import { Movie } from "@/services/api";
+import { WatchedButton } from "../WatchedButton";
 
 interface MovieDetailsHeaderProps {
   movie: Movie;
@@ -39,12 +40,17 @@ const MovieDetailsHeader: React.FC<MovieDetailsHeaderProps> = ({
             className="w-64 md:w-[330px] h-[400px] md:h-[550px] object-cover rounded-xl shadow-xl"
             style={{ background: "#1a1a1a" }}
           />
-          <div className="absolute top-3 right-3 drop-shadow-md">
+          <div className="absolute top-3 right-3 drop-shadow-md flex flex-col gap-2">
             <WishlistButton
               movie={movie}
               size="icon"
               variant="ghost"
               showText={false}
+            />
+            <WatchedButton
+              movie={movie}
+              size="icon"
+              variant="ghost"
             />
           </div>
         </div>
