@@ -135,7 +135,7 @@ const Wishlist = () => {
                   {tvWishlist.map((item) => (
                     <div
                       key={item.id}
-                      className="relative group cursor-pointer rounded-lg overflow-hidden shadow-lg hover:scale-105 transform transition-all duration-200 bg-card/50"
+                      className="relative group cursor-pointer rounded-lg overflow-hidden shadow-lg hover:scale-105 transform transition-all duration-200 bg-card"
                       onClick={() => navigate(`/tv/${item.series_id}`)}
                     >
                       <img

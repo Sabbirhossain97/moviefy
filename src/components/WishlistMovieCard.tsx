@@ -45,7 +45,7 @@ export default function WishlistMovieCard({ item, onRemove, onClick }: WishlistM
   return (
     <div
       className={cn(
-        "relative group cursor-pointer rounded-lg overflow-hidden shadow-lg hover:scale-105 transform transition-all duration-200 bg-card/50"
+        "relative group cursor-pointer rounded-lg overflow-hidden shadow-lg hover:scale-105 transform transition-all duration-200 bg-card"
       )}
       onClick={() => onClick(item.movie_id)}
       tabIndex={0}

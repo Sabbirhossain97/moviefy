@@ -99,13 +99,13 @@ const WatchedList = () => {
       return (
         <div
           key={item.id}
-          className="relative group cursor-pointer"
+          className="relative group cursor-pointer bg-card pb-4 rounded-lg overflow-hidden"
           onClick={() => navigate(`/movie/${item.movie_id}`)}
         >
-          <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300">
+          <div className="relative aspect-[2/3] bg-card backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300">
             <img
               src={item.movie_poster_path
-                ? `${IMAGE_SIZES.poster.small}${item.movie_poster_path}`
+                ? `${IMAGE_SIZES.poster.medium}${item.movie_poster_path}`
                 : '/placeholder.svg'}
               alt={item.movie_title}
               className="w-full h-full object-cover"
@@ -114,6 +114,7 @@ const WatchedList = () => {
               <Button
                 variant="ghost"
                 size="icon"
+                title={isMovieFavorite(item.movie_id) ? "remove from favorite" : "mark as favorite"}
                 className="w-8 h-8 bg-black/70 hover:bg-black/90 backdrop-blur-sm"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -222,13 +223,13 @@ const WatchedList = () => {
       return (
         <div
           key={item.id}
-          className="relative group cursor-pointer"
+          className="relative group cursor-pointer bg-card pb-4 rounded-lg overflow-hidden"
           onClick={() => navigate(`/tv/${item.series_id}`)}
         >
-          <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300">
+          <div className="relative aspect-[2/3] rounded-lg bg-card backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300">
             <img
               src={item.series_poster_path
-                ? `${IMAGE_SIZES.poster.small}${item.series_poster_path}`
+                ? `${IMAGE_SIZES.poster.medium}${item.series_poster_path}`
                 : '/placeholder.svg'}
               alt={item.series_name}
               className="w-full h-full object-cover"
@@ -352,7 +353,7 @@ const WatchedList = () => {
 
           <Tabs defaultValue="movies" className="w-full">
             <div className="flex items-center justify-between mb-6">
-              <TabsList className="grid grid-cols-2 max-w-md">
+              <TabsList className="grid w-full grid-cols-2 max-w-md">
                 <TabsTrigger value="movies" className="flex items-center gap-2">
                   <Film className="w-4 h-4" />
                   Movies ({filteredMovies.length})
@@ -369,7 +370,7 @@ const WatchedList = () => {
                   size="sm"
                   onClick={() => setViewMode('list')}
                 >
-                  <List className="w-4 h-4 mr-2" />
+                  <List className="w-4 h-4" />
                   List
                 </Button>
                 <Button
@@ -377,7 +378,7 @@ const WatchedList = () => {
                   size="sm"
                   onClick={() => setViewMode('grid')}
                 >
-                  <Grid3x3 className="w-4 h-4 mr-2" />
+                  <Grid3x3 className="w-4 h-4" />
                   Grid
                 </Button>
               </div>
@@ -426,7 +427,7 @@ const WatchedList = () => {
                   </Link>
                 </div>
               ) : (
-                <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4' : 'space-y-4'}>
+                <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6' : 'space-y-4'}>
                   {filteredMovies.map(renderMovieItem)}
                 </div>
               )}
