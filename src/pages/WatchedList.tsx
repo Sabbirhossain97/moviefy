@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useWatchedList } from '@/hooks/useWatchedList';
 import { useFavoriteMovies } from '@/hooks/useFavoriteMovies';
@@ -348,39 +349,40 @@ const WatchedList = () => {
             <Eye className="w-8 h-8 text-green-500" />
             <h1 className="text-3xl font-bold">My Watched List</h1>
           </div>
-          <div className="flex items-center justify-between mb-6">
-            <TabsList className="grid grid-cols-2 max-w-md">
-              <TabsTrigger value="movies" className="flex items-center gap-2">
-                <Film className="w-4 h-4" />
-                Movies ({filteredMovies.length})
-              </TabsTrigger>
-              <TabsTrigger value="tv" className="flex items-center gap-2">
-                <Tv className="w-4 h-4" />
-                TV Series ({filteredTVSeries.length})
-              </TabsTrigger>
-            </TabsList>
-
-            <div className="flex items-center gap-4">
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="w-4 h-4 mr-2" />
-                List
-              </Button>
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-              >
-                <Grid3x3 className="w-4 h-4 mr-2" />
-                Grid
-              </Button>
-            </div>
-          </div>
 
           <Tabs defaultValue="movies" className="w-full">
+            <div className="flex items-center justify-between mb-6">
+              <TabsList className="grid grid-cols-2 max-w-md">
+                <TabsTrigger value="movies" className="flex items-center gap-2">
+                  <Film className="w-4 h-4" />
+                  Movies ({filteredMovies.length})
+                </TabsTrigger>
+                <TabsTrigger value="tv" className="flex items-center gap-2">
+                  <Tv className="w-4 h-4" />
+                  TV Series ({filteredTVSeries.length})
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="flex items-center gap-4">
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                >
+                  <List className="w-4 h-4 mr-2" />
+                  List
+                </Button>
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                >
+                  <Grid3x3 className="w-4 h-4 mr-2" />
+                  Grid
+                </Button>
+              </div>
+            </div>
+
             <TabsContent value="movies" className="mt-6">
               <div className="flex justify-between items-center gap-4 mb-4">
                 <div className='flex gap-2'>
