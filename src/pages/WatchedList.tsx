@@ -4,7 +4,7 @@ import { useFavoriteMovies } from '@/hooks/useFavoriteMovies';
 import { useFavoriteTVSeries } from '@/hooks/useFavoriteTVSeries';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
-import { Eye, Film, Tv, Calendar, Star, Heart, List, Grid3x3, Filter } from 'lucide-react';
+import { Eye, Film, Tv, Calendar, Star, Heart, List, Grid3x3, Filter, Trash2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthDialog } from '@/components/AuthDialog';
@@ -94,20 +94,88 @@ const WatchedList = () => {
   }
 
   const renderMovieItem = (item: any) => {
-    const content = (
-      <>
+    if (viewMode === 'grid') {
+      return (
+        <div
+          key={item.id}
+          className="relative group cursor-pointer"
+          onClick={() => navigate(`/movie/${item.movie_id}`)}
+        >
+          <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300">
+            <img
+              src={item.movie_poster_path
+                ? `${IMAGE_SIZES.poster.small}${item.movie_poster_path}`
+                : '/placeholder.svg'}
+              alt={item.movie_title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-8 h-8 bg-black/70 hover:bg-black/90 backdrop-blur-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMovieFavoriteToggle(item);
+                }}
+              >
+                <Heart className={`w-4 h-4 ${isMovieFavorite(item.movie_id) ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-8 h-8 bg-black/70 hover:bg-black/90 backdrop-blur-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeMovie(item.movie_id);
+                }}
+              >
+                <Trash2 className="w-4 h-4 text-white" />
+              </Button>
+            </div>
+          </div>
+          <div className="mt-2 text-center">
+            <h3 className="font-semibold text-sm line-clamp-2 mb-1">
+              {item.movie_title}
+            </h3>
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                {item.movie_release_date
+                  ? new Date(item.movie_release_date).getFullYear()
+                  : 'N/A'}
+              </div>
+              {item.movie_vote_average && (
+                <div className="flex items-center gap-1">
+                  <Star className="w-3 h-3 text-yellow-400" />
+                  {item.movie_vote_average.toFixed(1)}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // List view
+    return (
+      <div
+        key={item.id}
+        className="flex items-center gap-4 p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group"
+        onClick={() => navigate(`/movie/${item.movie_id}`)}
+      >
         <img
           src={item.movie_poster_path
             ? `${IMAGE_SIZES.poster.small}${item.movie_poster_path}`
             : '/placeholder.svg'}
           alt={item.movie_title}
-          className={viewMode === 'grid' ? 'w-full h-48 object-cover rounded-md' : 'w-16 h-24 object-cover rounded-md'}
+          className="w-16 h-24 object-cover rounded-md"
         />
         <div className="flex-1 min-w-0">
-          <h3 className={`font-semibold group-hover:text-movie-primary transition-colors ${viewMode === 'grid' ? 'text-base mt-2' : 'text-lg mb-1'}`}>
+          <h3 className="font-semibold text-lg mb-1 group-hover:text-movie-primary transition-colors">
             {item.movie_title}
           </h3>
-          <div className={`flex items-center gap-4 text-sm text-muted-foreground ${viewMode === 'grid' ? 'flex-col items-start gap-1' : ''}`}>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               {item.movie_release_date
@@ -122,7 +190,7 @@ const WatchedList = () => {
             )}
           </div>
         </div>
-        <div className={`flex gap-2 ${viewMode === 'grid' ? 'mt-2 justify-center' : 'opacity-0 group-hover:opacity-100 transition-opacity'}`}>
+        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
             variant="outline"
             size="sm"
@@ -144,38 +212,93 @@ const WatchedList = () => {
             Remove
           </Button>
         </div>
-      </>
-    );
-
-    return (
-      <div
-        key={item.id}
-        className={`${viewMode === 'grid'
-          ? 'p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group text-center'
-          : 'flex items-center gap-4 p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group'
-          }`}
-        onClick={() => navigate(`/movie/${item.movie_id}`)}
-      >
-        {content}
       </div>
     );
   };
 
   const renderTVItem = (item: any) => {
-    const content = (
-      <>
+    if (viewMode === 'grid') {
+      return (
+        <div
+          key={item.id}
+          className="relative group cursor-pointer"
+          onClick={() => navigate(`/tv/${item.series_id}`)}
+        >
+          <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300">
+            <img
+              src={item.series_poster_path
+                ? `${IMAGE_SIZES.poster.small}${item.series_poster_path}`
+                : '/placeholder.svg'}
+              alt={item.series_name}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-8 h-8 bg-black/70 hover:bg-black/90 backdrop-blur-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleTVFavoriteToggle(item);
+                }}
+              >
+                <Heart className={`w-4 h-4 ${isTVFavorite(item.series_id) ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-8 h-8 bg-black/70 hover:bg-black/90 backdrop-blur-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeTVSeries(item.series_id);
+                }}
+              >
+                <Trash2 className="w-4 h-4 text-white" />
+              </Button>
+            </div>
+          </div>
+          <div className="mt-2 text-center">
+            <h3 className="font-semibold text-sm line-clamp-2 mb-1">
+              {item.series_name}
+            </h3>
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                {item.series_first_air_date
+                  ? new Date(item.series_first_air_date).getFullYear()
+                  : 'N/A'}
+              </div>
+              {item.series_vote_average && (
+                <div className="flex items-center gap-1">
+                  <Star className="w-3 h-3 text-yellow-400" />
+                  {item.series_vote_average.toFixed(1)}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // List view
+    return (
+      <div
+        key={item.id}
+        className="flex items-center gap-4 p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group"
+        onClick={() => navigate(`/tv/${item.series_id}`)}
+      >
         <img
           src={item.series_poster_path
             ? `${IMAGE_SIZES.poster.small}${item.series_poster_path}`
             : '/placeholder.svg'}
           alt={item.series_name}
-          className={viewMode === 'grid' ? 'w-full h-48 object-cover rounded-md' : 'w-16 h-24 object-cover rounded-md'}
+          className="w-16 h-24 object-cover rounded-md"
         />
         <div className="flex-1 min-w-0">
-          <h3 className={`font-semibold group-hover:text-movie-primary transition-colors ${viewMode === 'grid' ? 'text-base mt-2' : 'text-lg mb-1'}`}>
+          <h3 className="font-semibold text-lg mb-1 group-hover:text-movie-primary transition-colors">
             {item.series_name}
           </h3>
-          <div className={`flex items-center gap-4 text-sm text-muted-foreground ${viewMode === 'grid' ? 'flex-col items-start gap-1' : ''}`}>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               {item.series_first_air_date
@@ -190,7 +313,7 @@ const WatchedList = () => {
             )}
           </div>
         </div>
-        <div className={`flex gap-2 ${viewMode === 'grid' ? 'mt-2 justify-center' : 'opacity-0 group-hover:opacity-100 transition-opacity'}`}>
+        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
             variant="outline"
             size="sm"
@@ -212,19 +335,6 @@ const WatchedList = () => {
             Remove
           </Button>
         </div>
-      </>
-    );
-
-    return (
-      <div
-        key={item.id}
-        className={`${viewMode === 'grid'
-          ? 'p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group text-center'
-          : 'flex items-center gap-4 p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 cursor-pointer group'
-          }`}
-        onClick={() => navigate(`/tv/${item.series_id}`)}
-      >
-        {content}
       </div>
     );
   };
@@ -238,8 +348,8 @@ const WatchedList = () => {
             <Eye className="w-8 h-8 text-green-500" />
             <h1 className="text-3xl font-bold">My Watched List</h1>
           </div>
-          <Tabs defaultValue="movies" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-md">
+          <div className="flex items-center justify-between mb-6">
+            <TabsList className="grid grid-cols-2 max-w-md">
               <TabsTrigger value="movies" className="flex items-center gap-2">
                 <Film className="w-4 h-4" />
                 Movies ({filteredMovies.length})
@@ -250,29 +360,29 @@ const WatchedList = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="movies" className="mt-6">
+            <div className="flex items-center gap-4">
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="w-4 h-4 mr-2" />
+                List
+              </Button>
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid3x3 className="w-4 h-4 mr-2" />
+                Grid
+              </Button>
+            </div>
+          </div>
 
+          <Tabs defaultValue="movies" className="w-full">
+            <TabsContent value="movies" className="mt-6">
               <div className="flex justify-between items-center gap-4 mb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Button
-                      variant={viewMode === 'list' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setViewMode('list')}
-                    >
-                      <List className="w-4 h-4 mr-2" />
-                      List
-                    </Button>
-                    <Button
-                      variant={viewMode === 'grid' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setViewMode('grid')}
-                    >
-                      <Grid3x3 className="w-4 h-4 mr-2" />
-                      Grid
-                    </Button>
-                  </div>
-                </div>
                 <div className='flex gap-2'>
                   <div className="flex items-center gap-1">
                     <Filter className="w-4 h-4" />
