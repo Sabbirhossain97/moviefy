@@ -15,15 +15,15 @@ import { IMAGE_SIZES } from '@/services/api';
 
 const WatchedList = () => {
   const { user } = useAuth();
-  const { 
-    watchedList: movieWatchedList, 
-    watchedTVList: tvWatchedList, 
-    loading, 
+  const {
+    watchedList: movieWatchedList,
+    watchedTVList: tvWatchedList,
+    loading,
     hasMoreMovies,
     hasMoreTV,
     loadMoreMovies,
     loadMoreTV,
-    removeFromWatchedList: removeMovie, 
+    removeFromWatchedList: removeMovie,
     removeFromTVWatchedList: removeTVSeries,
     removeAllWatchedMovies,
     removeAllWatchedTVSeries
@@ -364,44 +364,47 @@ const WatchedList = () => {
           </div>
 
           <Tabs defaultValue="movies" className="w-full">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4 justify-between mb-6">
               <TabsList className="grid w-full grid-cols-2 max-w-md">
                 <TabsTrigger value="movies" className="flex items-center gap-2">
                   <Film className="w-4 h-4" />
-                  Movies ({filteredMovies.length})
+                  Movies
+                  {/* ({filteredMovies.length}) */}
                 </TabsTrigger>
                 <TabsTrigger value="tv" className="flex items-center gap-2">
                   <Tv className="w-4 h-4" />
-                  TV Series ({filteredTVSeries.length})
+                  TV Series
+                  {/* ({filteredTVSeries.length}) */}
                 </TabsTrigger>
               </TabsList>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-0">
                 <Button
                   variant={viewMode === 'list' ? 'default' : 'outline'}
                   size="sm"
+                  className='rounded-r-none'
                   onClick={() => setViewMode('list')}
                 >
                   <List className="w-4 h-4" />
-                  List
+                  {/* List */}
                 </Button>
                 <Button
                   variant={viewMode === 'grid' ? 'default' : 'outline'}
                   size="sm"
+                  className='rounded-l-none'
                   onClick={() => setViewMode('grid')}
                 >
                   <Grid3x3 className="w-4 h-4" />
-                  Grid
+                  {/* Grid */}
                 </Button>
               </div>
             </div>
 
             <TabsContent value="movies" className="mt-6">
-              <div className="flex justify-between items-center gap-4 mb-4">
+              <div className="flex justify-between items-center gap-4 mb-3">
                 <div className='flex gap-2'>
                   <div className="flex items-center gap-1">
-                    <Filter className="w-4 h-4" />
-                    <span className="text-sm font-medium">Filter:</span>
+                    <Filter className="w-5 h-5" />
                   </div>
                   <Select value={movieFilter} onValueChange={(value: 'all' | 'favorites') => setMovieFilter(value)}>
                     <SelectTrigger className="w-40 h-8 rounded-md">
@@ -415,17 +418,19 @@ const WatchedList = () => {
                 </div>
                 {filteredMovies.length > 0 && (
                   <Button
-                    variant="destructive"
+                    variant="default"
                     size="sm"
                     onClick={removeAllWatchedMovies}
-                    className="flex items-center gap-2"
+                    className="flex bg-red-600 h-8 items-center gap-2"
                   >
                     <TrashIcon className="w-4 h-4" />
                     Remove All
                   </Button>
                 )}
               </div>
-
+              <div className='text-gray-300 mb-3 text-sm'>
+                Showing {filteredMovies.length} results
+              </div>
               {loading && filteredMovies.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="animate-pulse">
@@ -472,8 +477,7 @@ const WatchedList = () => {
             <TabsContent value="tv" className="mt-6">
               <div className="flex justify-between items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4" />
-                  <span className="text-sm font-medium">Filter:</span>
+                  <Filter className="w-5 h-5" />
                   <Select value={tvFilter} onValueChange={(value: 'all' | 'favorites') => setTVFilter(value)}>
                     <SelectTrigger className="w-40 h-8 rounded-md">
                       <SelectValue placeholder="Filter TV series" />
@@ -489,14 +493,16 @@ const WatchedList = () => {
                     variant="destructive"
                     size="sm"
                     onClick={removeAllWatchedTVSeries}
-                    className="flex items-center gap-2"
+                    className="flex h-8 bg-red-600 items-center gap-2"
                   >
                     <TrashIcon className="w-4 h-4" />
                     Remove All
                   </Button>
                 )}
               </div>
-
+              <div className='text-gray-300 mb-3 text-sm'>
+                Showing {filteredTVSeries.length} results
+              </div>
               {loading && filteredTVSeries.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="animate-pulse">
