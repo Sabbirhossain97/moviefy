@@ -57,6 +57,14 @@ export const useTVSeriesWishlist = () => {
     }
 
     try {
+      // First, remove from watched list if it exists
+      await supabase
+        .from('watched_tv_series')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('series_id', series.id);
+
+      // Then add to wishlist
       const { error } = await supabase.from('tv_wishlists').insert({
         user_id: user.id,
         series_id: series.id,

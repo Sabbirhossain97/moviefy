@@ -57,6 +57,14 @@ export const useWishlist = () => {
     }
 
     try {
+      // First, remove from watched list if it exists
+      await supabase
+        .from('watched_movies')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('movie_id', movie.id);
+
+      // Then add to wishlist
       const { error } = await supabase.from('wishlists').insert({
         user_id: user.id,
         movie_id: movie.id,

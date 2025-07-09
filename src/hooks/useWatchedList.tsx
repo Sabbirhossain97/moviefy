@@ -26,26 +26,43 @@ interface WatchedTVSeries {
   watched_at: string;
 }
 
+const ITEMS_PER_PAGE = 20;
+
 export const useWatchedList = () => {
   const [watchedList, setWatchedList] = useState<WatchedMovie[]>([]);
   const [watchedTVList, setWatchedTVList] = useState<WatchedTVSeries[]>([]);
   const [loading, setLoading] = useState(false);
+  const [moviePage, setMoviePage] = useState(1);
+  const [tvPage, setTVPage] = useState(1);
+  const [hasMoreMovies, setHasMoreMovies] = useState(true);
+  const [hasMoreTV, setHasMoreTV] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const fetchWatchedList = async () => {
+  const fetchWatchedList = async (page: number = 1, append: boolean = false) => {
     if (!user) return;
 
     setLoading(true);
     try {
+      const from = (page - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+
       const { data, error } = await supabase
         .from('watched_movies')
         .select('*')
         .eq('user_id', user.id)
-        .order('watched_at', { ascending: false });
+        .order('watched_at', { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
-      setWatchedList(data || []);
+      
+      if (append) {
+        setWatchedList(prev => [...prev, ...(data || [])]);
+      } else {
+        setWatchedList(data || []);
+      }
+      
+      setHasMoreMovies((data || []).length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('Error fetching watched list:', error);
       toast({
@@ -58,19 +75,30 @@ export const useWatchedList = () => {
     }
   };
 
-  const fetchTVWatchedList = async () => {
+  const fetchTVWatchedList = async (page: number = 1, append: boolean = false) => {
     if (!user) return;
 
     setLoading(true);
     try {
+      const from = (page - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+
       const { data, error } = await supabase
         .from('watched_tv_series')
         .select('*')
         .eq('user_id', user.id)
-        .order('watched_at', { ascending: false });
+        .order('watched_at', { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
-      setWatchedTVList(data || []);
+      
+      if (append) {
+        setWatchedTVList(prev => [...prev, ...(data || [])]);
+      } else {
+        setWatchedTVList(data || []);
+      }
+      
+      setHasMoreTV((data || []).length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('Error fetching watched TV series list:', error);
       toast({
@@ -81,6 +109,18 @@ export const useWatchedList = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadMoreMovies = () => {
+    const nextPage = moviePage + 1;
+    setMoviePage(nextPage);
+    fetchWatchedList(nextPage, true);
+  };
+
+  const loadMoreTV = () => {
+    const nextPage = tvPage + 1;
+    setTVPage(nextPage);
+    fetchTVWatchedList(nextPage, true);
   };
 
   const addToWatchedList = async (movie: Movie) => {
@@ -94,6 +134,14 @@ export const useWatchedList = () => {
     }
 
     try {
+      // First, remove from wishlist if it exists
+      await supabase
+        .from('wishlists')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('movie_id', movie.id);
+
+      // Then add to watched list
       const { error } = await supabase.from('watched_movies').insert({
         user_id: user.id,
         movie_id: movie.id,
@@ -139,6 +187,14 @@ export const useWatchedList = () => {
     }
 
     try {
+      // First, remove from TV wishlist if it exists
+      await supabase
+        .from('tv_wishlists')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('series_id', series.id);
+
+      // Then add to watched list
       const { error } = await supabase.from('watched_tv_series').insert({
         user_id: user.id,
         series_id: series.id,
@@ -227,6 +283,62 @@ export const useWatchedList = () => {
     }
   };
 
+  const removeAllWatchedMovies = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('watched_movies')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'All movies removed',
+        description: 'All watched movies have been removed from your list',
+      });
+
+      setWatchedList([]);
+      setMoviePage(1);
+      setHasMoreMovies(true);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to remove all watched movies',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const removeAllWatchedTVSeries = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('watched_tv_series')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'All TV series removed',
+        description: 'All watched TV series have been removed from your list',
+      });
+
+      setWatchedTVList([]);
+      setTVPage(1);
+      setHasMoreTV(true);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to remove all watched TV series',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const isWatched = (movieId: number) => {
     return watchedList.some((item) => item.movie_id === movieId);
   };
@@ -238,10 +350,14 @@ export const useWatchedList = () => {
   useEffect(() => {
     if (user) {
       fetchWatchedList();
-      fetchTVWatchedList()
+      fetchTVWatchedList();
     } else {
       setWatchedList([]);
-      setWatchedTVList([])
+      setWatchedTVList([]);
+      setMoviePage(1);
+      setTVPage(1);
+      setHasMoreMovies(true);
+      setHasMoreTV(true);
     }
   }, [user]);
 
@@ -249,10 +365,16 @@ export const useWatchedList = () => {
     watchedList,
     watchedTVList,
     loading,
+    hasMoreMovies,
+    hasMoreTV,
+    loadMoreMovies,
+    loadMoreTV,
     addToWatchedList,
     addToTVWatchedList,
     removeFromWatchedList,
     removeFromTVWatchedList,
+    removeAllWatchedMovies,
+    removeAllWatchedTVSeries,
     isWatched,
     isTVWatched,
     fetchWatchedList,

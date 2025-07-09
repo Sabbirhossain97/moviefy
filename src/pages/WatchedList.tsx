@@ -5,7 +5,7 @@ import { useFavoriteMovies } from '@/hooks/useFavoriteMovies';
 import { useFavoriteTVSeries } from '@/hooks/useFavoriteTVSeries';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
-import { Eye, Film, Tv, Calendar, Star, Heart, List, Grid3x3, Filter, Trash2 } from 'lucide-react';
+import { Eye, Film, Tv, Calendar, Star, Heart, List, Grid3x3, Filter, Trash2, TrashIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthDialog } from '@/components/AuthDialog';
@@ -15,7 +15,19 @@ import { IMAGE_SIZES } from '@/services/api';
 
 const WatchedList = () => {
   const { user } = useAuth();
-  const { watchedList: movieWatchedList, watchedTVList: tvWatchedList, loading, removeFromWatchedList: removeMovie, removeFromTVWatchedList: removeTVSeries } = useWatchedList();
+  const { 
+    watchedList: movieWatchedList, 
+    watchedTVList: tvWatchedList, 
+    loading, 
+    hasMoreMovies,
+    hasMoreTV,
+    loadMoreMovies,
+    loadMoreTV,
+    removeFromWatchedList: removeMovie, 
+    removeFromTVWatchedList: removeTVSeries,
+    removeAllWatchedMovies,
+    removeAllWatchedTVSeries
+  } = useWatchedList();
   const { addToFavorites: addMovieToFavorites, removeFromFavorites: removeMovieFromFavorites, isFavorite: isMovieFavorite } = useFavoriteMovies();
   const { addToFavorites: addTVToFavorites, removeFromFavorites: removeTVFromFavorites, isFavorite: isTVFavorite } = useFavoriteTVSeries();
   const navigate = useNavigate();
@@ -401,6 +413,17 @@ const WatchedList = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                {filteredMovies.length > 0 && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={removeAllWatchedMovies}
+                    className="flex items-center gap-2"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                    Remove All
+                  </Button>
+                )}
               </div>
 
               {loading && filteredMovies.length === 0 ? (
@@ -427,27 +450,51 @@ const WatchedList = () => {
                   </Link>
                 </div>
               ) : (
-                <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6' : 'space-y-4'}>
-                  {filteredMovies.map(renderMovieItem)}
-                </div>
+                <>
+                  <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6' : 'space-y-4'}>
+                    {filteredMovies.map(renderMovieItem)}
+                  </div>
+                  {hasMoreMovies && (
+                    <div className="flex justify-center mt-8">
+                      <Button
+                        onClick={loadMoreMovies}
+                        disabled={loading}
+                        variant="outline"
+                      >
+                        {loading ? 'Loading...' : 'Load More'}
+                      </Button>
+                    </div>
+                  )}
+                </>
               )}
             </TabsContent>
 
             <TabsContent value="tv" className="mt-6">
-              <div className="flex items-center gap-4 mb-4">
+              <div className="flex justify-between items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
                   <Filter className="w-4 h-4" />
                   <span className="text-sm font-medium">Filter:</span>
+                  <Select value={tvFilter} onValueChange={(value: 'all' | 'favorites') => setTVFilter(value)}>
+                    <SelectTrigger className="w-40 h-8 rounded-md">
+                      <SelectValue placeholder="Filter TV series" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All TV Series</SelectItem>
+                      <SelectItem value="favorites">Favorites Only</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Select value={tvFilter} onValueChange={(value: 'all' | 'favorites') => setTVFilter(value)}>
-                  <SelectTrigger className="w-40 h-8 rounded-md">
-                    <SelectValue placeholder="Filter TV series" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All TV Series</SelectItem>
-                    <SelectItem value="favorites">Favorites Only</SelectItem>
-                  </SelectContent>
-                </Select>
+                {filteredTVSeries.length > 0 && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={removeAllWatchedTVSeries}
+                    className="flex items-center gap-2"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                    Remove All
+                  </Button>
+                )}
               </div>
 
               {loading && filteredTVSeries.length === 0 ? (
@@ -474,9 +521,22 @@ const WatchedList = () => {
                   </Link>
                 </div>
               ) : (
-                <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4' : 'space-y-4'}>
-                  {filteredTVSeries.map(renderTVItem)}
-                </div>
+                <>
+                  <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4' : 'space-y-4'}>
+                    {filteredTVSeries.map(renderTVItem)}
+                  </div>
+                  {hasMoreTV && (
+                    <div className="flex justify-center mt-8">
+                      <Button
+                        onClick={loadMoreTV}
+                        disabled={loading}
+                        variant="outline"
+                      >
+                        {loading ? 'Loading...' : 'Load More'}
+                      </Button>
+                    </div>
+                  )}
+                </>
               )}
             </TabsContent>
           </Tabs>
