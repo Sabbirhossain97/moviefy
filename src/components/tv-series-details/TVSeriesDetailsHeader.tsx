@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import MovieReminderButton from "@/components/MovieReminderButton";
@@ -27,7 +26,6 @@ const TVSeriesDetailsHeader: React.FC<TVSeriesDetailsHeaderProps> = ({
   onWriteReview,
   releaseYear,
 }) => {
-
 
   const getCurrentStatus = (series: TVSeries): string => {
     const nextEpDate = series.next_episode_to_air?.air_date;
@@ -68,7 +66,6 @@ const TVSeriesDetailsHeader: React.FC<TVSeriesDetailsHeaderProps> = ({
                 series={series}
                 size="icon"
                 variant="ghost"
-                showText={false}
               />
               <TVWatchedButton
                 series={series}

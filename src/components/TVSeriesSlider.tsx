@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { IMAGE_SIZES, TVSeries } from "@/services/api";
 import { Button } from "@/components/ui/button";
@@ -108,7 +107,6 @@ const TVSeriesSlider = ({ name, series, className = "", renderActions }: TVSerie
                                                 series={series}
                                                 size="icon"
                                                 variant="ghost"
-                                                showText={false}
                                             />
                                             <TVWatchedButton
                                                 series={series}
