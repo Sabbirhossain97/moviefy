@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, Movie } from "@/services/api";
@@ -45,13 +44,10 @@ const MovieCategory = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [selectedYear, setSelectedYear] = useState<number | undefined>();
   const { toast } = useToast();
-
   const categoryType = (category || "trending-now") as CategoryType;
   const categoryInfo = categoryMap[categoryType] || categoryMap.popular;
-
   const canFilterByYear = categoryType !== "trending-now";
 
-  // Filter movies based on selected year
   useEffect(() => {
     if (!selectedYear) {
       setFilteredMovies(allMovies);
@@ -63,7 +59,6 @@ const MovieCategory = () => {
       const movieYear = new Date(movie.release_date).getFullYear();
       return movieYear === selectedYear;
     });
-
     setFilteredMovies(filtered);
   }, [allMovies, selectedYear]);
 
@@ -146,7 +141,7 @@ const MovieCategory = () => {
           <div className="text-center py-16">
             <h2 className="text-xl font-medium mb-2">No movies found</h2>
             <p className="text-muted-foreground">
-              {selectedYear 
+              {selectedYear
                 ? `We couldn't find any movies from ${selectedYear} in this category.`
                 : "We couldn't find any movies in this category."
               }

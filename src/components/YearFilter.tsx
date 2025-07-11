@@ -38,7 +38,7 @@ const YearFilter = ({ selectedYear, onYearChange }: YearFilterProps) => {
         value={selectedYear ? selectedYear.toString() : ""}
         onValueChange={(value) => onYearChange(value ? parseInt(value) : undefined)}
       >
-        <SelectTrigger className="w-[120px]">
+        <SelectTrigger className="w-[100px] rounded-lg">
           <SelectValue placeholder="Year" />
         </SelectTrigger>
         <SelectContent>
