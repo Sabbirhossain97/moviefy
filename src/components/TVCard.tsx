@@ -1,10 +1,11 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { TVSeries } from "@/services/api";
 import { IMAGE_SIZES } from "@/services/api";
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { TVSeriesWishlistButton } from "@/components/TVSeriesWishlistButton";
+import TVSeriesWishlistButton from "@/components/TVSeriesWishlistButton";
 import { TVWatchedButton } from "./TVWatchedButton";
 
 interface TVSeriesCardProps {

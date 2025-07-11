@@ -4,7 +4,7 @@ import { IMAGE_SIZES, TVSeries } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { TVSeriesWishlistButton } from "./TVSeriesWishlistButton";
+import TVSeriesWishlistButton from "./TVSeriesWishlistButton";
 import { TVWatchedButton } from "./TVWatchedButton";
 
 interface TVSeriesSliderProps {

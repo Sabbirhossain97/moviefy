@@ -7,7 +7,7 @@ import { Film, Clock4, Play, Clapperboard } from "lucide-react";
 import Rating from "@/components/Rating";
 import { TVSeries } from "@/services/api";
 import { TVSeriesInfoSection } from "./TVSeriesInfoSection";
-import { TVSeriesWishlistButton } from "@/components/TVSeriesWishlistButton";
+import TVSeriesWishlistButton from "@/components/TVSeriesWishlistButton";
 import { TVWatchedButton } from "../TVWatchedButton";
 
 interface TVSeriesDetailsHeaderProps {
