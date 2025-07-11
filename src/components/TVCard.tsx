@@ -39,7 +39,6 @@ const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
                         series={series}
                         size="icon"
                         variant="ghost"
-                        showText={false}
                     />
                     <TVWatchedButton
                         series={series}

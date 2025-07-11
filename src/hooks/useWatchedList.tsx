@@ -273,7 +273,7 @@ export const useWatchedList = () => {
         description: 'TV series has been removed from your watched list',
       });
 
-      fetchWatchedList();
+      fetchTVWatchedList();
     } catch (error) {
       toast({
         title: 'Error',

@@ -2,7 +2,6 @@
 import { useWishlist } from '@/hooks/useWishlist';
 import { useTVSeriesWishlist } from '@/hooks/useTVSeriesWishlist';
 import { useWatchedList } from '@/hooks/useWatchedList';
-import { useTVSeriesWatchedList } from '@/hooks/useTVSeriesWatchedList';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import { Heart, Film, Tv, CheckCircle } from 'lucide-react';
@@ -10,15 +9,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthDialog } from '@/components/AuthDialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import WishlistMovieCard from '@/components/WishlistMovieCard';
 import { IMAGE_SIZES } from '@/services/api';
 
 const Wishlist = () => {
   const { user } = useAuth();
   const { wishlist: movieWishlist, loading: movieLoading, removeFromWishlist: removeMovie } = useWishlist();
   const { wishlist: tvWishlist, loading: tvLoading, removeFromWishlist: removeTVSeries } = useTVSeriesWishlist();
-  const { addToWatchedList: addMovieToWatched } = useWatchedList();
-  const { addToWatchedList: addTVSeriesToWatched } = useTVSeriesWatchedList();
+  const { addToWatchedList, addToTVWatchedList } = useWatchedList();
   const navigate = useNavigate();
 
   const handleMarkMovieAsWatched = (item: any) => {
@@ -38,7 +35,7 @@ const Wishlist = () => {
       video: false,
       vote_count: 0
     };
-    addMovieToWatched(movieData);
+    addToWatchedList(movieData);
   };
 
   const handleMarkTVSeriesAsWatched = (item: any) => {
@@ -56,7 +53,7 @@ const Wishlist = () => {
       created_by: [],
       networks: []
     };
-    addTVSeriesToWatched(seriesData);
+    addToTVWatchedList(seriesData);
   };
 
   if (!user) {

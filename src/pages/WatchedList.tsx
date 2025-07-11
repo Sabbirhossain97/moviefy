@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useWatchedList } from '@/hooks/useWatchedList';
 import { useFavoriteMovies } from '@/hooks/useFavoriteMovies';

@@ -108,11 +108,12 @@ const MovieSlider = ({ title, movies, className = "", renderActions }: MovieSlid
                         variant="ghost"
                         showText={false}
                       />
-                      <WatchedButton
-                        movie={movie}
-                        size="icon"
-                        variant="ghost"
-                      />
+                      {title !== "Upcoming Movies" &&
+                        <WatchedButton
+                          movie={movie}
+                          size="icon"
+                          variant="ghost"
+                        />}
                     </div>
                   </div>
                   <div className="p-3 h-[60px] flex flex-col justify-between">

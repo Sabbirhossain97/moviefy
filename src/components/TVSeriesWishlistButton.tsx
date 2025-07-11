@@ -9,14 +9,12 @@ interface TVSeriesWishlistButtonProps {
   series: TVSeries;
   size?: 'sm' | 'default' | 'lg' | 'icon';
   variant?: 'default' | 'outline' | 'ghost';
-  showText?: boolean;
 }
 
 export const TVSeriesWishlistButton = ({ 
   series, 
   size = 'default',
   variant = 'outline',
-  showText = true
 }: TVSeriesWishlistButtonProps) => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useTVSeriesWishlist();
   const inWishlist = isInWishlist(series.id);
@@ -36,6 +34,7 @@ export const TVSeriesWishlistButton = ({
     <Button 
       variant={variant} 
       size={size}
+      title={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
       onClick={handleClick}
       className={cn(
         "transition-all duration-200 flex items-center rounded-full p-0 w-9 h-9 justify-center shadow hover:bg-red-100/30",
@@ -60,14 +59,6 @@ export const TVSeriesWishlistButton = ({
         )} 
         fill={inWishlist ? "currentColor" : "none"}
       />
-      {showText && (
-        <span className={cn(
-          size === 'sm' && "text-xs",
-          "ml-2"
-        )}>
-          {inWishlist ? 'Remove' : 'Add to Wishlist'}
-        </span>
-      )}
     </Button>
   );
 };
