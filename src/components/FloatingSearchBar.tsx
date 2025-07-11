@@ -28,6 +28,7 @@ function FloatingSearchBar({ searchType, setSearchType, isSearchBarOpen, setIsSe
 
                 if (!isSelectRelatedClick) {
                     setIsSearchBarOpen(false);
+                    setShowDropdown(false);
                 }
             }
         }
@@ -50,7 +51,7 @@ function FloatingSearchBar({ searchType, setSearchType, isSearchBarOpen, setIsSe
                 <div>
                     <div className="fixed md:hidden inset-0 z-[1000] backdrop-blur-[6px]">
                     </div>
-                    <form ref={searchRef} onSubmit={handleSearch} className="fixed top-16 left-4 right-4 sm:left-16 sm:right-16 z-[1001] md:hidden">
+                    <form ref={searchRef} onSubmit={handleSearch} className="fixed top-16 left-6 right-6 z-[1001] md:hidden">
                         <div className="flex">
                             <div className="w-full relative">
                                 <Input
@@ -121,15 +122,15 @@ function FloatingSearchBar({ searchType, setSearchType, isSearchBarOpen, setIsSe
                                     </div>
                                 )}
                             </div>
-                            <div className="relative z-[1003] bg-muted">
+                            <div className="relative z-[1003]">
                                 <Select
                                     value={searchType}
                                     onValueChange={(v) => setSearchType(v as 'movie' | 'tv')}
                                 >
-                                    <SelectTrigger className="rounded-r-md border-l-0">
+                                    <SelectTrigger className="rounded-r-md bg-muted">
                                         <SelectValue placeholder="Type" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="mr-4">
                                         <SelectItem value="movie">Movies</SelectItem>
                                         <SelectItem value="tv">Series</SelectItem>
                                     </SelectContent>

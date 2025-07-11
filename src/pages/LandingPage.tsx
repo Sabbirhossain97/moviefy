@@ -88,7 +88,7 @@ const LandingPage = () => {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="container relative py-20">
+        <section id="features" className="container px-4 relative py-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Why You'll Love Moviefy</h2>
             <p className="text-muted-foreground mt-2">Everything you need for a perfect movie night.</p>
@@ -106,7 +106,7 @@ const LandingPage = () => {
 
         {/* Movie Slider Section */}
         {trending.length > 0 && (
-          <section className="container py-10">
+          <section className="container px-4 py-10">
             <MovieSlider title="Trending Now" movies={trending} />
           </section>
         )}
@@ -117,17 +117,19 @@ const LandingPage = () => {
         <div className="container py-8 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2">
             <Video className="h-6 w-6 text-movie-primary" />
-            <span className="font-bold text-lg">Moviefy</span>
+            <span className="font-bold text-lg bg-gradient-to-r from-movie-primary to-yellow-500 bg-clip-text text-transparent">
+              Moviefy <sup className="bg-gradient-to-r from-movie-primary to-yellow-500 bg-clip-text text-transparent">AI</sup>
+            </span>
           </div>
-          <p className="text-sm text-muted-foreground mt-4 md:mt-0">
+          <p className="text-sm text-center text-muted-foreground mt-4 md:mt-0">
             © {new Date().getFullYear()} Moviefy. All Rights Reserved. Data by{" "}
             <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" className="text-movie-primary hover:underline">
               TMDb
             </a>.
           </p>
           <div className="flex gap-4 mt-4 md:mt-0">
-            <Link to="/terms" className="text-muted-foreground hover:text-primary text-sm">Terms</Link>
-            <Link to="/privacy" className="text-muted-foreground hover:text-primary text-sm">Privacy</Link>
+            <Link to="#" className="text-muted-foreground hover:text-primary text-sm">Terms</Link>
+            <Link to="#" className="text-muted-foreground hover:text-primary text-sm">Privacy</Link>
           </div>
         </div>
       </footer>
