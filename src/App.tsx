@@ -21,6 +21,7 @@ import TVSeriesCategory from "./pages/TVSeriesCategory";
 import TVSeriesDetails from "./pages/TVSeriesDetails";
 import TVSeriesGenresList from "./pages/TVSeriesGenresList";
 import TVSeriesGenrePage from "./pages/TVSeriesGenrePage";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/watched" element={<WatchedList />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
