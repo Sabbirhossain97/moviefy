@@ -19,7 +19,7 @@ export const UserMenu = () => {
   if (!user) {
     return (
       <AuthDialog>
-        <Button variant="outline" size="sm" className='h-10 rounded-full md:rounded-md bg-muted/50 border-muted-foreground/20'>
+        <Button id="signinmodal" variant="outline" size="sm" className='h-10 rounded-full md:rounded-md bg-muted/50 border-muted-foreground/20'>
           <User className="w-4 h-4 lg:mr-2" />
           <span className='hidden md:block'>Sign In</span>
         </Button>
