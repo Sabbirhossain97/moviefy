@@ -18,7 +18,7 @@ export const TVSeriesWatchedButton = ({
   variant = 'outline',
   showText = true
 }: TVSeriesWatchedButtonProps) => {
-  const { addToWatchedList, removeFromWatchedList, isWatched } = useTVSeriesWatchedList();
+  const { addToWatched, removeFromWatched, isWatched } = useTVSeriesWatchedList();
   const watched = isWatched(series.id);
 
   const handleClick = (e: React.MouseEvent) => {
@@ -26,9 +26,9 @@ export const TVSeriesWatchedButton = ({
     e.stopPropagation();
     
     if (watched) {
-      removeFromWatchedList(series.id);
+      removeFromWatched(series.id);
     } else {
-      addToWatchedList(series);
+      addToWatched(series);
     }
   };
 
@@ -71,3 +71,5 @@ export const TVSeriesWatchedButton = ({
     </Button>
   );
 };
+
+export default TVSeriesWatchedButton;

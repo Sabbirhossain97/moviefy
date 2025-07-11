@@ -13,7 +13,7 @@ type CategoryType = "trending-now" | "popular" | "top-rated" | "upcoming";
 
 const categoryMap: Record<CategoryType, {
   title: string;
-  apiCall: (page: number, year?: number) => Promise<{ results: Movie[]; total_pages: number }>;
+  apiCall: (page: number) => Promise<{ results: Movie[]; total_pages: number }>;
 }> = {
   "trending-now": {
     title: "Trending Now",
@@ -24,21 +24,22 @@ const categoryMap: Record<CategoryType, {
   },
   "popular": {
     title: "Popular Movies",
-    apiCall: api.getPopular,
+    apiCall: (page: number) => api.getPopular(page),
   },
   "top-rated": {
     title: "Top Rated Movies",
-    apiCall: api.getTopRated,
+    apiCall: (page: number) => api.getTopRated(page),
   },
   "upcoming": {
     title: "Upcoming Movies",
-    apiCall: api.getUpcoming,
+    apiCall: (page: number) => api.getUpcoming(page),
   },
 };
 
 const MovieCategory = () => {
   const { category } = useParams<{ category: string }>();
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [allMovies, setAllMovies] = useState<Movie[]>([]);
+  const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -50,12 +51,28 @@ const MovieCategory = () => {
 
   const canFilterByYear = categoryType !== "trending-now";
 
+  // Filter movies based on selected year
+  useEffect(() => {
+    if (!selectedYear) {
+      setFilteredMovies(allMovies);
+      return;
+    }
+
+    const filtered = allMovies.filter(movie => {
+      if (!movie.release_date) return false;
+      const movieYear = new Date(movie.release_date).getFullYear();
+      return movieYear === selectedYear;
+    });
+
+    setFilteredMovies(filtered);
+  }, [allMovies, selectedYear]);
+
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         setLoading(true);
-        const response = await categoryInfo.apiCall(1, selectedYear);
-        setMovies(response.results);
+        const response = await categoryInfo.apiCall(1);
+        setAllMovies(response.results);
         setTotalPages(response.total_pages);
         setPage(1);
       } catch (error) {
@@ -71,7 +88,8 @@ const MovieCategory = () => {
     };
 
     fetchMovies();
-  }, [categoryType, selectedYear, toast]);
+    setSelectedYear(undefined); // Reset year filter when category changes
+  }, [categoryType, toast]);
 
   const loadMore = async () => {
     if (page >= totalPages) return;
@@ -79,8 +97,8 @@ const MovieCategory = () => {
     try {
       setLoading(true);
       const nextPage = page + 1;
-      const response = await categoryInfo.apiCall(nextPage, selectedYear);
-      setMovies(prev => [...prev, ...response.results]);
+      const response = await categoryInfo.apiCall(nextPage);
+      setAllMovies(prev => [...prev, ...response.results]);
       setPage(nextPage);
     } catch (error) {
       console.error(`Error loading more ${categoryType} movies:`, error);
@@ -89,7 +107,7 @@ const MovieCategory = () => {
     }
   };
 
-  if (loading && movies.length === 0) {
+  if (loading && allMovies.length === 0) {
     return (
       <>
         <Header />
@@ -105,6 +123,8 @@ const MovieCategory = () => {
     );
   }
 
+  const moviesToShow = filteredMovies;
+
   return (
     <>
       <Header />
@@ -112,6 +132,7 @@ const MovieCategory = () => {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">
             {categoryInfo.title}
+            {selectedYear && ` (${selectedYear})`}
           </h1>
           {canFilterByYear && (
             <YearFilter
@@ -121,7 +142,7 @@ const MovieCategory = () => {
           )}
         </div>
 
-        {movies.length === 0 ? (
+        {moviesToShow.length === 0 ? (
           <div className="text-center py-16">
             <h2 className="text-xl font-medium mb-2">No movies found</h2>
             <p className="text-muted-foreground">
@@ -135,14 +156,14 @@ const MovieCategory = () => {
         ) : (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {movies.map(movie => (
+              {moviesToShow.map(movie => (
                 <div key={movie.id}>
                   <MovieCard movie={movie} />
                 </div>
               ))}
             </div>
 
-            {page < totalPages && (
+            {!selectedYear && page < totalPages && (
               <div className="flex justify-center mt-10">
                 <Button
                   onClick={loadMore}

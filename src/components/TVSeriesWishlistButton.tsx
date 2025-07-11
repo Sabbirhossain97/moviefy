@@ -11,7 +11,7 @@ interface TVSeriesWishlistButtonProps {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 }
 
-const TVSeriesWishlistButton = ({ series, size = "default", variant = "default" }: TVSeriesWishlistButtonProps) => {
+export default function TVSeriesWishlistButton({ series, size = "default", variant = "default" }: TVSeriesWishlistButtonProps) {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useTVSeriesWishlist();
   const inWishlist = isInWishlist(series.id);
 
@@ -41,6 +41,4 @@ const TVSeriesWishlistButton = ({ series, size = "default", variant = "default" 
       )}
     </Button>
   );
-};
-
-export default TVSeriesWishlistButton;
+}

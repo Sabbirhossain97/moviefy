@@ -13,29 +13,30 @@ type CategoryType = "airing-today" | "on-the-air" | "popular" | "top-rated";
 
 const categoryMap: Record<CategoryType, {
     title: string;
-    apiCall: (page: number, year?: number) => Promise<{ results: TVSeries[]; total_pages: number }>;
+    apiCall: (page: number) => Promise<{ results: TVSeries[]; total_pages: number }>;
 }> = {
     "airing-today": {
         title: "Airing Today",
-        apiCall: api.getAiringToday,
+        apiCall: (page: number) => api.getAiringToday(page),
     },
     "on-the-air": {
         title: "On The Air",
-        apiCall: api.getOnTheAir,
+        apiCall: (page: number) => api.getOnTheAir(page),
     },
     "popular": {
         title: "Popular",
-        apiCall: api.getTvPopular,
+        apiCall: (page: number) => api.getTvPopular(page),
     },
     "top-rated": {
         title: "Top Rated",
-        apiCall: api.getTvTopRated,
+        apiCall: (page: number) => api.getTvTopRated(page),
     },
 };
 
-const MovieCategory = () => {
+const TVSeriesCategory = () => {
     const { category } = useParams<{ category: string }>();
-    const [tvSeries, setTvSeries] = useState<TVSeries[]>([]);
+    const [allTvSeries, setAllTvSeries] = useState<TVSeries[]>([]);
+    const [filteredTvSeries, setFilteredTvSeries] = useState<TVSeries[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -45,12 +46,28 @@ const MovieCategory = () => {
     const categoryType = (category || "airing-today") as CategoryType;
     const categoryInfo = categoryMap[categoryType] || categoryMap.popular;
 
+    // Filter TV series based on selected year
     useEffect(() => {
-        const fetchMovies = async () => {
+        if (!selectedYear) {
+            setFilteredTvSeries(allTvSeries);
+            return;
+        }
+
+        const filtered = allTvSeries.filter(series => {
+            if (!series.first_air_date) return false;
+            const seriesYear = new Date(series.first_air_date).getFullYear();
+            return seriesYear === selectedYear;
+        });
+
+        setFilteredTvSeries(filtered);
+    }, [allTvSeries, selectedYear]);
+
+    useEffect(() => {
+        const fetchTvSeries = async () => {
             try {
                 setLoading(true);
-                const response = await categoryInfo.apiCall(1, selectedYear);
-                setTvSeries(response.results);
+                const response = await categoryInfo.apiCall(1);
+                setAllTvSeries(response.results);
                 setTotalPages(response.total_pages);
                 setPage(1);
             } catch (error) {
@@ -65,8 +82,9 @@ const MovieCategory = () => {
             }
         };
 
-        fetchMovies();
-    }, [categoryType, selectedYear, toast]);
+        fetchTvSeries();
+        setSelectedYear(undefined); // Reset year filter when category changes
+    }, [categoryType, toast]);
 
     const loadMore = async () => {
         if (page >= totalPages) return;
@@ -74,17 +92,17 @@ const MovieCategory = () => {
         try {
             setLoading(true);
             const nextPage = page + 1;
-            const response = await categoryInfo.apiCall(nextPage, selectedYear);
-            setTvSeries(prev => [...prev, ...response.results]);
+            const response = await categoryInfo.apiCall(nextPage);
+            setAllTvSeries(prev => [...prev, ...response.results]);
             setPage(nextPage);
         } catch (error) {
-            console.error(`Error loading more ${categoryType} movies:`, error);
+            console.error(`Error loading more ${categoryType} tv series:`, error);
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading && tvSeries.length === 0) {
+    if (loading && allTvSeries.length === 0) {
         return (
             <>
                 <Header />
@@ -100,6 +118,8 @@ const MovieCategory = () => {
         );
     }
 
+    const seriesToShow = filteredTvSeries;
+
     return (
         <>
             <Header />
@@ -107,6 +127,7 @@ const MovieCategory = () => {
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-3xl font-bold">
                         {categoryInfo.title}
+                        {selectedYear && ` (${selectedYear})`}
                     </h1>
                     <YearFilter
                         selectedYear={selectedYear}
@@ -114,7 +135,7 @@ const MovieCategory = () => {
                     />
                 </div>
 
-                {tvSeries.length === 0 ? (
+                {seriesToShow.length === 0 ? (
                     <div className="text-center py-16">
                         <h2 className="text-xl font-medium mb-2">No tv series found</h2>
                         <p className="text-muted-foreground">
@@ -128,14 +149,14 @@ const MovieCategory = () => {
                 ) : (
                     <>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                            {tvSeries.map(series => (
+                            {seriesToShow.map(series => (
                                 <div key={series.id}>
                                     <TVCard series={series} />
                                 </div>
                             ))}
                         </div>
 
-                        {page < totalPages && (
+                        {!selectedYear && page < totalPages && (
                             <div className="flex justify-center mt-10">
                                 <Button
                                     onClick={loadMore}
@@ -155,4 +176,4 @@ const MovieCategory = () => {
     );
 };
 
-export default MovieCategory;
+export default TVSeriesCategory;
