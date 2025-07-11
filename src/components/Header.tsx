@@ -357,7 +357,7 @@ const Header = ({ genres: propGenres = [] }: HeaderProps) => {
             </NavigationMenu>
           </div>
 
-          <div className="flex items-center md:gap-2">
+          <div className="flex items-center gap-2">
             {/* search bar trigger for small screen */}
             <div className="md:hidden">
               <Button
