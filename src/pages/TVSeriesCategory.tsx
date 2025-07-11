@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, TVSeries } from "@/services/api";
@@ -6,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import TVCard from "@/components/TVCard";
 import Footer from "@/components/Footer";
+import YearFilter from "@/components/YearFilter";
 
 type CategoryType = "airing-today" | "on-the-air" | "popular" | "top-rated";
 
 const categoryMap: Record<CategoryType, {
     title: string;
-    apiCall: (page: number) => Promise<{ results: TVSeries[]; total_pages: number }>;
+    apiCall: (page: number, year?: number) => Promise<{ results: TVSeries[]; total_pages: number }>;
 }> = {
     "airing-today": {
         title: "Airing Today",
@@ -37,6 +39,7 @@ const MovieCategory = () => {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    const [selectedYear, setSelectedYear] = useState<number | undefined>();
     const { toast } = useToast();
 
     const categoryType = (category || "airing-today") as CategoryType;
@@ -46,7 +49,7 @@ const MovieCategory = () => {
         const fetchMovies = async () => {
             try {
                 setLoading(true);
-                const response = await categoryInfo.apiCall(1);
+                const response = await categoryInfo.apiCall(1, selectedYear);
                 setTvSeries(response.results);
                 setTotalPages(response.total_pages);
                 setPage(1);
@@ -63,7 +66,7 @@ const MovieCategory = () => {
         };
 
         fetchMovies();
-    }, [categoryType, toast]);
+    }, [categoryType, selectedYear, toast]);
 
     const loadMore = async () => {
         if (page >= totalPages) return;
@@ -71,7 +74,7 @@ const MovieCategory = () => {
         try {
             setLoading(true);
             const nextPage = page + 1;
-            const response = await categoryInfo.apiCall(nextPage);
+            const response = await categoryInfo.apiCall(nextPage, selectedYear);
             setTvSeries(prev => [...prev, ...response.results]);
             setPage(nextPage);
         } catch (error) {
@@ -101,16 +104,25 @@ const MovieCategory = () => {
         <>
             <Header />
             <main className="container py-8 px-4">
-                <h1 className="text-3xl font-bold mb-6">
-                    {categoryInfo.title}
-                </h1>
+                <div className="flex items-center justify-between mb-6">
+                    <h1 className="text-3xl font-bold">
+                        {categoryInfo.title}
+                    </h1>
+                    <YearFilter
+                        selectedYear={selectedYear}
+                        onYearChange={setSelectedYear}
+                    />
+                </div>
 
                 {tvSeries.length === 0 ? (
                     <div className="text-center py-16">
                         <h2 className="text-xl font-medium mb-2">No tv series found</h2>
                         <p className="text-muted-foreground">
-                            We couldn't find any tv series in this category.
-                            Try browsing our other categories.
+                            {selectedYear 
+                                ? `We couldn't find any TV series from ${selectedYear} in this category.`
+                                : "We couldn't find any tv series in this category."
+                            }
+                            Try browsing our other categories or different years.
                         </p>
                     </div>
                 ) : (

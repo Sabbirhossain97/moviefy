@@ -195,26 +195,26 @@ export const api = {
   getTrending: (timeWindow: "day" | "week" = "day") =>
     fetchFromApi<MoviesResponse>(`/trending/movie/${timeWindow}`),
 
-  getPopular: (page: number = 1) =>
-    fetchFromApi<MoviesResponse>("/movie/popular", { page }),
+  getPopular: (page: number = 1, year?: number) =>
+    fetchFromApi<MoviesResponse>("/movie/popular", { page, ...(year && { year }) }),
 
-  getTopRated: (page: number = 1) =>
-    fetchFromApi<MoviesResponse>("/movie/top_rated", { page }),
+  getTopRated: (page: number = 1, year?: number) =>
+    fetchFromApi<MoviesResponse>("/movie/top_rated", { page, ...(year && { year }) }),
 
-  getUpcoming: (page: number = 1) =>
-    fetchFromApi<MoviesResponse>("/movie/upcoming", { page }),
+  getUpcoming: (page: number = 1, year?: number) =>
+    fetchFromApi<MoviesResponse>("/movie/upcoming", { page, ...(year && { year }) }),
 
-  getAiringToday: (page: number = 1) =>
-    fetchFromApi<TVSeriesResponse>("/tv/airing_today", { page }),
+  getAiringToday: (page: number = 1, year?: number) =>
+    fetchFromApi<TVSeriesResponse>("/tv/airing_today", { page, ...(year && { first_air_date_year: year }) }),
 
-  getOnTheAir: (page: number = 1) =>
-    fetchFromApi<TVSeriesResponse>("/tv/on_the_air", { page }),
+  getOnTheAir: (page: number = 1, year?: number) =>
+    fetchFromApi<TVSeriesResponse>("/tv/on_the_air", { page, ...(year && { first_air_date_year: year }) }),
 
-  getTvPopular: (page: number = 1) =>
-    fetchFromApi<TVSeriesResponse>("/tv/popular", { page }),
+  getTvPopular: (page: number = 1, year?: number) =>
+    fetchFromApi<TVSeriesResponse>("/tv/popular", { page, ...(year && { first_air_date_year: year }) }),
 
-  getTvTopRated: (page: number = 1) =>
-    fetchFromApi<TVSeriesResponse>("/tv/top_rated", { page }),
+  getTvTopRated: (page: number = 1, year?: number) =>
+    fetchFromApi<TVSeriesResponse>("/tv/top_rated", { page, ...(year && { first_air_date_year: year }) }),
 
   getMovie: (id: number) =>
     fetchFromApi<Movie>(`/movie/${id}`),
