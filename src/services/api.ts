@@ -1,3 +1,4 @@
+
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
@@ -196,25 +197,46 @@ export const api = {
     fetchFromApi<MoviesResponse>(`/trending/movie/${timeWindow}`),
 
   getPopular: (page: number = 1, year?: number) =>
-    fetchFromApi<MoviesResponse>("/movie/popular", { page, ...(year && { year }) }),
+    fetchFromApi<MoviesResponse>("/movie/popular", { 
+      page, 
+      ...(year && { primary_release_year: year }) 
+    }),
 
   getTopRated: (page: number = 1, year?: number) =>
-    fetchFromApi<MoviesResponse>("/movie/top_rated", { page, ...(year && { year }) }),
+    fetchFromApi<MoviesResponse>("/movie/top_rated", { 
+      page, 
+      ...(year && { primary_release_year: year }) 
+    }),
 
   getUpcoming: (page: number = 1, year?: number) =>
-    fetchFromApi<MoviesResponse>("/movie/upcoming", { page, ...(year && { year }) }),
+    fetchFromApi<MoviesResponse>("/movie/upcoming", { 
+      page, 
+      ...(year && { primary_release_year: year }) 
+    }),
 
   getAiringToday: (page: number = 1, year?: number) =>
-    fetchFromApi<TVSeriesResponse>("/tv/airing_today", { page, ...(year && { first_air_date_year: year }) }),
+    fetchFromApi<TVSeriesResponse>("/tv/airing_today", { 
+      page, 
+      ...(year && { first_air_date_year: year }) 
+    }),
 
   getOnTheAir: (page: number = 1, year?: number) =>
-    fetchFromApi<TVSeriesResponse>("/tv/on_the_air", { page, ...(year && { first_air_date_year: year }) }),
+    fetchFromApi<TVSeriesResponse>("/tv/on_the_air", { 
+      page, 
+      ...(year && { first_air_date_year: year }) 
+    }),
 
   getTvPopular: (page: number = 1, year?: number) =>
-    fetchFromApi<TVSeriesResponse>("/tv/popular", { page, ...(year && { first_air_date_year: year }) }),
+    fetchFromApi<TVSeriesResponse>("/tv/popular", { 
+      page, 
+      ...(year && { first_air_date_year: year }) 
+    }),
 
   getTvTopRated: (page: number = 1, year?: number) =>
-    fetchFromApi<TVSeriesResponse>("/tv/top_rated", { page, ...(year && { first_air_date_year: year }) }),
+    fetchFromApi<TVSeriesResponse>("/tv/top_rated", { 
+      page, 
+      ...(year && { first_air_date_year: year }) 
+    }),
 
   getMovie: (id: number) =>
     fetchFromApi<Movie>(`/movie/${id}`),
