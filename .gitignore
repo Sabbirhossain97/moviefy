@@ -10,6 +10,9 @@ lerna-debug.log*
 node_modules
 gemini_reports
 puppeteer
+ai_training
+run_ui_ux_review.sh
+ui_ux_feedback_report.md
 dist
 .env
 dist-ssr
