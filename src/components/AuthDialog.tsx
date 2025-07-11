@@ -73,8 +73,9 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
     e.preventDefault();
     setLoading(true);
     try {
+      const siteUrl = import.meta.env.VITE_SITE_URL || 'http://localhost:8080';
       const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${siteUrl}/reset-password`,
       });
 
       if (error) throw error;
@@ -146,7 +147,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="signin" className="space-y-4">
             <form onSubmit={handleSignIn} className="space-y-4">
               <div className="space-y-2">
@@ -202,7 +203,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
               </Button>
             </form>
           </TabsContent>
-          
+
           <TabsContent value="signup" className="space-y-4">
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="space-y-2">
