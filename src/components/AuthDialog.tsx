@@ -73,7 +73,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const siteUrl = import.meta.env.VITE_SITE_URL || 'http://localhost:8080';
+      const siteUrl = import.meta.env.VITE_SITE_URL;
       const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail, {
         redirectTo: `${siteUrl}/reset-password`,
       });
