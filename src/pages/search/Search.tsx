@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { api, Movie, TVSeries } from "@/services/api";
@@ -29,13 +28,13 @@ const Search = () => {
         if (searchTypeFromUrl === "movie") {
           const response = await api.searchMovies(query, 1);
           setMovies(response.results);
-          setTvSeries([]); // Clear TV series when searching movies
+          setTvSeries([]); 
           setTotalPages(response.total_pages);
           setPage(1);
         } else {
           const response = await api.searchTVSeries(query, 1);
           setTvSeries(response.results);
-          setMovies([]); // Clear movies when searching TV series
+          setMovies([]); 
           setTotalPages(response.total_pages);
           setPage(1);
         }

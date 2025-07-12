@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -23,8 +22,6 @@ interface TVReviewRow {
   type: 'tv';
 }
 
-type ReviewRow = MovieReviewRow | TVReviewRow;
-
 export default function AdminReviewsTable() {
   const [movieRows, setMovieRows] = useState<MovieReviewRow[]>([]);
   const [tvRows, setTvRows] = useState<TVReviewRow[]>([]);
@@ -35,7 +32,6 @@ export default function AdminReviewsTable() {
       setLoading(true);
       
       try {
-        // Fetch movie reviews and ratings
         const { data: movieReviews, error: movieError } = await supabase
           .from("movie_reviews")
           .select(`
@@ -59,7 +55,6 @@ export default function AdminReviewsTable() {
           `)
           .order("created_at", { ascending: false });
 
-        // Fetch TV series reviews and ratings
         const { data: tvReviews, error: tvError } = await supabase
           .from("series_reviews")
           .select(`

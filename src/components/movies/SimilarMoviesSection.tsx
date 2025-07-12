@@ -1,4 +1,3 @@
-
 import React from "react";
 import MovieSlider from "@/components/movies/MovieSlider";
 

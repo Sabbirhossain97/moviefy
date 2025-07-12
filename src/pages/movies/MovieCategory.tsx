@@ -83,7 +83,7 @@ const MovieCategory = () => {
     };
 
     fetchMovies();
-    setSelectedYear(undefined); // Reset year filter when category changes
+    setSelectedYear(undefined); 
   }, [categoryType, toast]);
 
   const loadMore = async () => {

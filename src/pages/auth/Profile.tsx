@@ -11,10 +11,10 @@ import { User, Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 
-const BUCKET = "avatars"; // For Supabase storage
+const BUCKET = "avatars"; 
 
 const Profile = () => {
-  const { user, profile: userProfile, refreshProfile } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({
@@ -31,7 +31,6 @@ const Profile = () => {
     }
   }, [user]);
 
-  // Clean up preview object URL if file changes
   useEffect(() => {
     let previewUrl: string | null = null;
     if (avatarFile) {
@@ -67,20 +66,17 @@ const Profile = () => {
     }
   };
 
-  // Upload avatar to Supabase Storage
   const uploadAvatar = async (file: File) => {
     if (!user) return null;
     const fileExt = file.name.split('.').pop();
     const fileName = `${user.id}.${fileExt}`;
     setAvatarUploading(true);
     try {
-      // Directly try to upload avatar file
-      const { data, error } = await supabase
+      const { error } = await supabase
         .storage
         .from(BUCKET)
         .upload(fileName, file, { upsert: true, contentType: file.type });
       if (error) throw error;
-      // Get public URL
       const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
       return urlData?.publicUrl || null;
     } finally {
@@ -111,8 +107,8 @@ const Profile = () => {
       setAvatarFile(null);
       setAvatarPreview(null);
       setProfile(prev => ({ ...prev, avatar_url }));
-      await refreshProfile(); // update everywhere globally!
-      fetchProfile(); // refresh UI from db
+      await refreshProfile();
+      fetchProfile(); 
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -159,7 +155,6 @@ const Profile = () => {
                 <div className="flex items-center gap-6">
                   <div className="relative">
                     <Avatar className="w-20 h-20">
-                      {/* Show preview if available; otherwise show existing avatar */}
                       {avatarPreview ? (
                         <AvatarImage src={avatarPreview} />
                       ) : (

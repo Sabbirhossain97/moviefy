@@ -1,8 +1,7 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import MovieReminderButton from "@/components/movies/MovieReminderButton";
 import { Button } from "@/components/ui/button";
-import { Film, Clock4, Play, Clapperboard } from "lucide-react";
+import { Film, Play, Clapperboard } from "lucide-react";
 import Rating from "@/components/common/Rating";
 import { TVSeries } from "@/services/api";
 import { TVSeriesInfoSection } from "./TVSeriesInfoSection";
@@ -47,8 +46,6 @@ const TVSeriesDetailsHeader: React.FC<TVSeriesDetailsHeaderProps> = ({
   const endYear = series.status === "Ended" || series.status === 'Returning Series'
     ? new Date(series.last_air_date).getFullYear()
     : currentStatus;
-
-    console.log(endYear)
 
   return (
     <div className="flex flex-col md:flex-row gap-2 bg-transparent">

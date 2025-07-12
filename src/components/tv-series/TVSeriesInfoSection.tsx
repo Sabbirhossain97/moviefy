@@ -1,5 +1,3 @@
-
-import { create } from "domain";
 import { Badge } from "../ui/badge";
 
 interface TVSeriesInfoSectionProps {

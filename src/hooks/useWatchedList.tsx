@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -55,13 +54,13 @@ export const useWatchedList = () => {
         .range(from, to);
 
       if (error) throw error;
-      
+
       if (append) {
         setWatchedList(prev => [...prev, ...(data || [])]);
       } else {
         setWatchedList(data || []);
       }
-      
+
       setHasMoreMovies((data || []).length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('Error fetching watched list:', error);
@@ -91,13 +90,13 @@ export const useWatchedList = () => {
         .range(from, to);
 
       if (error) throw error;
-      
+
       if (append) {
         setWatchedTVList(prev => [...prev, ...(data || [])]);
       } else {
         setWatchedTVList(data || []);
       }
-      
+
       setHasMoreTV((data || []).length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('Error fetching watched TV series list:', error);
@@ -134,14 +133,12 @@ export const useWatchedList = () => {
     }
 
     try {
-      // First, remove from wishlist if it exists
       await supabase
         .from('wishlists')
         .delete()
         .eq('user_id', user.id)
         .eq('movie_id', movie.id);
 
-      // Then add to watched list
       const { error } = await supabase.from('watched_movies').insert({
         user_id: user.id,
         movie_id: movie.id,
@@ -187,14 +184,12 @@ export const useWatchedList = () => {
     }
 
     try {
-      // First, remove from TV wishlist if it exists
       await supabase
         .from('tv_wishlists')
         .delete()
         .eq('user_id', user.id)
         .eq('series_id', series.id);
 
-      // Then add to watched list
       const { error } = await supabase.from('watched_tv_series').insert({
         user_id: user.id,
         series_id: series.id,
@@ -210,8 +205,7 @@ export const useWatchedList = () => {
         title: 'Marked as watched',
         description: `${series.name} has been added to your watched list`,
       });
-
-      fetchWatchedList();
+      fetchTVWatchedList();
     } catch (error: any) {
       if (error.code === '23505') {
         toast({

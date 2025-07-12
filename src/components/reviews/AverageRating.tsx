@@ -1,4 +1,3 @@
-
 import { Star } from "lucide-react";
 
 interface AverageRatingProps {

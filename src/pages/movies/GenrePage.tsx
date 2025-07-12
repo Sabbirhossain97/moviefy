@@ -23,14 +23,12 @@ const GenrePage = () => {
         setLoading(true);
         const genreId = parseInt(id);
         
-        // Fetch all genres to find the current one
         const genresResponse = await api.getGenres();
         const currentGenre = genresResponse.genres.find(g => g.id === genreId);
         
         if (currentGenre) {
           setGenre(currentGenre);
           
-          // Fetch movies for this genre
           const moviesResponse = await api.getMoviesByGenre(genreId, 1);
           setMovies(moviesResponse.results);
           setTotalPages(moviesResponse.total_pages);
@@ -68,7 +66,6 @@ const GenrePage = () => {
     }
   };
 
-  // Determine custom genre header label.
   let genreTitle = genre ? genre.name : "Genre Not Found";
   if (genreTitle.toLowerCase() === "tv movie") {
     genreTitle = "TV Shows";

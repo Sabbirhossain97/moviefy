@@ -42,33 +42,28 @@ const AdminDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      
-      // Get total users
+
       const { count: totalUsers } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
 
-      // Get total wishlists
       const { count: totalWishlists } = await supabase
         .from('wishlists')
         .select('*', { count: 'exact', head: true });
 
-      // Get total admins
       const { count: totalAdmins } = await supabase
         .from('user_roles')
         .select('*', { count: 'exact', head: true })
         .eq('role', 'admin');
 
-      // Get recent signups (last 7 days)
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
-      
+
       const { count: recentSignups } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', weekAgo.toISOString());
 
-      // Get recent users
       const { data: recentUsersData } = await supabase
         .from('profiles')
         .select('id, email, full_name, created_at')
@@ -152,7 +147,6 @@ const AdminDashboard = () => {
             <Crown className="w-8 h-8 text-yellow-500" />
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           </div>
-          {/* Stats Section */}
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {[...Array(4)].map((_, i) => (
@@ -209,7 +203,6 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* Recent Users */}
           <Card className="gradient-card">
             <CardHeader>
               <CardTitle>Recent Users</CardTitle>
@@ -231,7 +224,6 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Admin Reviews Table */}
           <Card className="gradient-card mt-8">
             <CardHeader>
               <CardTitle>All Reviews & Ratings</CardTitle>
@@ -241,7 +233,6 @@ const AdminDashboard = () => {
                 View all user reviews and ratings submitted across all movies.
               </div>
               <div>
-                {/* Admin Reviews Table */}
                 <AdminReviewsTable />
               </div>
             </CardContent>

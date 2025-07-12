@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -55,7 +54,6 @@ export const WishlistButton = ({
             : size === 'lg' 
             ? "w-5 h-5" 
             : "w-4 h-4",
-          // mr-2 for text, but not for icon-only
           inWishlist && "fill-red-500 text-red-500",
           !inWishlist && "fill-none"
         )} 

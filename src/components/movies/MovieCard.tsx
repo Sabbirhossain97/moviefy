@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Movie } from "@/services/api";
 import { IMAGE_SIZES } from "@/services/api";

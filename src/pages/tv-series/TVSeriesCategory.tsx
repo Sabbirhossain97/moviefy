@@ -42,11 +42,9 @@ const TVSeriesCategory = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [selectedYear, setSelectedYear] = useState<number | undefined>();
     const { toast } = useToast();
-
     const categoryType = (category || "airing-today") as CategoryType;
     const categoryInfo = categoryMap[categoryType] || categoryMap.popular;
 
-    // Filter TV series based on selected year
     useEffect(() => {
         if (!selectedYear) {
             setFilteredTvSeries(allTvSeries);
@@ -83,7 +81,7 @@ const TVSeriesCategory = () => {
         };
 
         fetchTvSeries();
-        setSelectedYear(undefined); // Reset year filter when category changes
+        setSelectedYear(undefined);
     }, [categoryType, toast]);
 
     const loadMore = async () => {
@@ -139,7 +137,7 @@ const TVSeriesCategory = () => {
                     <div className="text-center py-16">
                         <h2 className="text-xl font-medium mb-2">No tv series found</h2>
                         <p className="text-muted-foreground">
-                            {selectedYear 
+                            {selectedYear
                                 ? `We couldn't find any TV series from ${selectedYear} in this category.`
                                 : "We couldn't find any tv series in this category."
                             }
@@ -171,7 +169,7 @@ const TVSeriesCategory = () => {
                     </>
                 )}
             </main>
-            <Footer/>
+            <Footer />
         </>
     );
 };

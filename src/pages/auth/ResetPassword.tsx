@@ -14,24 +14,8 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  // useEffect(() => {
-  //   // Check if we have the necessary auth tokens in the URL
-  //   const access_token = searchParams.get('access_token');
-  //   const refresh_token = searchParams.get('refresh_token');
-
-  //   if (!access_token || !refresh_token) {
-  //     toast({
-  //       title: 'Invalid Reset Link',
-  //       description: 'This password reset link is invalid or has expired.',
-  //       variant: 'destructive',
-  //     });
-  //     navigate('/');
-  //   }
-  // }, [searchParams, navigate, toast]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();

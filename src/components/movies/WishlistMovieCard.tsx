@@ -55,7 +55,7 @@ export default function WishlistMovieCard({ item, onRemove, onClick }: WishlistM
         alt={item.movie_title}
         className="object-cover w-full h-64"
       />
-      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex gap-2">
+      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex flex-col gap-2">
         <button
           onClick={e => {
             e.stopPropagation();

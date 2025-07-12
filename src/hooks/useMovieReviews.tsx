@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,7 +35,6 @@ export function useMovieReviews(id: number, type: string) {
     setError(null);
     if (type === 'movie') {
       try {
-        // First fetch the movie reviews with user profiles
         const { data: reviewsData, error: reviewsError } = await supabase
           .from("movie_reviews")
           .select(`
@@ -53,7 +51,6 @@ export function useMovieReviews(id: number, type: string) {
           return;
         }
 
-        // Then fetch the ratings separately
         const { data: ratingsData, error: ratingsError } = await supabase
           .from("movie_ratings")
           .select("user_id, rating")
@@ -63,7 +60,6 @@ export function useMovieReviews(id: number, type: string) {
           console.error("Error fetching ratings:", ratingsError);
         }
 
-        // Combine the data
         const safeData: Review[] = (reviewsData || []).map((r: any) => {
           const userRating = ratingsData?.find(rating => rating.user_id === r.user_id);
           return {
@@ -85,7 +81,6 @@ export function useMovieReviews(id: number, type: string) {
       }
     } else {
       try {
-        // First fetch the series reviews
         const { data: reviewsData, error: reviewsError } = await supabase
           .from("series_reviews")
           .select(`
@@ -102,7 +97,6 @@ export function useMovieReviews(id: number, type: string) {
           return;
         }
 
-        // Then fetch the ratings separately
         const { data: ratingsData, error: ratingsError } = await supabase
           .from("series_ratings")
           .select("user_id, rating")
@@ -112,7 +106,6 @@ export function useMovieReviews(id: number, type: string) {
           console.error("Error fetching ratings:", ratingsError);
         }
 
-        // Combine the data
         const safeData: SeriesReview[] = (reviewsData || []).map((r: any) => {
           const userRating = ratingsData?.find(rating => rating.user_id === r.user_id);
           return {
@@ -135,7 +128,6 @@ export function useMovieReviews(id: number, type: string) {
     }
   };
 
-  // Fetch user's own review if exists
   const fetchMyReview = async () => {
     if (!user) return setMyReview(null);
     if (type === 'movie') {

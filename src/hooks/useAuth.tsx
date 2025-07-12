@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       toast({
         title: "Success!",
-        description: "Please check your email to confirm your account.",
+        description: "You have successfully registered!",
       });
     } catch (error: any) {
       toast({

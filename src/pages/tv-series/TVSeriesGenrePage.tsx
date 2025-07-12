@@ -29,7 +29,6 @@ const TVSeriesGenrePage = () => {
                 if (currentGenre) {
                     setGenre(currentGenre);
 
-                    // Fetch movies for this genre
                     const tvSeriesResponse = await api.getTVSeriesByGenre(genreId, 1);
                     setTvSeries(tvSeriesResponse.results);
                     setTotalPages(tvSeriesResponse.total_pages);
@@ -67,7 +66,6 @@ const TVSeriesGenrePage = () => {
         }
     };
 
-    // Determine custom genre header label.
     let genreTitle = genre ? genre.name : "Genre Not Found";
     if (genreTitle.toLowerCase() === "tv movie") {
         genreTitle = "TV Shows";

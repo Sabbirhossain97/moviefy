@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
 import { useTVSeriesWatchedList } from '@/hooks/useTVSeriesWatchedList';

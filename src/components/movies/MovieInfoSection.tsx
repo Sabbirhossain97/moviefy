@@ -1,4 +1,3 @@
-
 import { Badge } from "../ui/badge";
 
 interface MovieInfoSectionProps {

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { AuthDialog } from "@/components/auth/AuthDialog";
 import { Brain, Heart, Search, Users, Video } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 
 const features = [
   {
@@ -87,7 +86,6 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Features Section */}
         <section id="features" className="container px-4 relative py-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Why You'll Love Moviefy</h2>
@@ -104,7 +102,6 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Movie Slider Section */}
         {trending.length > 0 && (
           <section className="container px-4 py-10">
             <MovieSlider title="Trending Now" movies={trending} />
@@ -112,7 +109,6 @@ const LandingPage = () => {
         )}
       </main>
 
-      {/* Footer */}
       <footer className="border-t mt-12">
         <div className="container py-8 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2">

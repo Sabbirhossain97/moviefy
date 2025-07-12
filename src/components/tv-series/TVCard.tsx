@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { TVSeries } from "@/services/api";
 import { IMAGE_SIZES } from "@/services/api";
@@ -13,17 +12,12 @@ interface TVSeriesCardProps {
     size?: "sm" | "md" | "lg";
 }
 
-const TVCard = ({ series, size = "md" }: TVSeriesCardProps) => {
+const TVCard = ({ series }: TVSeriesCardProps) => {
     const firstAirDate = series.first_air_date ? new Date(series.first_air_date).getFullYear() : "N/A";
     const posterUrl = series.poster_path
         ? `${IMAGE_SIZES.poster.medium}${series.poster_path}`
         : "/placeholder.svg";
-    const cardSizes = {
-        sm: "w-[150px]",
-        md: "w-[200px]",
-        lg: "w-[250px]",
-    };
-
+  
     return (
         <Card className={`overflow-hidden movie-card-hover pb-2 gradient-card border-border/50`}>
             <div className="relative aspect-[2/3] overflow-hidden group">
