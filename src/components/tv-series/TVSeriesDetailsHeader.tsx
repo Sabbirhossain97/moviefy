@@ -78,7 +78,7 @@ const TVSeriesDetailsHeader: React.FC<TVSeriesDetailsHeaderProps> = ({
         )}
       </div>
       <div className="flex-1">
-        <h1 className="text-4xl flex font-bold mb-1 text-center md:text-start leading-tight items-center gap-2">
+        <h1 className="text-4xl flex justify-center md:justify-start font-bold mb-1 leading-tight items-center gap-2">
           <span>{series.name}</span>
           {currentStatus && <span className="rounded-full px-2.5 py-1 text-xs bg-red-700">
             {currentStatus}
