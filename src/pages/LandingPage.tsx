@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Movie, Genre } from "@/services/api";
-import Header from "@/components/Header";
-import MovieSlider from "@/components/MovieSlider";
+import Header from "@/components/common/Header";
+import MovieSlider from "@/components/movies/MovieSlider";
 import { Button } from "@/components/ui/button";
-import { AuthDialog } from "@/components/AuthDialog";
+import { AuthDialog } from "@/components/auth/AuthDialog";
 import { Brain, Heart, Search, Users, Video } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";

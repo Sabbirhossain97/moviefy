@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import LandingPage from './LandingPage';
-import Dashboard from './Dashboard';
+import Dashboard from './dashboard/Dashboard';
 import { useState, useEffect } from 'react';
 import { Video } from "lucide-react";
 
