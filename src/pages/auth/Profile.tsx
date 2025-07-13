@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Camera } from 'lucide-react';
+import { User, Camera, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AuthDialog } from '@/components/auth/AuthDialog';
+import { DeleteAccountDialog } from '@/components/profile/DeleteAccountDialog';
 
 const BUCKET = "avatars"; 
 
@@ -144,8 +145,9 @@ const Profile = () => {
     <div className="min-h-screen gradient-bg">
       <Header />
       <main className="container px-4 py-8">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto space-y-6">
           <h1 className="text-3xl font-bold mb-8">My Profile</h1>
+          
           <Card className="gradient-card">
             <CardHeader>
               <CardTitle>Profile Information</CardTitle>
@@ -225,6 +227,25 @@ const Profile = () => {
                   {loading ? 'Updating...' : avatarUploading ? "Uploading..." : 'Update Profile'}
                 </Button>
               </form>
+            </CardContent>
+          </Card>
+
+          <Card className="gradient-card border-destructive/20">
+            <CardHeader>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Once you delete your account, there is no going back. Please be certain.
+                </p>
+                <DeleteAccountDialog>
+                  <Button variant="destructive" className="w-full">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Account
+                  </Button>
+                </DeleteAccountDialog>
+              </div>
             </CardContent>
           </Card>
         </div>
