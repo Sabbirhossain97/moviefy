@@ -117,7 +117,7 @@ const Wishlist = () => {
                       key={item.id}
                       item={item}
                       onRemove={removeTVSeries}
-                      onClick={(movieId) => navigate(`/tv-series/${movieId}`)}
+                      onClick={(seriesId) => navigate(`/tv/${seriesId}`)}
                     />
                   ))}
                 </div>

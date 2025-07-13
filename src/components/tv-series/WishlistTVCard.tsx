@@ -14,7 +14,7 @@ interface WishlistTVCardProps {
     onClick: (seriesId: number) => void;
 }
 
-export default function WishlistTVCard({ item, onRemove }: WishlistTVCardProps) {
+export default function WishlistTVCard({ item, onRemove, onClick }: WishlistTVCardProps) {
     const { addToTVWatchedList } = useWatchedList();
 
     const posterUrl = item.series_poster_path
@@ -43,6 +43,7 @@ export default function WishlistTVCard({ item, onRemove }: WishlistTVCardProps) 
     return (
         <div
             className="relative group cursor-pointer rounded-lg overflow-hidden shadow-lg hover:scale-105 transform transition-all duration-200 bg-card"
+            onClick={() => onClick(item.series_id)}
         >
             <img
                 src={posterUrl}
