@@ -24,7 +24,7 @@ interface DeleteAccountDialogProps {
 
 export const DeleteAccountDialog = ({ children }: DeleteAccountDialogProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -33,29 +33,13 @@ export const DeleteAccountDialog = ({ children }: DeleteAccountDialogProps) => {
 
     setIsDeleting(true);
     try {
-      // Delete user data from all tables
-      const deletePromises = [
-        supabase.from('wishlists').delete().eq('user_id', user.id),
-        supabase.from('tv_wishlists').delete().eq('user_id', user.id),
-        supabase.from('watched_movies').delete().eq('user_id', user.id),
-        supabase.from('watched_tv_series').delete().eq('user_id', user.id),
-        supabase.from('favorite_movies').delete().eq('user_id', user.id),
-        supabase.from('favorite_tv_series').delete().eq('user_id', user.id),
-        supabase.from('movie_ratings').delete().eq('user_id', user.id),
-        supabase.from('series_ratings').delete().eq('user_id', user.id),
-        supabase.from('movie_reviews').delete().eq('user_id', user.id),
-        supabase.from('series_reviews').delete().eq('user_id', user.id),
-        supabase.from('movie_reminders').delete().eq('user_id', user.id),
-        supabase.from('user_api_keys').delete().eq('user_id', user.id),
-        supabase.from('user_roles').delete().eq('user_id', user.id),
-      ];
-
-      await Promise.all(deletePromises);
-
-      // Delete the user account (this will also delete the profile due to cascade)
+      // Delete the user account using the RPC function
       const { error } = await supabase.rpc('delete_user');
       
       if (error) throw error;
+
+      // Sign out the user immediately
+      await signOut();
 
       toast({
         title: 'Account deleted',
