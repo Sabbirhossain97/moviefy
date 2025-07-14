@@ -139,15 +139,19 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
 
       if (error) throw error;
 
+      // Set the pending email and show verification screen
       setPendingEmail(signUpData.email);
       setShowEmailVerification(true);
       setSignUpData({ email: '', password: '', fullName: '' });
+      
+      console.log('Signup successful, showing verification screen for:', signUpData.email);
       
       toast({
         title: 'Check Your Email',
         description: 'We sent you a verification link. Please check your email and click the link to complete registration.',
       });
     } catch (error: any) {
+      console.error('Signup error:', error);
       toast({
         title: 'Registration Failed',
         description: error.message || 'An error occurred during registration.',
@@ -224,9 +228,26 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
     }
   };
 
+  const resetAllStates = () => {
+    setShowEmailVerification(false);
+    setShowForgotPassword(false);
+    setPendingEmail('');
+    setSignInData({ email: '', password: '' });
+    setSignUpData({ email: '', password: '', fullName: '' });
+    setForgotPasswordEmail('');
+  };
+
+  const handleDialogOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen) {
+      // Reset all states when dialog closes
+      resetAllStates();
+    }
+  };
+
   if (showEmailVerification) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleDialogOpenChange}>
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -272,7 +293,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
 
   if (showForgotPassword) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleDialogOpenChange}>
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -309,7 +330,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
