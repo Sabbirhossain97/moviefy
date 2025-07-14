@@ -125,8 +125,13 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
     }
 
     setLoading(true);
+    console.log('Starting signup process for:', signUpData.email);
+    
     try {
-      const { error } = await supabase.auth.signUp({
+      // First sign out any existing session to prevent auto-login
+      await supabase.auth.signOut();
+      
+      const { data, error } = await supabase.auth.signUp({
         email: signUpData.email,
         password: signUpData.password,
         options: {
@@ -137,19 +142,33 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
         },
       });
 
+      console.log('Signup response:', { data, error });
+
       if (error) throw error;
 
-      // Set the pending email and show verification screen
-      setPendingEmail(signUpData.email);
-      setShowEmailVerification(true);
-      setSignUpData({ email: '', password: '', fullName: '' });
-      
-      console.log('Signup successful, showing verification screen for:', signUpData.email);
-      
-      toast({
-        title: 'Check Your Email',
-        description: 'We sent you a verification link. Please check your email and click the link to complete registration.',
-      });
+      // Check if the user needs email confirmation
+      if (data.user && !data.user.email_confirmed_at) {
+        console.log('Email confirmation required, showing verification screen');
+        setPendingEmail(signUpData.email);
+        setShowEmailVerification(true);
+        setSignUpData({ email: '', password: '', fullName: '' });
+        
+        // Sign out immediately to prevent auto-login
+        await supabase.auth.signOut();
+        
+        toast({
+          title: 'Check Your Email',
+          description: 'We sent you a verification link. Please check your email and click the link to complete registration.',
+        });
+      } else {
+        // User was created and confirmed immediately
+        toast({
+          title: 'Account Created',
+          description: 'Your account has been created successfully!',
+        });
+        setOpen(false);
+        setSignUpData({ email: '', password: '', fullName: '' });
+      }
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({
@@ -240,7 +259,6 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
   const handleDialogOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
     if (!newOpen) {
-      // Reset all states when dialog closes
       resetAllStates();
     }
   };
@@ -264,7 +282,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
               </p>
               <p className="font-medium text-movie-primary">{pendingEmail}</p>
               <p className="text-sm text-muted-foreground">
-                Click the link in the email to complete your registration.
+                Click the link in the email to complete your registration. You won't be able to sign in until your email is verified.
               </p>
             </div>
             <div className="flex flex-col gap-2">

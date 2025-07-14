@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -62,11 +61,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
+      console.log('Initial session check:', session?.user?.email_confirmed_at ? 'confirmed' : 'not confirmed');
+      
+      // Only set session if email is confirmed
+      if (session?.user?.email_confirmed_at) {
+        setSession(session);
+        setUser(session.user);
         checkUserRole(session.user.id);
         fetchProfile(session.user);
+      } else {
+        // Clear any unconfirmed session
+        setSession(null);
+        setUser(null);
       }
       setLoading(false);
     });
@@ -74,23 +80,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email_confirmed_at);
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, 'Email confirmed:', session?.user?.email_confirmed_at);
       
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        // Only proceed if email is confirmed
-        if (session.user.email_confirmed_at) {
-          checkUserRole(session.user.id);
-          fetchProfile(session.user);
-        } else {
-          // Email not confirmed, clear user state
+      if (event === 'SIGNED_UP') {
+        console.log('User signed up, checking email confirmation status');
+        // Don't set session for unconfirmed users
+        if (!session?.user?.email_confirmed_at) {
+          setSession(null);
+          setUser(null);
           setIsAdmin(false);
           setProfile(null);
+          setLoading(false);
+          return;
         }
+      }
+      
+      if (session?.user?.email_confirmed_at) {
+        setSession(session);
+        setUser(session.user);
+        checkUserRole(session.user.id);
+        fetchProfile(session.user);
       } else {
+        setSession(null);
+        setUser(null);
         setIsAdmin(false);
         setProfile(null);
       }
@@ -98,7 +111,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => subscription.unsubscribe();
-    // eslint-disable-next-line
   }, []);
 
   const checkUserRole = async (userId: string) => {
@@ -147,16 +159,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
         if (error.message.includes('Email not confirmed')) {
-          throw new Error('Email not confirmed. Please check your email and click the verification link.');
+          throw new Error('Please verify your email address before signing in. Check your inbox for the verification link.');
         }
         throw error;
+      }
+
+      // Double-check email confirmation
+      if (data.user && !data.user.email_confirmed_at) {
+        await supabase.auth.signOut();
+        throw new Error('Please verify your email address before signing in. Check your inbox for the verification link.');
       }
 
       toast({
