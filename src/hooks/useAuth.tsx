@@ -83,25 +83,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, 'Email confirmed:', session?.user?.email_confirmed_at);
       
-      if (event === 'SIGNED_UP') {
-        console.log('User signed up, checking email confirmation status');
-        // Don't set session for unconfirmed users
-        if (!session?.user?.email_confirmed_at) {
+      // Handle different auth events
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        // Only set session for confirmed users
+        if (session?.user?.email_confirmed_at) {
+          setSession(session);
+          setUser(session.user);
+          checkUserRole(session.user.id);
+          fetchProfile(session.user);
+        } else {
+          // Clear session for unconfirmed users
           setSession(null);
           setUser(null);
           setIsAdmin(false);
           setProfile(null);
-          setLoading(false);
-          return;
         }
-      }
-      
-      if (session?.user?.email_confirmed_at) {
-        setSession(session);
-        setUser(session.user);
-        checkUserRole(session.user.id);
-        fetchProfile(session.user);
-      } else {
+      } else if (event === 'SIGNED_OUT') {
         setSession(null);
         setUser(null);
         setIsAdmin(false);
