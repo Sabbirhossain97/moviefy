@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import {
   Dialog,
@@ -11,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
-import { LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
+import { LogIn, UserPlus, Eye, EyeOff, Mail } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -19,13 +20,18 @@ interface AuthDialogProps {
   children: React.ReactNode;
 }
 
+// Email validation regex
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 export const AuthDialog = ({ children }: AuthDialogProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState('');
+  const { signIn } = useAuth();
   const { toast } = useToast();
 
   const [signInData, setSignInData] = useState({
@@ -41,15 +47,48 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
 
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
 
+  const validateEmail = (email: string): boolean => {
+    return EMAIL_REGEX.test(email);
+  };
+
+  const validatePassword = (password: string): boolean => {
+    return password.length >= 6;
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateEmail(signInData.email)) {
+      toast({
+        title: 'Invalid Email',
+        description: 'Please enter a valid email address.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!validatePassword(signInData.password)) {
+      toast({
+        title: 'Invalid Password',
+        description: 'Password must be at least 6 characters long.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       await signIn(signInData.email, signInData.password);
       setOpen(false);
       setSignInData({ email: '', password: '' });
-    } catch (error) {
-      // Error handled in useAuth hook
+    } catch (error: any) {
+      if (error.message?.includes('Email not confirmed')) {
+        toast({
+          title: 'Email Not Verified',
+          description: 'Please check your email and click the verification link before signing in.',
+          variant: 'destructive',
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -57,13 +96,63 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateEmail(signUpData.email)) {
+      toast({
+        title: 'Invalid Email',
+        description: 'Please enter a valid email address (e.g., user@example.com).',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!validatePassword(signUpData.password)) {
+      toast({
+        title: 'Weak Password',
+        description: 'Password must be at least 6 characters long.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!signUpData.fullName.trim()) {
+      toast({
+        title: 'Missing Name',
+        description: 'Please enter your full name.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      await signUp(signUpData.email, signUpData.password, signUpData.fullName);
-      setOpen(false);
+      const { error } = await supabase.auth.signUp({
+        email: signUpData.email,
+        password: signUpData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: signUpData.fullName,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      setPendingEmail(signUpData.email);
+      setShowEmailVerification(true);
       setSignUpData({ email: '', password: '', fullName: '' });
-    } catch (error) {
-      // Error handled in useAuth hook
+      
+      toast({
+        title: 'Check Your Email',
+        description: 'We sent you a verification link. Please check your email and click the link to complete registration.',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Registration Failed',
+        description: error.message || 'An error occurred during registration.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -71,9 +160,19 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateEmail(forgotPasswordEmail)) {
+      toast({
+        title: 'Invalid Email',
+        description: 'Please enter a valid email address.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const siteUrl = import.meta.env.VITE_SITE_URL;
+      const siteUrl = window.location.origin;
       const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail, {
         redirectTo: `${siteUrl}/reset-password`,
       });
@@ -97,11 +196,85 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
     }
   };
 
+  const handleResendVerification = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: pendingEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Verification Email Sent',
+        description: 'We sent another verification email to your inbox.',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to resend verification email.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (showEmailVerification) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Verify Your Email</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-center">
+            <div className="flex justify-center">
+              <Mail className="h-12 w-12 text-movie-primary" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold">Check your email</h3>
+              <p className="text-muted-foreground">
+                We sent a verification link to:
+              </p>
+              <p className="font-medium text-movie-primary">{pendingEmail}</p>
+              <p className="text-sm text-muted-foreground">
+                Click the link in the email to complete your registration.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Button
+                variant="outline"
+                onClick={handleResendVerification}
+                disabled={loading}
+              >
+                {loading ? 'Sending...' : 'Resend verification email'}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setShowEmailVerification(false);
+                  setPendingEmail('');
+                }}
+              >
+                Back to sign in
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   if (showForgotPassword) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="sm:max-w-md ">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Reset Password</DialogTitle>
           </DialogHeader>
@@ -159,6 +332,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
                   onChange={(e) =>
                     setSignInData({ ...signInData, email: e.target.value })
                   }
+                  placeholder="user@example.com"
                   required
                 />
               </div>
@@ -172,6 +346,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
                     onChange={(e) =>
                       setSignInData({ ...signInData, password: e.target.value })
                     }
+                    placeholder="Enter your password"
                     required
                   />
                   <Button
@@ -215,6 +390,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
                   onChange={(e) =>
                     setSignUpData({ ...signUpData, fullName: e.target.value })
                   }
+                  placeholder="Enter your full name"
                   required
                 />
               </div>
@@ -227,6 +403,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
                   onChange={(e) =>
                     setSignUpData({ ...signUpData, email: e.target.value })
                   }
+                  placeholder="user@example.com"
                   required
                 />
               </div>
@@ -240,6 +417,7 @@ export const AuthDialog = ({ children }: AuthDialogProps) => {
                     onChange={(e) =>
                       setSignUpData({ ...signUpData, password: e.target.value })
                     }
+                    placeholder="At least 6 characters"
                     required
                   />
                   <Button

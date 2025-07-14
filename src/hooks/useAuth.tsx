@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -74,11 +75,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email_confirmed_at);
+      
       setSession(session);
       setUser(session?.user ?? null);
+      
       if (session?.user) {
-        checkUserRole(session.user.id);
-        fetchProfile(session.user);
+        // Only proceed if email is confirmed
+        if (session.user.email_confirmed_at) {
+          checkUserRole(session.user.id);
+          fetchProfile(session.user);
+        } else {
+          // Email not confirmed, clear user state
+          setIsAdmin(false);
+          setProfile(null);
+        }
       } else {
         setIsAdmin(false);
         setProfile(null);
@@ -111,6 +122,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email,
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/`,
           data: {
             full_name: fullName,
           },
@@ -120,13 +132,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
 
       toast({
-        title: "Success!",
-        description: "You have successfully registered!",
+        title: "Check Your Email",
+        description: "We sent you a verification link. Please check your email to complete registration.",
       });
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Registration Failed",
+        description: error.message || "An error occurred during registration.",
         variant: "destructive",
       });
       throw error;
@@ -140,7 +152,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('Email not confirmed')) {
+          throw new Error('Email not confirmed. Please check your email and click the verification link.');
+        }
+        throw error;
+      }
 
       toast({
         title: "Welcome back!",
@@ -149,7 +166,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await refreshProfile();
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Sign In Failed",
         description: error.message,
         variant: "destructive",
       });
