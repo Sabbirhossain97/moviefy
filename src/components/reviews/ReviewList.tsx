@@ -1,3 +1,4 @@
+
 import React from "react";
 import ReviewCard from "./ReviewCard";
 
@@ -50,7 +51,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
             onStartEdit={onStartEdit}
             onCancelEdit={onCancelEdit}
             onDelete={onDelete}
-            rating={r.user_rating}
+            rating={r.showRating ? r.user_rating : null}
           />
         </li>
       ))}

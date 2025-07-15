@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
@@ -51,14 +52,34 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
     return filtered;
   }, [allReviews, filterRating, sortOrder]);
 
-  // Move current user's reviews to the top
-  let displayReviews = [...filteredAndSortedReviews];
-  if (user) {
-    displayReviews = [
-      ...displayReviews.filter(r => r.user_id === user.id),
-      ...displayReviews.filter(r => r.user_id !== user.id),
-    ];
-  }
+  // Move current user's reviews to the top and determine which reviews should show ratings
+  const displayReviews = useMemo(() => {
+    let processedReviews = [...filteredAndSortedReviews];
+    
+    // Separate current user's reviews from others
+    if (user) {
+      processedReviews = [
+        ...processedReviews.filter(r => r.user_id === user.id),
+        ...processedReviews.filter(r => r.user_id !== user.id),
+      ];
+    }
+
+    // Track which users have already shown their rating
+    const userRatingShown = new Set();
+    
+    // Add a flag to each review indicating whether to show the rating
+    return processedReviews.map(review => {
+      const shouldShowRating = !userRatingShown.has(review.user_id) && review.user_rating;
+      if (shouldShowRating) {
+        userRatingShown.add(review.user_id);
+      }
+      
+      return {
+        ...review,
+        showRating: shouldShowRating
+      };
+    });
+  }, [filteredAndSortedReviews, user]);
 
   const currentUserInfo = user
     ? {
