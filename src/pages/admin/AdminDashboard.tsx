@@ -210,8 +210,8 @@ const AdminDashboard = () => {
             <CardContent>
               <div className="space-y-4">
                 {recentUsers.map((user) => (
-                  <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
+                  <div key={user.id} className="flex [@media(max-width:400px)]:flex-col items-center justify-between p-3 border rounded-lg">
+                    <div className='text-center [@media(min-width:400px)]:text-start'>
                       <p className="font-medium">{user.full_name || 'Unknown'}</p>
                       <p className="text-sm text-muted-foreground">{user.email}</p>
                     </div>

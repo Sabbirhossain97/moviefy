@@ -77,7 +77,7 @@ export const MovieInfoSection: React.FC<MovieInfoSectionProps> = ({
         </div>
       )}
       {spokenLanguages && spokenLanguages.length > 0 && (
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col items-center md:items-start">
           <p className="font-bold text-white mb-0.5 text-center md:text-start">Spoken Languages</p>
           <span className="text-gray-400">
             {spokenLanguages.map((pc) => {

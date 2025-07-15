@@ -204,7 +204,6 @@ export default function AdminReviewsTable() {
           <tr className="bg-muted whitespace-nowrap">
             <th className="px-2 py-2 text-left font-medium">Movie</th>
             <th className="px-2 py-2 text-left font-medium">User</th>
-            <th className="px-2 py-2 text-left font-medium">Rating</th>
             <th className="px-2 py-2 text-left font-medium">Review</th>
             <th className="px-2 py-2 text-left font-medium">Posted At</th>
             <th className="px-2 py-2 text-left font-medium">Action</th>
@@ -217,7 +216,6 @@ export default function AdminReviewsTable() {
                 {row.movie_title}
               </td>
               <td className="px-2 py-1">{row.user_name}</td>
-              <td className="px-2 py-1">{row.rating ?? "-"}</td>
               <td className="px-2 py-1 max-w-[300px] truncate" title={row.review || "-"}>
                 {row.review ?? "-"}
               </td>

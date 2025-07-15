@@ -30,7 +30,7 @@ export const TVSeriesInfoSection: React.FC<TVSeriesInfoSectionProps> = ({
             </div>
             <div className="flex [@media(max-width:500px)]:flex-wrap [@media(max-width:500px)]:justify-center [@media(max-width:500px)]:gap-6 flex-row gap-16 mt-2 mb-1">
                 {creators && creators.length > 0 && (
-                    <div>
+                    <div className="flex flex-col items-center md:items-start">
                         <span className="block font-bold whitespace-nowrap text-white mb-0.5">Created By</span>
                         <span className="text-gray-400">
                             {creators.map((pc) => pc.name).join(", ")}
@@ -77,8 +77,8 @@ export const TVSeriesInfoSection: React.FC<TVSeriesInfoSectionProps> = ({
             )}
 
             {spokenLanguages && spokenLanguages.length > 0 && (
-                <div>
-                    <p className="font-bold text-white mb-0.5 flex justify-center md:justify-start items-center">Spoken Languages</p>
+                <div className="flex flex-col items-center md:items-start">
+                    <p className="font-bold text-white mb-0.5">Spoken Languages</p>
                     <span className="text-gray-400 text-center">
                         {spokenLanguages.map((pc) => {
                             if (pc.iso_639_1 === originalLanguage) {
