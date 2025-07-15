@@ -1,10 +1,16 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { api } from "@/services/api";
 
 interface MovieReviewRow {
   id: string;
   movie_title: string;
+  movie_id: number;
   rating: number | null;
   review: string | null;
   user_name: string | null;
@@ -15,6 +21,7 @@ interface MovieReviewRow {
 interface TVReviewRow {
   id: string;
   series_name: string;
+  series_id: number;
   rating: number | null;
   review: string | null;
   user_name: string | null;
@@ -26,6 +33,27 @@ export default function AdminReviewsTable() {
   const [movieRows, setMovieRows] = useState<MovieReviewRow[]>([]);
   const [tvRows, setTvRows] = useState<TVReviewRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const fetchMovieTitle = async (movieId: number): Promise<string> => {
+    try {
+      const movie = await api.getMovie(movieId);
+      return movie.title;
+    } catch (error) {
+      console.error(`Error fetching movie ${movieId}:`, error);
+      return `Movie ID: ${movieId}`;
+    }
+  };
+
+  const fetchSeriesTitle = async (seriesId: number): Promise<string> => {
+    try {
+      const series = await api.getTvSeries(seriesId);
+      return series.name;
+    } catch (error) {
+      console.error(`Error fetching series ${seriesId}:`, error);
+      return `Series ID: ${seriesId}`;
+    }
+  };
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -78,58 +106,74 @@ export default function AdminReviewsTable() {
           `)
           .order("created_at", { ascending: false });
 
+        // Process movie reviews
         if (!movieError && movieReviews) {
-          const mappedMovieRows = movieReviews.map((r: any) => ({
-            id: r.id,
-            movie_title: `ID: ${r.movie_id}`,
-            rating: null,
-            review: r.review,
-            user_name: r.profiles?.full_name || "Unknown User",
-            created_at: r.created_at,
-            type: 'movie' as const,
-          }));
-          setMovieRows(mappedMovieRows);
+          const movieReviewsWithTitles = await Promise.all(
+            movieReviews.map(async (r: any) => ({
+              id: r.id,
+              movie_title: await fetchMovieTitle(r.movie_id),
+              movie_id: r.movie_id,
+              rating: null,
+              review: r.review,
+              user_name: r.profiles?.full_name || "Unknown User",
+              created_at: r.created_at,
+              type: 'movie' as const,
+            }))
+          );
+          setMovieRows(movieReviewsWithTitles);
         }
 
+        // Process movie ratings
         if (!ratingError && movieRatings) {
-          const mappedRatings = movieRatings.map((r: any) => ({
-            id: `rating-${r.movie_id}-${r.user_id}`,
-            movie_title: `ID: ${r.movie_id}`,
-            rating: r.rating,
-            review: null,
-            user_name: r.profiles?.full_name || "Unknown User",
-            created_at: r.created_at,
-            type: 'movie' as const,
-          }));
-          setMovieRows(prev => [...prev, ...mappedRatings].sort((a, b) => 
+          const movieRatingsWithTitles = await Promise.all(
+            movieRatings.map(async (r: any) => ({
+              id: `rating-${r.movie_id}-${r.user_id}`,
+              movie_title: await fetchMovieTitle(r.movie_id),
+              movie_id: r.movie_id,
+              rating: r.rating,
+              review: null,
+              user_name: r.profiles?.full_name || "Unknown User",
+              created_at: r.created_at,
+              type: 'movie' as const,
+            }))
+          );
+          setMovieRows(prev => [...prev, ...movieRatingsWithTitles].sort((a, b) => 
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           ));
         }
 
+        // Process TV reviews
         if (!tvError && tvReviews) {
-          const mappedTVRows = tvReviews.map((r: any) => ({
-            id: r.id.toString(),
-            series_name: `ID: ${r.series_id}`,
-            rating: null,
-            review: r.review,
-            user_name: r.profiles?.full_name || "Unknown User",
-            created_at: r.created_at,
-            type: 'tv' as const,
-          }));
-          setTvRows(mappedTVRows);
+          const tvReviewsWithTitles = await Promise.all(
+            tvReviews.map(async (r: any) => ({
+              id: r.id.toString(),
+              series_name: await fetchSeriesTitle(r.series_id),
+              series_id: r.series_id,
+              rating: null,
+              review: r.review,
+              user_name: r.profiles?.full_name || "Unknown User",
+              created_at: r.created_at,
+              type: 'tv' as const,
+            }))
+          );
+          setTvRows(tvReviewsWithTitles);
         }
 
+        // Process TV ratings
         if (!tvRatingError && tvRatings) {
-          const mappedTVRatings = tvRatings.map((r: any) => ({
-            id: `tv-rating-${r.series_id}-${r.user_id}`,
-            series_name: `ID: ${r.series_id}`,
-            rating: r.rating,
-            review: null,
-            user_name: r.profiles?.full_name || "Unknown User",
-            created_at: r.created_at,
-            type: 'tv' as const,
-          }));
-          setTvRows(prev => [...prev, ...mappedTVRatings].sort((a, b) => 
+          const tvRatingsWithTitles = await Promise.all(
+            tvRatings.map(async (r: any) => ({
+              id: `tv-rating-${r.series_id}-${r.user_id}`,
+              series_name: await fetchSeriesTitle(r.series_id),
+              series_id: r.series_id,
+              rating: r.rating,
+              review: null,
+              user_name: r.profiles?.full_name || "Unknown User",
+              created_at: r.created_at,
+              type: 'tv' as const,
+            }))
+          );
+          setTvRows(prev => [...prev, ...tvRatingsWithTitles].sort((a, b) => 
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           ));
         }
@@ -143,6 +187,14 @@ export default function AdminReviewsTable() {
     fetchReviews();
   }, []);
 
+  const handleViewMovie = (movieId: number) => {
+    navigate(`/movie/${movieId}`);
+  };
+
+  const handleViewSeries = (seriesId: number) => {
+    navigate(`/tv/${seriesId}`);
+  };
+
   if (loading) return <div>Loading reviews and ratings…</div>;
 
   const MovieReviewsTable = ({ rows }: { rows: MovieReviewRow[] }) => (
@@ -155,16 +207,31 @@ export default function AdminReviewsTable() {
             <th className="px-2 py-2 text-left font-medium">Rating</th>
             <th className="px-2 py-2 text-left font-medium">Review</th>
             <th className="px-2 py-2 text-left font-medium">Posted At</th>
+            <th className="px-2 py-2 text-left font-medium">Action</th>
           </tr>
         </thead>
         <tbody>
           {rows.map(row => (
             <tr key={row.id} className="border-t whitespace-nowrap">
-              <td className="px-2 py-1">{row.movie_title}</td>
+              <td className="px-2 py-1 max-w-[200px] truncate" title={row.movie_title}>
+                {row.movie_title}
+              </td>
               <td className="px-2 py-1">{row.user_name}</td>
               <td className="px-2 py-1">{row.rating ?? "-"}</td>
-              <td className="px-2 py-1">{row.review ?? "-"}</td>
+              <td className="px-2 py-1 max-w-[300px] truncate" title={row.review || "-"}>
+                {row.review ?? "-"}
+              </td>
               <td className="px-2 py-1">{new Date(row.created_at).toLocaleString()}</td>
+              <td className="px-2 py-1">
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  onClick={() => handleViewMovie(row.movie_id)}
+                  className="h-6 w-6 p-0"
+                >
+                  <Eye className="h-3 w-3" />
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -182,16 +249,31 @@ export default function AdminReviewsTable() {
             <th className="px-2 py-2 text-left font-medium">Rating</th>
             <th className="px-2 py-2 text-left font-medium">Review</th>
             <th className="px-2 py-2 text-left font-medium">Posted At</th>
+            <th className="px-2 py-2 text-left font-medium">Action</th>
           </tr>
         </thead>
         <tbody>
           {rows.map(row => (
             <tr key={row.id} className="border-t whitespace-nowrap">
-              <td className="px-2 py-1">{row.series_name}</td>
+              <td className="px-2 py-1 max-w-[200px] truncate" title={row.series_name}>
+                {row.series_name}
+              </td>
               <td className="px-2 py-1">{row.user_name}</td>
               <td className="px-2 py-1">{row.rating ?? "-"}</td>
-              <td className="px-2 py-1">{row.review ?? "-"}</td>
+              <td className="px-2 py-1 max-w-[300px] truncate" title={row.review || "-"}>
+                {row.review ?? "-"}
+              </td>
               <td className="px-2 py-1">{new Date(row.created_at).toLocaleString()}</td>
+              <td className="px-2 py-1">
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  onClick={() => handleViewSeries(row.series_id)}
+                  className="h-6 w-6 p-0"
+                >
+                  <Eye className="h-3 w-3" />
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
