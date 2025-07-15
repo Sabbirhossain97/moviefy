@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { useMovieReviews } from "@/hooks/useMovieReviews";
 import { useAuth } from "@/hooks/useAuth";
@@ -89,11 +88,29 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
     }
     : null;
 
-  // Calculate average rating
-  const ratingsWithValues = allReviews.filter(review => review.user_rating !== null && review.user_rating !== undefined);
-  const averageRating = ratingsWithValues.length > 0
-    ? ratingsWithValues.reduce((sum, review) => sum + (review.user_rating || 0), 0) / ratingsWithValues.length
-    : 0;
+  // Calculate average rating and total ratings count properly
+  const ratingStats = useMemo(() => {
+    // Get unique users who have given ratings
+    const uniqueUserRatings = new Map();
+    
+    allReviews.forEach(review => {
+      if (review.user_rating !== null && review.user_rating !== undefined) {
+        // Only keep the most recent rating for each user
+        if (!uniqueUserRatings.has(review.user_id) || 
+            new Date(review.created_at) > new Date(uniqueUserRatings.get(review.user_id).created_at)) {
+          uniqueUserRatings.set(review.user_id, review);
+        }
+      }
+    });
+
+    const ratingsArray = Array.from(uniqueUserRatings.values());
+    const totalRatings = ratingsArray.length;
+    const averageRating = totalRatings > 0
+      ? ratingsArray.reduce((sum, review) => sum + (review.user_rating || 0), 0) / totalRatings
+      : 0;
+
+    return { averageRating, totalRatings };
+  }, [allReviews]);
 
   // --- Handlers ---
   const handleSubmit = async (e: React.FormEvent) => {
@@ -133,8 +150,8 @@ export default function Reviews({ id, type }: { id: number, type: string }) {
       <div className="mb-4 mt-4 flex justify-between gap-3 items-center flex-wrap">
         <div>
           <AverageRating
-            averageRating={averageRating}
-            totalReviews={ratingsWithValues.length}
+            averageRating={ratingStats.averageRating}
+            totalReviews={ratingStats.totalRatings}
           />
         </div>
         <div className="flex gap-2">
